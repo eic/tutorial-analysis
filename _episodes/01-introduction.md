@@ -11,16 +11,38 @@ objectives:
 keypoints:
 - "Use `xrdfs` from within the eic shell or the minio client to access simulation files"
 ---
-More detailed information on the simulation productions can be found on the [Simulation Production Campaign Website](https://eic.github.io/epic-prod/). 
 
-# Simulation Files Organization
+More detailed information on the simulation productions, including the information presented below, can be found on the [Simulation Production Campaign Website](https://eic.github.io/epic-prod/). 
+
+## Simulation Files Organization
 
 There are three broad classes of files stored on xrootd/S3, each in their own directory:
 - EVGEN: The input hepmc3 datasets
 - FULL: The full GEANT4 output root files (usually only saved for a fration of runs)
 - RECO: The output root files from the reconstruction
 
-Most users will interact with the files in the RECO directory and that is what we will focus on in this tutorial. Within the RECO directory, files are organized by campaign (23.12.0 for the December 2023 campaign, for example), detector configuration, physics process, energy, and Q2. 
+Most users will interact with the files in the RECO directory and that is what we will focus on in this tutorial. Within the RECO directory, files are organized by campaign (23.12.0 for the December 2023 campaign, for example), detector configuration, physics process, energy, and Q2. The directory structure and number of reconstructed files for each campaign can be found on the Simulation Website [here](https://eic.github.io/epic-prod/campaigns/campaigns_reco.html).
+
+## Access Simulation from Jefferson Lab xrootd
+
+The prefered method for browsing the simulation output is to use xrootd from within the eic-shell. To browse the directory structure and exit, one can run the commands:
+```console
+./eic-shell
+xrdfs root://dtn-eic.jlab.org
+ls /work/eic2/EPIC/RECO/23.12.0
+exit
+```
+
+It is alos possible to copy a file and open it locally using the `xrdcp` command:
+```console
+./eic-shell
+xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/23.12.0/path-to-file .
+exit
+```
+
+## Access Simulation from BNL S3
+
+The simulation files 
 
 {% include links.md %}
 
