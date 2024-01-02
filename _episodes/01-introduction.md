@@ -42,7 +42,31 @@ exit
 
 ## Access Simulation from BNL S3
 
-The simulation files 
+The simulation files can also be accessed from S3 storage at BNL using the client. Issue the following commands to install minio:
+```console
+mkdir --parent ~/bin
+curl https://dl.min.io/client/mc/release/linux-amd64/mc --create-dirs -o ~/bin/mc
+chmod +x ~/bin/mc
+```
+
+After the client is installed, it needs to be configured for read access:
+```console
+~/bin/mc config host add S3 https://eics3.sdcc.bnl.gov:9000 <credential> <credential>
+```
+
+The <credential> values can be obtained by asking on Mattermost. Assuming the minio client is installed and configured as above, one can browse the file structure using the minio `ls` command:
+```console
+~/bin/mc ls S3/eictest/EPIC/RECO
+```
+
+Files can also be coppied locally by replacing `ls` with `cp`.
+
+## Streaming Files
+
+It is also possible to open a file directly in ROOT. Note that the following command should be executed after opening root and `TFile::Open()` should be used:
+```console
+auto f = TFile::Open("root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/path-to-file")
+```
 
 {% include links.md %}
 
