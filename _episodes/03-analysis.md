@@ -36,7 +36,7 @@ TTreeReaderArray<float> partMomX(tree_reader, "MCParticles.momentum.x");
 ...
 ```
 
-Once you have defined the `TTreeReaderArray` objects for the data-members you want to look at, you can loop over the events and the members within that event:
+The branches and their members can be viewed by opening a file with TBrowser (`new TBrowser()`) from within ROOT. Once you have defined the `TTreeReaderArray` objects for the data-members you want to look at, you can loop over the events and the members within that event:
 
 ```c++
 while(tree_reader.Next()) { // Loop over events
@@ -60,7 +60,7 @@ All members of the same branch should have the same number of entries, so it is 
 
 ## The MCParticles Record
 
-Nearly every analysis will include some comparison to the truth level, so it is important to understand how to access generator level information
+Nearly every analysis will include some comparison to the truth level, so it is important to understand how to access generator level information. Particles produced by the Monte Carlo Event Generator and during the interaction of these primary particles with the detector material as modeled by GEANT are stored in the MCParticles branch, whoes structure is defined by the datatype [edm4hep::MCParticle](https://github.com/key4hep/EDM4hep/blob/main/edm4hep.yaml#L140). The particle's [PDG](https://pdg.lbl.gov/2020/reviews/rpp2020-rev-monte-carlo-numbering.pdf) code, charge, production time, mass, production vertex, endpoint, momentum at the production vertex, and momentum at the endpoint are all available. In addition, the status of the particle as defined by the event generator and the detector simulation are stored. For example, if one wanted to look at stable particles from the event generator, they would require `MCParticles.generatorStatus == 1`. The field `MCParticles.simulatorStatus` is a bit-field which encodes some information on how the particle propagated through the detector. The detailed definition of the bit assignments can be found in the [edm4hep yaml file](https://github.com/key4hep/EDM4hep/blob/main/edm4hep.yaml#L140).
 
 ## Sample Analysis: Track Efficiency and Resolution
 
