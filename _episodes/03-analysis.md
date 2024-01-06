@@ -64,3 +64,22 @@ Nearly every analysis will include some comparison to the truth level, so it is 
 
 ## Sample Analysis: Track Efficiency and Resolution
 
+As a sample exercise to become familiar with the simulation output and how to use it in a realistic setting, we will find the tracking eficiency and resolution. We will need to access the reconstructed track information and the truth particle information and we will have to associate the individual tracks and particles to one another. 
+
+Before we begin, we should create a skeleton macro to handle file I/O. For the `TTreeReader` and `RDataFrames` examples, we will use a simple ROOT macro. Using your favorite editor, create a file with a name like `trackAnalysis.C` or something similar and copy in the following code: 
+
+```c++
+void trackAnalysis(TString infile="path_to_your_simu_file")
+  {
+    // Set output file for the histograms
+    TFile *ofile = TFile::Open("out.hist.root","RECREATE");
+
+    // Analysis code will go here
+
+    ofile->Write(); // Write histograms to file
+    ofile->Close(); // Close output file
+  }
+```
+
+Next, we need to access the appropriate branches, we saw how to do this in the "Reading the Output Trees" section. We will need momentum, generator status, and possibly particle species information for the truth particles and momentum information for the reconstructed tracks. The reconstructed track information can be accessed from two different branches: CentralCKFTrackParameters and ReconstructedChargedParticles. 
+
