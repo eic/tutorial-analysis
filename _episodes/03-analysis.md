@@ -110,3 +110,71 @@ TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParti
 
 The last two lines encode the association between a ReconstructedChargedParticle and a MCParticle where the matching is determined in the [ParticlesWithPID](https://github.com/eic/EICrecon/blob/main/src/algorithms/pid/ParticlesWithPID.cc) algorithm which generates the ReconstructedChargedParticle objects. 
 
+Now that we have access to the data we need we will begin constructing our efficiency plots, starting with efficiency as a function of the true particle pseudorapidity. The basic strategy is outlined below:
+
+1. Loop over all events in the file
+2. Within each event, loop over all stable charged particles
+3. Identify the ReconstructedChargedParticle (if any) associated with the truth particle we are looking at
+4. Create and fill the necessary histograms
+
+Here is the code to implement these steps:
+
+```c++
+// Define Histograms
+TH1D *partEta = new TH1D("partEta","Eta of Thrown Charged Particles;Eta",100,-5.,5.);
+TH1D *matchedPartEta = new TH1D("matchedPartEta","Eta of Thrown Charged Particles That Have Matching Track",100,-5.,5.);
+
+TH1D *matchedPartTrackDeltaR = new TH1D("matchedPartTrackDeltaR","Delta R Between Matching Thrown and Reconstructed Charged Particle",5000,0.,5.);
+
+while(tree_reader.Next()) { // Loop over events
+
+  for(unsigned int i=0; i<partGenStat.GetSize(); i++) // Loop over thrown particles
+    {
+	    if(partGenStat[i] == 1) // Select stable thrown particles
+	      {
+	        int pdg = TMath::Abs(partPdg[i]);
+
+	        if(pdg == 11 || pdg == 13 || pdg == 211 || pdg == 321 || pdg == 2212) // Look at charged particles (electrons, muons, pions, kaons, protons)
+	          {
+		          TVector3 trueMom(partMomX[i],partMomY[i],partMomZ[i]);
+
+		          float trueEta = trueMom.PseudoRapidity();
+		          float truePhi = trueMom.Phi();
+	    
+		          partEta->Fill(trueEta);
+
+              // Loop over associations to find matching ReconstructedChargedParticle
+		          for(unsigned int j=0; j<simuAssoc.GetSize(); j++)
+		            {
+		              if(simuAssoc[j] == i) // Find association index matching the index of the thrown particle we are looking at
+		                {
+			                TVector3 recMom(trackMomX[recoAssoc[j]],trackMomY[recoAssoc[j]],trackMomZ[recoAssoc[j]]); // recoAssoc[j] is the index of the matched ReconstructedChargedParticle
+
+                      // Check the distance between the thrown and reconstructed particle
+			                float deltaEta = trueEta - recMom.PseudoRapidity();
+			                float deltaPhi = TVector2::Phi_mpi_pi(truePhi - recMom.Phi());
+			                float deltaR = TMath::Sqrt(deltaEta*deltaEta + deltaPhi*deltaPhi);
+
+			                matchedPartTrackDeltaR->Fill(deltaR);
+
+			                matchedPartEta->Fill(trueEta); // Plot the thrown eta if a matched ReconstructedChargedParticle was found
+                    }
+                }
+            }            
+        }
+    }
+}
+```
+
+We should now have everything we need to find the track efficiency as a function of pseudorapidity. To run the macro and produce an output file containing the histograms we defined, simply type `root -l -q trackAnalysis.C`. After the macro runs, you can open the root file to inspect the histograms. The efficiency can be found by taking the ratio of matchedPartEta over partEta.
+
+> Question:
+> - We plot the distance between thrown and reconstructed charged partices, does this distribution look reasonable?
+> - When filling the matchedPartEta histogram (the numerator in our efficiency), why do we use again the true thrown eta instead of the associated reconstructed eta?
+{: .callout}
+
+> Exercise:
+> - Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
+> - Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
+> - Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
+{: .challenge}
