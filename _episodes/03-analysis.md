@@ -81,5 +81,32 @@ void trackAnalysis(TString infile="path_to_your_simu_file")
   }
 ```
 
-Next, we need to access the appropriate branches, we saw how to do this in the "Reading the Output Trees" section. We will need momentum, generator status, and possibly particle species information for the truth particles and momentum information for the reconstructed tracks. The reconstructed track information can be accessed from two different branches: CentralCKFTrackParameters and ReconstructedChargedParticles. 
+Next, we need to access the appropriate branches, we saw how to do this in the "Reading the Output Trees" section. We will need momentum, generator status, and particle species information for the truth particles and momentum information for the reconstructed tracks. The reconstructed track information can be accessed from two different branches: CentralCKFTrackParameters and ReconstructedChargedParticles. We will proceed using the ReconstructedChargedParticles branch as this will give us a chance to practice using associations, copy the following lines into your analysis macro.
+
+```c++
+// Set up input file chain
+TChain *mychain = new TChain("events");
+mychain->Add(infile);
+
+// Initialize reader
+TTreeReader tree_reader(mychain);
+
+// Get Particle Information
+TTreeReaderArray<int> partGenStat(tree_reader, "MCParticles.generatorStatus");
+TTreeReaderArray<float> partMomX(tree_reader, "MCParticles.momentum.x");
+TTreeReaderArray<float> partMomY(tree_reader, "MCParticles.momentum.y");
+TTreeReaderArray<float> partMomZ(tree_reader, "MCParticles.momentum.z");
+TTreeReaderArray<int> partPdg(tree_reader, "MCParticles.PDG");
+
+// Get Reconstructed Track Information
+TTreeReaderArray<float> trackMomX(tree_reader, "ReconstructedChargedParticles.momentum.x");
+TTreeReaderArray<float> trackMomY(tree_reader, "ReconstructedChargedParticles.momentum.y");
+TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
+
+// Get Associations Between MCParticles and ReconstructedChargedParticles
+TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "ReconstructedChargedParticleAssociations.recID");
+TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParticleAssociations.simID");
+```
+
+The last two lines encode the association between a ReconstructedChargedParticle and a MCParticle where the matching is determined in the [ParticlesWithPID](https://github.com/eic/EICrecon/blob/main/src/algorithms/pid/ParticlesWithPID.cc) algorithm which generates the ReconstructedChargedParticle objects. 
 
