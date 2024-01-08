@@ -53,6 +53,9 @@ All members of the same branch should have the same number of entries, so it is 
 
 ### ROOT RDataFrames
 
+> Note: Section to be filled.
+{: .callout}
+
 ### PYTHON
 
 > Note: Section to be filled.
@@ -109,6 +112,8 @@ TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParti
 ```
 
 The last two lines encode the association between a ReconstructedChargedParticle and a MCParticle where the matching is determined in the [ParticlesWithPID](https://github.com/eic/EICrecon/blob/main/src/algorithms/pid/ParticlesWithPID.cc) algorithm which generates the ReconstructedChargedParticle objects. 
+
+### Efficiency Analysis
 
 Now that we have access to the data we need we will begin constructing our efficiency plots, starting with efficiency as a function of the true particle pseudorapidity. The basic strategy is outlined below:
 
@@ -178,3 +183,33 @@ We should now have everything we need to find the track efficiency as a function
 > - Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
 > - Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
 {: .challenge}
+
+### Resolution Analysis
+
+Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram:
+
+```c++
+TH1D *trackMomentumRes = new TH1D("trackMomentumRes","Track Momentum Resolution",2000,=10.,10.);
+...
+// Loop over associations to find matching ReconstructedChargedParticle
+for(unsigned int j=0; j<simuAssoc.GetSize(); j++)
+  {
+    if(simuAssoc[j] == i) // Find association index matching the index of the thrown particle we are looking at
+      {
+        ...
+        double momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag();
+
+        trackMomentumRes->Fill(momRes);
+      }
+  }  
+```
+
+While this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta.
+
+> Exercise:
+> - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity
+> - Don't forget to place appropriate cuts on kinematic quantities you are not explicitly plotting
+{: .challenge}
+
+
+
