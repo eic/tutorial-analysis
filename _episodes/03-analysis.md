@@ -1,15 +1,15 @@
 ---
 title: "Analyzing the Reconstruction Output"
 teaching: 30
-exercises: 0
+exercises: 20
 questions:
 - "How does one utilize the reconstruction output trees to do an analysis?"
 objectives:
 - "Become familiar with methods for reading the trees"
 - "Understand how to access truth/particle information"
-- "Perform some basic analyses"
+- "Find track efficiency and resolution"
 keypoints:
-- "FIXME"
+- "Flat tree structure provides flexibility in analysis. MCParticles and ReconstructedChargedParticles branches hold information on generator level particles and reconstructed tracks, respectively."
 ---
 
 Discussion of steps needed to perform and analysis ...
@@ -204,11 +204,11 @@ for(unsigned int j=0; j<simuAssoc.GetSize(); j++)
   }  
 ```
 
-While this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta.
+While this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
 
 > Exercise:
 > - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity
-> - Don't forget to place appropriate cuts on kinematic quantities you are not explicitly plotting
+> - Break resolution plots down by particle species
 {: .challenge}
 
 
