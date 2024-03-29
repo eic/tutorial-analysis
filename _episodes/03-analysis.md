@@ -49,13 +49,12 @@ while(tree_reader.Next()) { // Loop over events
 }
 ```
 All members of the same branch should have the same number of entries, so it is sufficient to use any member of the branch to set the limit of your loop.
-
-
+<!--
 ### ROOT RDataFrames
 
 > Note: Section to be filled.
 {: .callout}
-
+-->
 ### PYTHON
 
 > Note: Section to be filled.
