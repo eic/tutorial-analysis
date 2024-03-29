@@ -18,8 +18,11 @@ More detailed information on the simulation productions, including the informati
 
 There are three broad classes of files stored on xrootd/S3, each in their own directory:
 - EVGEN: The input hepmc3 datasets
-- FULL: The full GEANT4 output root files (usually only saved for a fration of runs)
+    - E.g. some files that have been supplied by a physics event generator
+- FULL: The full GEANT4 output root files (usually only saved for a fraction of runs)
+    - If running a simulation yourself, this would be your output from processing npsim
 - RECO: The output root files from the reconstruction
+    - And again, if running yourself, this would be your output from EICrecon (after you've used your awesome new reconstruction algorithm from the later tutorial of course)
 
 Most users will interact with the files in the RECO directory and that is what we will focus on in this tutorial. Within the RECO directory, files are organized by campaign (23.12.0 for the December 2023 campaign, for example), detector configuration, physics process, energy, and Q2. The directory structure and number of reconstructed files for each campaign can be found on the Simulation Website [here](https://eic.github.io/epic-prod/campaigns/campaigns_reco.html).
 
@@ -39,7 +42,6 @@ It is alos possible to copy a file and open it locally using the `xrdcp` command
 xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/23.12.0/path-to-file .
 exit
 ```
-
 ## Access Simulation from BNL S3
 
 The simulation files can also be accessed from S3 storage at BNL using the client. Issue the following commands to install minio:
@@ -68,5 +70,45 @@ It is also possible to open a file directly in ROOT. Note that the following com
 auto f = TFile::Open("root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/path-to-file")
 ```
 
-{% include links.md %}
+## Advanced Use Case - Grabbing a whole bunch of files
 
+I'm going to sprinkle in a few advanced use cases or suggestions throughout the tutorial. We won't go through these in the tutorial, but these may be something you want to come back to as you get deeper into writing and using your own analysis code. Our first quick advanced use case involves copying/using a large number of processed files. Something you might want to do once your analysis is out of the testing phase and onto the "Let's process ALL of the data!" stage.
+
+If you're moving a lot of files around, you might normally resort to using a wildcard -
+
+```console
+cp File* My_Folder/
+```
+or similar. However, with the mc or xrdcp, this isn't so trivial. Some methods to test and try are include below. 
+
+```console
+mc find S3/eictest/EPIC/RECO/main/CI/ --name "*0001*.root" --exec "mc cp {} ."
+```
+where here we're finding things in the given path that match the name pattern provided, and copying them to our current directory.
+
+Alternatively, you could grab a list of the files you want and pipe them to a file -
+
+```console
+xrdfs root://dtn-eic.jlab.org ls /work/eic2/EPIC/RECO/23.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10 | sed 's|^|root://dtn-eic.jlab.org/|g' > list.txt
+```
+
+In this case, we're listing all files on the server in that path, piping them to sed and inserting "root://dtn-eic.jlab.org/" at the front and then feeding the output to the file "list.txt".
+
+```console
+more list.txt
+root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/23.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0000.eicrecon.tree.edm4eic.root
+root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/23.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0001.eicrecon.tree.edm4eic.root
+...
+```
+We could then, for example, feed this list to a TChain -
+
+```console
+TChain events("events")
+std::ifstream in("list.txt")
+std::string file("")
+while (in >> file) events.Add(file.data())
+events.Scan("@MCParticles.size()","","",10)
+```
+Where in the final line we're only going to skim over the first 10 events.
+
+It should be noted that the best solution may just be to run the files from the server rather than copying them to somewhere else and running them there.
