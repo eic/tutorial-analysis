@@ -24,7 +24,7 @@ There are three broad classes of files stored on xrootd/S3, each in their own di
 - RECO: The output root files from the reconstruction
     - And again, if running yourself, this would be your output from EICrecon (after you've used your awesome new reconstruction algorithm from the later tutorial of course)
 
-Most users will interact with the files in the RECO directory and that is what we will focus on in this tutorial. Within the RECO directory, files are organized by campaign (23.12.0 for the December 2023 campaign, for example), detector configuration, physics process, energy, and Q2. The directory structure and number of reconstructed files for each campaign can be found on the Simulation Website [here](https://eic.github.io/epic-prod/campaigns/campaigns_reco.html).
+Most users will interact with the files in the RECO directory and that is what we will focus on in this tutorial. Within the RECO directory, files are organized by campaign (23.12.0 for the December 2023 campaign, for example), detector configuration and then physics process. Each physics process will have different sub directories, for example generator version, energy, or Q2. The directory structure and number of reconstructed files for each campaign can be found on the Simulation Website [here](https://eic.github.io/epic-prod/campaigns/campaigns_reco.html).
 
 ## Access Simulation from Jefferson Lab xrootd
 
@@ -35,7 +35,6 @@ xrdfs root://dtn-eic.jlab.org
 ls /work/eic2/EPIC/RECO/23.12.0
 exit
 ```
-
 It is also possible to copy a file and open it locally using the `xrdcp` command:
 ```console
 ./eic-shell
@@ -50,12 +49,10 @@ mkdir --parent ~/bin
 curl https://dl.min.io/client/mc/release/linux-amd64/mc --create-dirs -o ~/bin/mc
 chmod +x ~/bin/mc
 ```
-
 After the client is installed, it needs to be configured for read access:
 ```console
 ~/bin/mc config host add S3 https://eics3.sdcc.bnl.gov:9000 <credential> <credential>
 ```
-
 The <credential> values can be obtained by asking on Mattermost. Assuming the minio client is installed and configured as above, one can browse the file structure using the minio `ls` command:
 ```console
 ~/bin/mc ls S3/eictest/EPIC/RECO
