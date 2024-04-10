@@ -85,6 +85,8 @@ xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/23.12.0/epic_craterlake/DIS/N
 ```
 Note that the ./ at the end is the target location to copy to. Change this as desired.
 
+You can also stream the file if you prefer, just copy the path of the file above.
+
 ## Advanced Use Case - Grabbing a whole bunch of files
 
 I'm going to sprinkle in a few advanced use cases or suggestions throughout the tutorial. We won't go through these in the tutorial, but these may be something you want to come back to as you get deeper into writing and using your own analysis code. Our first quick advanced use case involves copying/using a large number of processed files. Something you might want to do once your analysis is out of the testing phase and onto the "Let's process ALL of the data!" stage.
