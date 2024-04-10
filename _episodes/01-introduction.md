@@ -36,7 +36,7 @@ ls /work/eic2/EPIC/RECO/23.12.0
 exit
 ```
 
-It is alos possible to copy a file and open it locally using the `xrdcp` command:
+It is also possible to copy a file and open it locally using the `xrdcp` command:
 ```console
 ./eic-shell
 xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/23.12.0/path-to-file .
@@ -69,6 +69,21 @@ It is also possible to open a file directly in ROOT. Note that the following com
 ```console
 auto f = TFile::Open("root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/path-to-file")
 ```
+## Reminder - Download a file for the next step!
+
+We will need a file to analyse going forward, if you have not done so, download a file now!
+
+Grab a file from -
+
+```console
+/work/eic2/EPIC/RECO/23.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10/
+```
+For example -
+
+```console
+xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/23.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=0.025_hiDiv_5.0001.eicrecon.tree.edm4eic.root ./
+```
+Note that the ./ at the end is the target location to copy to. Change this as desired.
 
 ## Advanced Use Case - Grabbing a whole bunch of files
 
