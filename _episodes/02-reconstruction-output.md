@@ -1,7 +1,7 @@
 ---
 title: "The Reconstruction Output Tree"
 teaching: 30
-exercises: 0
+exercises: 10
 questions:
 - "How is the reconstruction output tree populated?"
 objectives:
