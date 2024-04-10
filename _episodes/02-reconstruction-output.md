@@ -8,7 +8,7 @@ objectives:
 - "Become familiar with the tree branches"
 
 keypoints:
-- "FIXME"
+- "Output trees contain a lot of information. Take time to explore what is available, identify what you want to try and do, find the relevant branches."
 ---
 <!--
   Commenting out for now until the final content of this part of the lesson is decided. Leaning towards not including the locating factory/algorithm as a core part of the tutorial. - SJDK 29/03/24
