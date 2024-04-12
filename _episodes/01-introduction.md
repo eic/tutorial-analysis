@@ -9,7 +9,10 @@ objectives:
 - "Know how to access the simulation output using Jefferson Lab xrootd"
 - "Know how to access the simulation output using BNL S3"
 keypoints:
-- "Use `xrdfs` from within the eic shell or the minio client to access simulation files"
+- "Use `xrdfs` from within the eic shell to browse available files from simulations campaigns."
+- "Use `xrdcp` from within eic-shell to copy files to your local environment."
+- "Alternatively, use the minio client to access simulation files"
+- "Within eic-shell, you can also stream files in your root macros - `auto f = TFile::Open("root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/path-to-file")`"
 ---
 
 More detailed information on the simulation productions, including the information presented below, can be found on the [Simulation Production Campaign Website](https://eic.github.io/epic-prod/). 
