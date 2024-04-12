@@ -49,16 +49,6 @@ while(tree_reader.Next()) { // Loop over events
 }
 ```
 All members of the same branch should have the same number of entries, so it is sufficient to use any member of the branch to set the limit of your loop.
-<!--
-### ROOT RDataFrames
-
-> Note: Section to be filled.
-{: .callout}
--->
-### PYTHON
-
-> Note: Section to be filled.
-{: .callout}
 
 ## The MCParticles Record
 
@@ -209,6 +199,18 @@ While this plot will give us a sense of what the tracking resolution is, we don'
 > - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity
 > - Break resolution plots down by particle species
 {: .challenge}
+
+### PYTHON
+
+> Note: Section to be filled.
+{: .callout}
+
+### ROOT RDataFrames
+
+Newer versions of root, such as the version in eic-shell, have access to a relatively new class, [RDataFrames](https://root.cern/doc/master/classROOT_1_1RDataFrame.html). These are similar to pythonic data frame style strucutres that you may be familiar with. Some people are moving towards utilising RDataFrames in their analysis. If you are more familiar with working with data frames, you may wish to investigate these further.
+
+RDataFrames will not be covered in this (April 2024) tutorial, but may be included in future. If you have an example analysis utilising an RDataFrame that you would be happy to share, please let us know so we can refer to it as an example!
+
 
 
 
