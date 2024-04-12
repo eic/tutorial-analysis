@@ -9,7 +9,8 @@ objectives:
 - "Understand how to access truth/particle information"
 - "Find track efficiency and resolution"
 keypoints:
-- "Flat tree structure provides flexibility in analysis. MCParticles and ReconstructedChargedParticles branches hold information on generator level particles and reconstructed tracks, respectively."
+- "Flat tree structure provides flexibility in analysis."
+- "The ReconstructedChargedParticles branch holds information on reconstructed tracks."
 ---
 
 So far, we have only looked at (and plotted) some information from our file interactively. This is very useful and can help us identify the variables we want to deal with. However, we can't really use these techniques to conduct a full analysis of the data. To do so, we typically use a script or macro. In this part of the tutorial, we will create a script that we can use to do a relatively straightforward analysis of our file.
@@ -39,7 +40,7 @@ void trackAnalysis(TString infile="path_to_your_simu_file")
 
 We will need momentum, generator status, and particle species information for the truth particles and momentum information for the reconstructed tracks. The reconstructed track information can be accessed from two different branches: CentralCKFTrackParameters and ReconstructedChargedParticles. We can access these branches using a TTreeReaderArray.
 
-> ROOT TTreeReaderArray:
+> ROOT TTreeReaderArrays:
 >
 >TTreeReader and the associated TTreeReaderArray is a simple interface for reading data from a TTree. The class description and examples can be seen [here](https://root.cern/doc/v630/classTTreeReader.html). To instantiate the reader and access values from a given branch (e.g. the MCParticles branch), one would use the following calls:
 >
@@ -99,7 +100,7 @@ TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "ReconstructedChargedParti
 TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParticleAssociations.simID");
 ```
 
-The last two lines encode the association between a ReconstructedChargedParticle and a MCParticle where the matching is determined in the [ParticlesWithPID](https://github.com/eic/EICrecon/blob/main/src/algorithms/pid/ParticlesWithPID.cc) algorithm which generates the ReconstructedChargedParticle objects. 
+The last two lines encode the association between a ReconstructedChargedParticle and a MCParticle where the matching is determined in the [ParticlesWithPID](https://github.com/eic/EICrecon/blob/main/src/algorithms/pid/ParticlesWithPID.cc) algorithm which generates the ReconstructedChargedParticle objects.
 
 ### Efficiency Analysis
 
