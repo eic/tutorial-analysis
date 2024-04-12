@@ -17,6 +17,15 @@ Once you have identified the file(s) you wish to copy, (still within eic-shell e
 xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/23.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10/filename.eicrecon.tree.edm4eic.root ./
 ```
 
-Do not forget the trailing ./ (or just . works too) as this tells the progam to put the file in your current dir. 
+Do not forget the trailing ./ (or just . works too) as this tells the progam to put the file in your current dir.
+
+## Additional Comments for this Tutorial - April 2024 Version
+
+Note that this tutorial is a little odd in that, for the most part, we don't rely on eic-shell for the majority of the lesson. We will need a working ROOT install though. This ROOT install must also be one that we can work with interactively, with minimal lag. There are two straightforward options for this -
+
+1. eic-shell running locally on your own local machine. You should be able to run ROOT interactively from within eic-shell.
+2. A working version (and relatively recent, 6.22 or above) of ROOT on your local machine.
+
+If you use option 2, note that you will not be able to "stream" files to your ROOT script, you will need them available locally. I will be using option 2 for this tutorial.
 
 {% include links.md %}
