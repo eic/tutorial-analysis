@@ -39,37 +39,38 @@ void trackAnalysis(TString infile="path_to_your_simu_file")
 
 We will need momentum, generator status, and particle species information for the truth particles and momentum information for the reconstructed tracks. The reconstructed track information can be accessed from two different branches: CentralCKFTrackParameters and ReconstructedChargedParticles. We can access these branches using a TTreeReaderArray.
 
-#### ROOT TTreeReaderArray
-
-TTreeReader and the associated TTreeReaderArray is a simple interface for reading data from a TTree. The class description and examples can be seen [here](https://root.cern/doc/v630/classTTreeReader.html). To instantiate the reader and access values from a given branch (e.g. the MCParticles branch), one would use the following calls:
-
-```c++
-// Set up input file chain
-TChain *mychain = new TChain("events");
-mychain->Add(input_file_name);
-
-// Initialize reader
-TTreeReader tree_reader(mychain);
-
-// Access whatever data-members you need
-TTreeReaderArray<int> partGenStat(tree_reader, "MCParticles.generatorStatus");
-TTreeReaderArray<float> partMomX(tree_reader, "MCParticles.momentum.x");
-...
-```
-
-The branches and their members can be viewed by opening a file with TBrowser (`new TBrowser()`) from within ROOT. Once you have defined the `TTreeReaderArray` objects for the data-members you want to look at, you can loop over the events and the members within that event:
-
-```c++
-while(tree_reader.Next()) { // Loop over events
-  for(unsigned int i=0; i<partGenStat.GetSize(); i++) // Loop through particles in the event
-    {
-      int particleStatus = partGenStat[i]; // Access data-members as you would an array
-      float particleXMomentum = partMomX[i]; // partMomX should have same number of entries as partGenStat because they are in the same branch
-      ...
-    }
-}
-```
-All members of the same branch should have the same number of entries, so it is sufficient to use any member of the branch to set the limit of your loop.
+> ROOT TTreeReaderArray:
+>
+>TTreeReader and the associated TTreeReaderArray is a simple interface for reading data from a TTree. The class description and examples can be seen [here](https://root.cern/doc/v630/classTTreeReader.html). To instantiate the reader and access values from a given branch (e.g. the MCParticles branch), one would use the following calls:
+>
+> ```c++
+> // Set up input file chain
+> TChain *mychain = new TChain("events");
+> mychain->Add(input_file_name);
+>
+> // Initialize reader
+> TTreeReader tree_reader(mychain);
+>
+> // Access whatever data-members you need
+> TTreeReaderArray<int> partGenStat(tree_reader, "MCParticles.generatorStatus");
+> TTreeReaderArray<float> partMomX(tree_reader, "MCParticles.momentum.x");
+> ...
+> ```
+>
+> The branches and their members can be viewed by opening a file with TBrowser (`new TBrowser()`) from within ROOT. Once you have defined the `TTreeReaderArray` objects for the data-members you want to look at, you can loop over the events and the members within that event:
+>
+> ```c++
+> while(tree_reader.Next()) { // Loop over events
+>  for(unsigned int i=0; i<partGenStat.GetSize(); i++) // Loop through particles in the event
+>    {
+>      int particleStatus = partGenStat[i]; // Access data-members as you would an array
+>      float particleXMomentum = partMomX[i]; // partMomX should have same number of entries as partGenStat because they are in the same branch
+>      ...
+>    }
+> }
+> ```
+> All members of the same branch should have the same number of entries, so it is sufficient to use any member of the branch to set the limit of your loop.
+{: .callout}
 
 We will proceed using the ReconstructedChargedParticles branch as this will give us a chance to practice using associations, copy the following lines into your analysis macro.
 
