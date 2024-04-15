@@ -218,11 +218,15 @@ Before we begin, we should create a skeleton macro to handle file I/O. For this 
          
 #Import relevant packages
 import ROOT, sys, math, os, subprocess, array, re                                  
-from ROOT import TCanvas, TColor, TGaxis, TH1F, TH2F, TPad, TStyle, gStyle, gPad, TGaxis, TLine, TMath, TPaveText
+from ROOT import TCanvas, TColor, TGaxis, TH1F, TH2F, TPad, TStyle, gStyle, gPad, TGaxis, TLine, TMath, TPaveText, TTree
+import uproot as up
 
 # Define and open files
-infile=ROOT.TFile.Open("path_to_your_simu_file", "READ") # Put relevant path to file in
+infile="/home/sjdkay/Work/EIC/ePIC/ePIC_Tutorials/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_5.0001.eicrecon.tree.edm4eic.root" 
 ofile=ROOT.TFile.Open("TrackAnalysis_OutPy.root", "RECREATE")
+
+# Open input file and define branches we want to look at with uproot
+events_tree = up.open(infile)["events"]
 
 # Define histograms below
 
@@ -232,8 +236,29 @@ ofile=ROOT.TFile.Open("TrackAnalysis_OutPy.root", "RECREATE")
 
 # Close files
 ofile.Close()                    
-infile.Close()
 ```
+Note that we are using the module uproot to access the data here. See [further documentation here](https://masonproffitt.github.io/uproot-tutorial/03-trees/index.html).
+
+> Question:
+> We will use uproot a little bit like we use the TTreeReader in the other example. We can define the branches we want and assign them to arrays with uproot.
+> We can do this via:
+>  ```python
+> # Open input file and define branches we want to look at with uproot                                                                                                                                                                          
+> events_tree = up.open(infile)["events"]
+> # Get particle information
+> partGenStat = events_tree.array("MCParticles.generatorStatus")
+>  ...
+> ```
+>  We can then access them as an array in a loop -
+> ```python
+>  # Add main analysis loop(s) below                                                                                                                                                                                                             
+> for i in range(0, len(events_tree)): # Loop over all events
+>     for j in range(0, len(partGenStat[i])): # Loop over all thrown particles
+>         if partGenStat[i][j] == 1: # Select stable particles
+>             pdg = abs(partPdg[i][j]) # Get PDG for each stable particle
+>             ...
+> ```
+{: .callout}
 
 You can run this file with ``python3 trackAnalysis.py``. It should open your file and create an empty output root file as specified. We will add histograms to this script and fill them in the next step.
 
