@@ -214,6 +214,17 @@ With python, some tasks become easier, e.g. string manipulation and writing to (
 Before we begin, we should create a skeleton macro to handle file I/O. For this example, we will make a simple python script. Using your favorite editor, create a file with a name like `trackAnalysis.py` or something similar and copy in the following code: 
 
 ```python
+#! /usr/bin/python
+         
+#Import relevant packages
+import ROOT, sys, math, os, subprocess, array, re                                  
+from ROOT import TCanvas, TColor, TGaxis, TH1F, TH2F, TPad, TStyle, gStyle, gPad, TGaxis, TLine, TMath, TPaveText
+                                  
+infile=ROOT.TFile.Open("/home/sjdkay/Work/EIC/ePIC/ePIC_Tutorials/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_5.0001.eicrecon.tree.edm4eic.root", "READ")
+ofile=ROOT.TFile.Open("EfficiencyAnalysis_OutPy.root", "RECREATE")
+                     
+ofile.Close()                    
+infile.Close()
 
 ```
 We will need to access various branches from the file to take a closer look at the efficiency and resolution, copy the following into your script:
