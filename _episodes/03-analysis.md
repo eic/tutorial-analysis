@@ -219,18 +219,25 @@ Before we begin, we should create a skeleton macro to handle file I/O. For this 
 #Import relevant packages
 import ROOT, sys, math, os, subprocess, array, re                                  
 from ROOT import TCanvas, TColor, TGaxis, TH1F, TH2F, TPad, TStyle, gStyle, gPad, TGaxis, TLine, TMath, TPaveText
-                                  
+
+# Define and open files
 infile=ROOT.TFile.Open("path_to_your_simu_file", "READ") # Put relevant path to file in
-ofile=ROOT.TFile.Open("EfficiencyAnalysis_OutPy.root", "RECREATE")
-                     
+ofile=ROOT.TFile.Open("TrackAnalysis_OutPy.root", "RECREATE")
+
+# Define histograms below
+
+# Add main analysis loop(s) below
+
+# Write output histograms to file below                
+
+# Close files
 ofile.Close()                    
 infile.Close()
 ```
-We will need to access various branches from the file to take a closer look at the efficiency and resolution, copy the following into your script:
 
-```python
+You can run this file with ``python3 trackAnalysis.py``. It should open your file and create an empty output root file as specified. We will add histograms to this script and fill them in the next step.
 
-```
+Note that depending upon your setup, ``python trackAnalysis.py`` may work too.
 
 ### Efficiency Analysis
 
