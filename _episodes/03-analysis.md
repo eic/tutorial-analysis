@@ -220,12 +220,11 @@ Before we begin, we should create a skeleton macro to handle file I/O. For this 
 import ROOT, sys, math, os, subprocess, array, re                                  
 from ROOT import TCanvas, TColor, TGaxis, TH1F, TH2F, TPad, TStyle, gStyle, gPad, TGaxis, TLine, TMath, TPaveText
                                   
-infile=ROOT.TFile.Open("/home/sjdkay/Work/EIC/ePIC/ePIC_Tutorials/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_5.0001.eicrecon.tree.edm4eic.root", "READ")
+infile=ROOT.TFile.Open("path_to_your_simu_file", "READ") # Put relevant path to file in
 ofile=ROOT.TFile.Open("EfficiencyAnalysis_OutPy.root", "RECREATE")
                      
 ofile.Close()                    
 infile.Close()
-
 ```
 We will need to access various branches from the file to take a closer look at the efficiency and resolution, copy the following into your script:
 
