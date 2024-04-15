@@ -163,6 +163,7 @@ while(tree_reader.Next()) { // Loop over events
 We should now have everything we need to find the track efficiency as a function of pseudorapidity. To run the macro and produce an output file containing the histograms we defined, simply type `root -l -q trackAnalysis.C`. After the macro runs, you can open the root file to inspect the histograms. The efficiency can be found by taking the ratio of matchedPartEta over partEta.
 
 > Question:
+> - Do the histogram ranges make sense?
 > - We plot the distance between thrown and reconstructed charged partices, does this distribution look reasonable?
 > - When filling the matchedPartEta histogram (the numerator in our efficiency), why do we use again the true thrown eta instead of the associated reconstructed eta?
 {: .callout}
@@ -312,9 +313,10 @@ matchedPartTrackDeltaR.Write()
 ofile.Close()
 ```
 
-We should now have everything we need to find the track efficiency as a function of pseudorapidity. To run the macro... The efficiency can be found by taking the ratio of matchedPartEta over partEta.
+We should now have everything we need to find the track efficiency as a function of pseudorapidity. Run the script with `python3 trackAnalysis.py``. This should produce a root file with a few histograms in place The efficiency can be found by taking the ratio of matchedPartEta over partEta.
 
 > Question:
+> - Do the hisotgram ranges make sense?
 > - We plot the distance between thrown and reconstructed charged partices, does this distribution look reasonable?
 > - When filling the matchedPartEta histogram (the numerator in our efficiency), why do we use again the true thrown eta instead of the associated reconstructed eta?
 {: .callout}
