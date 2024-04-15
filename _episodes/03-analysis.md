@@ -354,7 +354,7 @@ While this plot will give us a sense of what the tracking resolution is, we don'
 > - Could we present the resolution values in a more understandable way?
 {: .callout}
 
-> Note: Section to be finalised.
+> Note: Need to test python section behaves when used within eic-shell.
 {: .callout}
 
 ## ROOT RDataFrames
