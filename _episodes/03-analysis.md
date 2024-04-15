@@ -313,8 +313,7 @@ matchedPartTrackDeltaR.Write()
 # Close files
 ofile.Close()
 ```
-
-We should now have everything we need to find the track efficiency as a function of pseudorapidity. Run the script with `python3 trackAnalysis.py``. This should produce a root file with a few histograms in place The efficiency can be found by taking the ratio of matchedPartEta over partEta.
+Insert this block of code appropriately. We should now have everything we need to find the track efficiency as a function of pseudorapidity. Run the script with `python3 trackAnalysis.py``. This should produce a root file with a few histograms in place. The efficiency can be found by taking the ratio of matchedPartEta over partEta.
 
 > Question:
 > - Do the hisotgram ranges make sense?
