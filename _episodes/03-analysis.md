@@ -1,7 +1,7 @@
 ---
 title: "Analyzing the Reconstruction Output"
-teaching: 30
-exercises: 20
+teaching: 20
+exercises: 30
 questions:
 - "How does one utilize the reconstruction output trees to do an analysis?"
 objectives:
@@ -17,7 +17,7 @@ So far, we have only looked at (and plotted) some information from our file inte
 
 ## Reading the Output Trees
 
-The simulation output trees are "flat" in the sense that there is no event class structure embedded within the tree and no additional libraries are needed to handle the output. Therefore, the end user can simply read the values stored in each branch using whatever method/workflow they are most comfortable with. Examples of several common methods for reading the trees are provided below.
+The simulation output trees are "flat" in the sense that there is no event class structure embedded within the tree and no additional libraries are needed to handle the output. Therefore, the end user can simply read the values stored in each branch using whatever method/workflow they are most comfortable with. Examples of several common methods for reading the trees are provided below. We will see a ROOT TTreeReader based example using a ROOT macro and a python based version. During the tutorial, you should try the exercise using whichever language you feel most comfortable with.
 
 ## Sample Analysis with ROOT TTreeReader: Track Efficiency and Resolution
 
@@ -196,16 +196,86 @@ for(unsigned int j=0; j<simuAssoc.GetSize(); j++)
 While this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
 
 > Exercise:
-> - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity
-> - Break resolution plots down by particle species
+> - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity.
+> - Break resolution plots down by particle species.
 {: .challenge}
 
-### PYTHON
-
-> Note: Section to be filled.
+> Question:
+> - Will the histogram ranges for each particle species be the same?
+> - Could we present the resolution values in a more understandable way?
 {: .callout}
 
-### ROOT RDataFrames
+## Sample Analysis with Python/PYROOT: Track Efficiency and Resolution
+
+If you are more familiar with python than you are with C/C++, you might find that using a python based root macro is easier for you. Outlined below are sample blocks of code for creating and running a python based analysis script.
+
+With python, some tasks become easier, e.g. string manipulation and writing to (non ROOT) files.
+
+Before we begin, we should create a skeleton macro to handle file I/O. For this example, we will make a simple python script. Using your favorite editor, create a file with a name like `trackAnalysis.py` or something similar and copy in the following code: 
+
+```python
+
+```
+We will need to access various branches from the file to take a closer look at the efficiency and resolution, copy the following into your script:
+
+```python
+
+```
+
+### Efficiency Analysis
+
+As with the ROOT TTreeReader example, we will find the tracking eficiency and resolution. We will need to access the reconstructed track information and the truth particle information and we will have to associate the individual tracks and particles to one another.
+
+The basic strategy is the same:
+
+1. Loop over all events in the file
+2. Within each event, loop over all stable charged particles
+3. Identify the ReconstructedChargedParticle (if any) associated with the truth particle we are looking at
+4. Create and fill the necessary histograms
+
+Here is the sample code to implement these steps:
+
+```python
+
+```
+
+We should now have everything we need to find the track efficiency as a function of pseudorapidity. To run the macro... The efficiency can be found by taking the ratio of matchedPartEta over partEta.
+
+> Question:
+> - We plot the distance between thrown and reconstructed charged partices, does this distribution look reasonable?
+> - When filling the matchedPartEta histogram (the numerator in our efficiency), why do we use again the true thrown eta instead of the associated reconstructed eta?
+{: .callout}
+
+> Exercise:
+> - Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
+> - Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
+> - Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
+{: .challenge}
+
+### Resolution Analysis
+
+Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram:
+
+```python
+
+```
+
+While this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
+
+> Exercise:
+> - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity.
+> - Break resolution plots down by particle species.
+{: .challenge}
+
+> Question:
+> - Will the histogram ranges for each particle species be the same?
+> - Could we present the resolution values in a more understandable way?
+{: .callout}
+
+> Note: Section to be finalised.
+{: .callout}
+
+## ROOT RDataFrames
 
 Newer versions of root, such as the version in eic-shell, have access to a relatively new class, [RDataFrames](https://root.cern/doc/master/classROOT_1_1RDataFrame.html). These are similar to pythonic data frame style strucutres that you may be familiar with. Some people are moving towards utilising RDataFrames in their analysis. If you are more familiar with working with data frames, you may wish to investigate these further.
 
