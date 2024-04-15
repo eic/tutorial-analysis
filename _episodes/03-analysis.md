@@ -1,7 +1,7 @@
 ---
 title: "Analyzing the Reconstruction Output"
 teaching: 20
-exercises: 30
+exercises: 40
 questions:
 - "How does one utilize the reconstruction output trees to do an analysis?"
 objectives:
