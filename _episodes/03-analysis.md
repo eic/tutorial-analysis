@@ -239,11 +239,10 @@ ofile.Close()
 ```
 Note that we are using the module uproot to access the data here. See [further documentation here](https://masonproffitt.github.io/uproot-tutorial/03-trees/index.html).
 
-> Question:
 > We will use uproot a little bit like we use the TTreeReader in the other example. We can define the branches we want and assign them to arrays with uproot.
 > We can do this via:
 >  ```python
-> # Open input file and define branches we want to look at with uproot                                                                                                                                                                          
+> # Open input file and define branches we want to look at with uproot
 > events_tree = up.open(infile)["events"]
 > # Get particle information
 > partGenStat = events_tree.array("MCParticles.generatorStatus")
@@ -251,7 +250,7 @@ Note that we are using the module uproot to access the data here. See [further d
 > ```
 >  We can then access them as an array in a loop -
 > ```python
->  # Add main analysis loop(s) below                                                                                                                                                                                                             
+> # Add main analysis loop(s) below
 > for i in range(0, len(events_tree)): # Loop over all events
 >     for j in range(0, len(partGenStat[i])): # Loop over all thrown particles
 >         if partGenStat[i][j] == 1: # Select stable particles
