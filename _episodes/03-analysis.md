@@ -218,7 +218,7 @@ Before we begin, we should create a skeleton macro to handle file I/O. For this 
          
 #Import relevant packages
 import ROOT, sys, math, os, subprocess, array, re                                  
-from ROOT import TCanvas, TColor, TGaxis, TH1F, TH2F, TPad, TStyle, gStyle, gPad, TGaxis, TLine, TMath, TPaveText, TTree
+from ROOT import TCanvas, TColor, TGaxis, TH1F, TH2F, TPad, TStyle, gStyle, gPad, TGaxis, TLine, TMath, TPaveText, TTree, TVector3, TVector2
 import uproot as up
 
 # Define and open files
@@ -277,7 +277,39 @@ The basic strategy is the same:
 Here is the sample code to implement these steps:
 
 ```python
+# Define histograms below
+partEta = ROOT.TH1D("partEta","Eta of Thrown Charged Particles;Eta",100, -5 ,5 )
+matchedPartEta = ROOT.TH1D("matchedPartEta","Eta of Thrown Charged Particles That Have Matching Track", 100, -5 ,5);
+matchedPartTrackDeltaR = ROOT.TH1D("matchedPartTrackDeltaR","Delta R Between Matching Thrown and Reconstructed Charge Particle", 5000, 0, 5);
 
+# Add main analysis loop(s) below
+for i in range(0, len(events_tree)): # Loop over all events
+    for j in range(0, len(partGenStat[i])): # Loop over all thrown particles
+        if partGenStat[i][j] == 1: # Select stable particles
+            pdg = abs(partPdg[i][j]) # Get PDG for each stable particle
+            if(pdg == 11 or pdg == 13 or pdg == 211 or pdg == 321 or pdg == 2212):
+                trueMom = ROOT.TVector3(partMomX[i][j], partMomY[i][j], partMomZ[i][j])
+                trueEta = trueMom.PseudoRapidity()
+                truePhi = trueMom.Phi()
+                
+                partEta.Fill(trueEta)
+                for k in range(0,len(simuAssoc[i])): # Loop over associations to find matching ReconstructedChargedParticle
+                    if (simuAssoc[i][k] == j):
+                        recMom = ROOT.TVector3(trackMomX[i][recoAssoc[i][k]], trackMomY[i][recoAssoc[i][k]], trackMomZ[i][recoAssoc[i][k]])
+                        deltaEta = trueEta - recMom.PseudoRapidity()
+                        deltaPhi = TVector2. Phi_mpi_pi(truePhi - recMom.Phi())
+                        deltaR = math.sqrt((deltaEta*deltaEta) + (deltaPhi*deltaPhi))
+
+                        matchedPartEta.Fill(trueEta)
+                        matchedPartTrackDeltaR.Fill(deltaR)
+                        
+# Write output histograms to file below
+partEta.Write()
+matchedPartEta.Write()
+matchedPartTrackDeltaR.Write()
+
+# Close files
+ofile.Close()
 ```
 
 We should now have everything we need to find the track efficiency as a function of pseudorapidity. To run the macro... The efficiency can be found by taking the ratio of matchedPartEta over partEta.
