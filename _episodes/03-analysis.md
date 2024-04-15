@@ -17,7 +17,7 @@ So far, we have only looked at (and plotted) some information from our file inte
 
 ## Reading the Output Trees
 
-The simulation output trees are "flat" in the sense that there is no event class structure embedded within the tree and no additional libraries are needed to handle the output. Therefore, the end user can simply read the values stored in each branch using whatever method/workflow they are most comfortable with. Examples of several common methods for reading the trees are provided below. We will see a ROOT TTreeReader based example using a ROOT macro and a python based version. During the tutorial, you should try the exercise using whichever language you feel most comfortable with.
+The simulation output trees are "flat" in the sense that there is no event class structure embedded within the tree and no additional libraries are needed to handle the output. Therefore, the end user can simply read the values stored in each branch using whatever method/workflow they are most comfortable with. Examples of several common methods for reading the trees are provided below. We will see a ROOT TTreeReader based example using a ROOT macro and a python/uproot based version. During the tutorial, you should try the exercise using whichever language you feel most comfortable with.
 
 ## Sample Analysis with ROOT TTreeReader: Track Efficiency and Resolution
 
@@ -206,7 +206,7 @@ While this plot will give us a sense of what the tracking resolution is, we don'
 > - Could we present the resolution values in a more understandable way?
 {: .callout}
 
-## Sample Analysis with Python/PYROOT: Track Efficiency and Resolution
+## Sample Analysis with Python/uproot: Track Efficiency and Resolution
 
 If you are more familiar with python than you are with C/C++, you might find that using a python based root macro is easier for you. Outlined below are sample blocks of code for creating and running a python based analysis script.
 
@@ -238,7 +238,7 @@ events_tree = up.open(infile)["events"]
 # Close files
 ofile.Close()                    
 ```
-Note that we are using the module uproot to access the data here. See [further documentation here](https://masonproffitt.github.io/uproot-tutorial/03-trees/index.html).
+Note that we are using the module uproot to access the data here. See [further documentation here](https://masonproffitt.github.io/uproot-tutorial/03-trees/index.html). You may also need some of the other included packages too.
 
 > We will use uproot a little bit like we use the TTreeReader in the other example. We can define the branches we want and assign them to arrays with uproot.
 > We can do this via:
@@ -258,6 +258,7 @@ Note that we are using the module uproot to access the data here. See [further d
 >             pdg = abs(partPdg[i][j]) # Get PDG for each stable particle
 >             ...
 > ```
+> Uproot effectively takes the information in the tree, and turns it into an array. We can then acces and manipulate this array in the same way that we can with any array in python.
 {: .callout}
 
 You can run this file with ``python3 trackAnalysis.py``. It should open your file and create an empty output root file as specified. We will add histograms to this script and fill them in the next step.
@@ -329,10 +330,17 @@ We should now have everything we need to find the track efficiency as a function
 
 ### Resolution Analysis
 
-Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram:
+Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram by inserting this block of code appropriately:
 
 ```python
+trackMomentumRes = ROOT.TH1D("trackMomentumRes","Track Momentum Resolution",2000,-10.,10.);
+...
+                for k in range(0,len(simuAssoc[i])): # Loop over associations to find matching ReconstructedChargedParticle
+                    if (simuAssoc[i][k] == j):
+                        recMom = ROOT.TVector3(trackMomX[i][recoAssoc[i][k]], trackMomY[i][recoAssoc[i][k]], trackMomZ[i][recoAssoc[i][k]])
+                        momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag()
 
+                        trackMomentumRes.Fill(momRes)
 ```
 
 While this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
