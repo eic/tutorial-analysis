@@ -77,8 +77,8 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
         } // End stable particles condition  
     } // End loop over thrown particles
   } // End loop over events 
-ofile->Write(); // Write histograms to file
-ofile->Close(); // Close output file
+  ofile->Write(); // Write histograms to file
+  ofile->Close(); // Close output file
 }
 ```
 
@@ -122,39 +122,39 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   TH1D *matchedPartTrackDeltaPhi = new TH1D("matchedPartTrackDeltaPhi","#Detla #phi Between Matching Thrown and Reconstructed Charged Particle; #Delta#phi", 200, -0.2, 0.2);
   TH1D *matchedPartTrackDeltaR = new TH1D("matchedPartTrackDeltaR","#Delta R Between Matching Thrown and Reconstructed Charged Particle; #Delta R", 300, 0, 0.3);
   TH1D *matchedPartTrackDeltaMom = new TH1D("matchedPartTrackDeltaMom","#Delta P Between Matching Thrown and Reconstructed Charged Particle; #Delta P", 200, -10, 10);
-
   while(tree_reader.Next()) { // Loop over events
     for(unsigned int i=0; i<partGenStat.GetSize(); i++){ // Loop over thrown particles
-	    if(partGenStat[i] == 1){ // Select stable thrown particles
-	      int pdg = TMath::Abs(partPdg[i]);
-        if(pdg == 11 || pdg == 13 || pdg == 211 || pdg == 321 || pdg == 2212){ // Look at charged particles (electrons, muons, pions, kaons, protons)
-        TVector3 trueMom(partMomX[i],partMomY[i],partMomZ[i]);
+	if(partGenStat[i] == 1){ // Select stable thrown particles
+	    int pdg = TMath::Abs(partPdg[i]);
+	    if(pdg == 11 || pdg == 13 || pdg == 211 || pdg == 321 || pdg == 2212){ // Look at charged particles (electrons, muons, pions, kaons, protons)
+		TVector3 trueMom(partMomX[i],partMomY[i],partMomZ[i]);
 
-		    float trueEta = trueMom.PseudoRapidity();
-	    	float truePhi = trueMom.Phi();
-        for(unsigned int j=0; j<simuAssoc.GetSize(); j++){ // Loop over associations to find matching ReconstructedChargedParticle
-		      if(simuAssoc[j] == i){ // Find association index matching the index of the thrown particle we are looking at	      
-			      TVector3 recMom(trackMomX[recoAssoc[j]],trackMomY[recoAssoc[j]],trackMomZ[recoAssoc[j]]); // recoAssoc[j] is the index of the matched ReconstructedChargedParticle
+		float trueEta = trueMom.PseudoRapidity();
+		float truePhi = trueMom.Phi();
+	    
+		for(unsigned int j=0; j<simuAssoc.GetSize(); j++){ // Loop over associations to find matching ReconstructedChargedParticle
+		    if(simuAssoc[j] == i){ // Find association index matching the index of the thrown particle we are looking at
+			TVector3 recMom(trackMomX[recoAssoc[j]],trackMomY[recoAssoc[j]],trackMomZ[recoAssoc[j]]); // recoAssoc[j] is the index of the matched ReconstructedChargedParticle
 
-			      // Check the distance between the thrown and reconstructed particle
-			      float deltaEta = trueEta - recMom.PseudoRapidity();
-			      float deltaPhi = TVector2::Phi_mpi_pi(truePhi - recMom.Phi());
-	      		float deltaR = TMath::Sqrt(deltaEta*deltaEta + deltaPhi*deltaPhi);
-		      	float deltaMom = ((trueMom.Mag()) - (recMom.Mag()));
-
-		      	double momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag();
+			// Check the distance between the thrown and reconstructed particle
+			float deltaEta = trueEta - recMom.PseudoRapidity();
+			float deltaPhi = TVector2::Phi_mpi_pi(truePhi - recMom.Phi());
+			float deltaR = TMath::Sqrt(deltaEta*deltaEta + deltaPhi*deltaPhi);
+			float deltaMom = ((trueMom.Mag()) - (recMom.Mag()));
+	    double momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag();
 	
-		      	trackMomentumRes->Fill(momRes);
+			trackMomentumRes->Fill(momRes);
 
-			      matchedPartTrackDeltaEta->Fill(deltaEta);
-			      matchedPartTrackDeltaPhi->Fill(deltaPhi);
-			      matchedPartTrackDeltaR->Fill(deltaR);
-			      matchedPartTrackDeltaMom->Fill(deltaMom);
-          }
-        }// End loop over associations} // End PDG check
-      } // End stable particles condition
+			matchedPartTrackDeltaEta->Fill(deltaEta);
+			matchedPartTrackDeltaPhi->Fill(deltaPhi);
+			matchedPartTrackDeltaR->Fill(deltaR);
+			matchedPartTrackDeltaMom->Fill(deltaMom);
+                    }
+                } // End loop over associations 
+            } // End PDG check          
+        } // End stable particles condition  
     } // End loop over thrown particles
-  } // End loop over events
+  } // End loop over events 
   ofile->Write(); // Write histograms to file
   ofile->Close(); // Close output file
 }
