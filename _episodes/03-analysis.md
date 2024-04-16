@@ -104,6 +104,10 @@ The last two lines encode the association between a ReconstructedChargedParticle
 
 ### Efficiency Analysis
 
+> Hint:
+> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#efficiencyanalysisc) if you're having trouble putting things in the right place.
+{: .callout}
+
 Now that we have access to the data we need we will begin constructing our efficiency plots, starting with efficiency as a function of the true particle pseudorapidity. The basic strategy is outlined below:
 
 1. Loop over all events in the file
@@ -175,6 +179,10 @@ We should now have everything we need to find the track efficiency as a function
 {: .challenge}
 
 ### Resolution Analysis
+
+> Hint:
+> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#resolutionanalysisc) if you're having trouble putting things in the right place.
+{: .callout}
 
 Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram:
 
@@ -267,6 +275,10 @@ Note that depending upon your setup, ``python trackAnalysis.py`` may work too.
 
 ### Efficiency Analysis
 
+> Hint:
+> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#efficiencyanalysispy) if you're having trouble putting things in the right place.
+{: .callout}
+
 As with the ROOT TTreeReader example, we will find the tracking eficiency and resolution. We will need to access the reconstructed track information and the truth particle information and we will have to associate the individual tracks and particles to one another.
 
 The basic strategy is the same:
@@ -329,6 +341,10 @@ Insert this block of code appropriately. We should now have everything we need t
 
 ### Resolution Analysis
 
+> Hint:
+> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#resolutionanalysispy) if you're having trouble putting things in the right place.
+{: .callout}
+> 
 Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram by inserting this block of code appropriately:
 
 ```python
