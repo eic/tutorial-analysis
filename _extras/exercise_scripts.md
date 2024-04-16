@@ -141,7 +141,7 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
 			float deltaPhi = TVector2::Phi_mpi_pi(truePhi - recMom.Phi());
 			float deltaR = TMath::Sqrt(deltaEta*deltaEta + deltaPhi*deltaPhi);
 			float deltaMom = ((trueMom.Mag()) - (recMom.Mag()));
-        double momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag();
+			double momRes = (recMom.Mag()- trueMom.Mag())/trueMom.Mag();
       
 			trackMomentumRes->Fill(momRes);
 
@@ -174,7 +174,7 @@ from ROOT import TCanvas, TColor, TGaxis, TH1F, TH2F, TPad, TStyle, gStyle, gPad
 import uproot as up
 
 #Define and open files
-infile="PATH_TO_INPUT_FILE""
+infile="PATH_TO_INPUT_FILE"
 ofile=ROOT.TFile.Open("EfficiencyAnalysis_OutPy.root", "RECREATE")
 
 # Open input file and define branches we want to look at with uproot
@@ -244,7 +244,7 @@ from ROOT import TCanvas, TColor, TGaxis, TH1F, TH2F, TPad, TStyle, gStyle, gPad
 import uproot as up
 
 #Define and open files
-infile="PATH_TO_INPUT_FILE""
+infile="PATH_TO_INPUT_FILE"
 ofile=ROOT.TFile.Open("ResolutionAnalysis_OutPy.root", "RECREATE")
 
 # Open input file and define branches we want to look at with uproot
