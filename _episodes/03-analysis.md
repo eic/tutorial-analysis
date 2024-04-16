@@ -342,7 +342,7 @@ trackMomentumRes = ROOT.TH1D("trackMomentumRes","Track Momentum Resolution",2000
                         trackMomentumRes.Fill(momRes)
 ```
 
-While this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
+Remember to write this histogram to the output file too! While this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
 
 > Exercise:
 > - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity.
