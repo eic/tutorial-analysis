@@ -69,14 +69,14 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   			      matchedPartTrackDeltaR->Fill(deltaR);
   
   			      matchedPartEta->Fill(trueEta); // Plot the thrown eta if a matched ReconstructedChargedParticle was found
-  		        }
-  		      } // End loop over associations
-          } // End PDG check
-        } // End stable particles condition
-      } // End loop over thrown particles
-    } // End loop over events
-    ofile->Write(); // Write histograms to file
-    ofile->Close(); // Close output file
+            }
+          } // End loop over associations
+        } // End PDG check
+      } // End stable particles condition
+    } // End loop over thrown particles
+  } // End loop over events  
+  ofile->Write(); // Write histograms to file
+  ofile->Close(); // Close output file
 }
 ```
 
