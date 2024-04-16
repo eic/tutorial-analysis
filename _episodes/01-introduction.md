@@ -1,7 +1,7 @@
 ---
 title: "Introduction"
-teaching: 20
-exercises: 0
+teaching: 15
+exercises: 5
 questions:
 - "How do I locate and access the simulation output?"
 objectives:
@@ -9,7 +9,7 @@ objectives:
 - "Know how to access the simulation output using Jefferson Lab xrootd"
 - "Know how to access the simulation output using BNL S3"
 keypoints:
-- "Use `xrdfs` from within the eic shell to browse available files from simulations campaigns."
+- "Use `xrdfs` from within the eic-shell to browse available files from simulations campaigns."
 - "Use `xrdcp` from within eic-shell to copy files to your local environment."
 - "Alternatively, use the minio client to access simulation files."
 - "Within eic-shell, you can also stream files directly in your root macros."
@@ -85,7 +85,7 @@ xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/23.12.0/epic_craterlake/DIS/N
 ```
 Note that the ./ at the end is the target location to copy to. Change this as desired.
 
-You can also stream the file if you prefer, just copy the path of the file above.
+You can also stream the file if you prefer, just copy the path of the file above. You will need to modify the scripts later in the tutorial accordingly to account for this.
 
 ## Advanced Use Case - Grabbing a whole bunch of files
 
@@ -128,4 +128,4 @@ events.Scan("@MCParticles.size()","","",10)
 ```
 Where in the final line we're only going to skim over the first 10 events.
 
-It should be noted that the best solution may just be to run the files from the server rather than copying them to somewhere else and running them there.
+It should be noted that the best solution may just be to run the files from the server, rather than copying them to somewhere else and running them there.
