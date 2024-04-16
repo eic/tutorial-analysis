@@ -344,7 +344,7 @@ Insert this block of code appropriately. We should now have everything we need t
 > Hint:
 > Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#resolutionanalysispy) if you're having trouble putting things in the right place.
 {: .callout}
-> 
+
 Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram by inserting this block of code appropriately:
 
 ```python
