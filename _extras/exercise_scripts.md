@@ -168,7 +168,7 @@ Create a file called `EfficiencyAnalysis.py` and copy in the code below to get s
 
 #Import relevant packages
 import ROOT, math, array
-from ROOT import TCanvas, TColor, TGaxis, TH1F, TH2F, TPad, TStyle, gStyle, gPad, TGaxis, TLine, TMath, TPaveText, TTree, TVector3, TVector2
+from ROOT import TH1F, TH2F, TMath, TTree, TVector3, TVector2
 import uproot as up
 
 #Define and open files
@@ -238,7 +238,7 @@ Create a file called `ResolutionAnalysis.py` and copy in the code below to get s
 
 #Import relevant packages
 import ROOT, math, array
-from ROOT import TCanvas, TColor, TGaxis, TH1F, TH2F, TPad, TStyle, gStyle, gPad, TGaxis, TLine, TMath, TPaveText, TTree, TVector3, TVector2
+from ROOT import TH1F, TH2F, TMath, TTree, TVector3, TVector2
 import uproot as up
 
 #Define and open files
