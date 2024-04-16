@@ -89,13 +89,14 @@ You can also stream the file if you prefer, just copy the path of the file above
 
 ## Advanced Use Case - Grabbing a whole bunch of files
 
-I'm going to sprinkle in a few advanced use cases or suggestions throughout the tutorial. We won't go through these in the tutorial, but these may be something you want to come back to as you get deeper into writing and using your own analysis code. Our first quick advanced use case involves copying/using a large number of processed files. Something you might want to do once your analysis is out of the testing phase and onto the "Let's process ALL of the data!" stage.
+I won't go through this in the tutorial, but this may be something you want to come back to as you get deeper into writing and using your own analysis code. This advanced use case involves copying/using a large number of processed files. Something you might want to do once your analysis is out of the testing phase and onto the "Let's process ALL of the data!" stage.
 
 If you're moving a lot of files around, you might normally resort to using a wildcard -
 
 ```console
 cp File* My_Folder/
 ```
+
 or similar. However, with the mc or xrdcp, this isn't so trivial. Some methods to test and try are include below. 
 
 ```console
