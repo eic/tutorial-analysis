@@ -218,7 +218,7 @@ Before we begin, we should create a skeleton macro to handle file I/O. For this 
 #! /usr/bin/python
          
 #Import relevant packages
-import ROOT, sys, math, os, subprocess, array, re                                  
+import ROOT, math, array                                
 from ROOT import TCanvas, TColor, TGaxis, TH1F, TH2F, TPad, TStyle, gStyle, gPad, TGaxis, TLine, TMath, TPaveText, TTree, TVector3, TVector2
 import uproot as up
 
