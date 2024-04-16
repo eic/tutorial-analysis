@@ -141,7 +141,7 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
 			float deltaPhi = TVector2::Phi_mpi_pi(truePhi - recMom.Phi());
 			float deltaR = TMath::Sqrt(deltaEta*deltaEta + deltaPhi*deltaPhi);
 			float deltaMom = ((trueMom.Mag()) - (recMom.Mag()));
-	    double momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag();
+      double momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag();
 	
 			trackMomentumRes->Fill(momRes);
 
