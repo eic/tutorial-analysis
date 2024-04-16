@@ -8,8 +8,6 @@ You should be able to copy the code text directly into a new file. The name of t
 
 ## ROOT TTreeReader Scripts
 
-Note that in copying these scripts, the tabbing seemed to get completely screwed up. I *highly* recommend that you select all of the code and hit `tab` once you copy it into a file. Most editors should then correctly tab each line.
-
 ### EfficiencyAnalysis.C
 
 Create a file called `EfficiencyAnalysis.C` and copy in the code below to get started on the efficiency analysis exercise. Note that you will need to correctly specifiy your input file path in the first line.
