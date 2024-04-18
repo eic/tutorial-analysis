@@ -179,20 +179,20 @@ ofile=ROOT.TFile.Open("EfficiencyAnalysis_OutPy.root", "RECREATE")
 events_tree = up.open(infile)["events"]
 
 # Get particle information
-partGenStat = events_tree.array("MCParticles.generatorStatus")
-partMomX = events_tree.array("MCParticles.momentum.x")
-partMomY = events_tree.array("MCParticles.momentum.y")
-partMomZ = events_tree.array("MCParticles.momentum.z")
-partPdg = events_tree.array("MCParticles.PDG")
+partGenStat = events_tree["MCParticles.generatorStatus"].array()
+partMomX = events_tree["MCParticles.momentum.x"].array()
+partMomY = events_tree["MCParticles.momentum.y"].array()
+partMomZ = events_tree["MCParticles.momentum.z"].array()
+partPdg = events_tree["MCParticles.PDG"].array()
 
 # Get reconstructed track information
-trackMomX = events_tree.array("ReconstructedChargedParticles.momentum.x")
-trackMomY = events_tree.array("ReconstructedChargedParticles.momentum.y")
-trackMomZ = events_tree.array("ReconstructedChargedParticles.momentum.z")
+trackMomX = events_tree["ReconstructedChargedParticles.momentum.x"].array()
+trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
+trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree.array("ReconstructedChargedParticleAssociations.recID")
-simuAssoc = events_tree.array("ReconstructedChargedParticleAssociations.simID")
+recoAssoc = events_tree["ReconstructedChargedParticleAssociations.recID"].array()
+simuAssoc = events_tree["ReconstructedChargedParticleAssociations.simID"].array()
 
 # Define histograms below
 partEta = ROOT.TH1D("partEta","Eta of Thrown Charged Particles;Eta",100, -5 ,5 )
@@ -249,20 +249,20 @@ ofile=ROOT.TFile.Open("ResolutionAnalysis_OutPy.root", "RECREATE")
 events_tree = up.open(infile)["events"]
 
 # Get particle information
-partGenStat = events_tree.array("MCParticles.generatorStatus")
-partMomX = events_tree.array("MCParticles.momentum.x")
-partMomY = events_tree.array("MCParticles.momentum.y")
-partMomZ = events_tree.array("MCParticles.momentum.z")
-partPdg = events_tree.array("MCParticles.PDG")
+partGenStat = events_tree["MCParticles.generatorStatus"].array()
+partMomX = events_tree["MCParticles.momentum.x"].array()
+partMomY = events_tree["MCParticles.momentum.y"].array()
+partMomZ = events_tree["MCParticles.momentum.z"].array()
+partPdg = events_tree["MCParticles.PDG"].array()
 
 # Get reconstructed track information
-trackMomX = events_tree.array("ReconstructedChargedParticles.momentum.x")
-trackMomY = events_tree.array("ReconstructedChargedParticles.momentum.y")
-trackMomZ = events_tree.array("ReconstructedChargedParticles.momentum.z")
+trackMomX = events_tree["ReconstructedChargedParticles.momentum.x"].array()
+trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
+trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree.array("ReconstructedChargedParticleAssociations.recID")
-simuAssoc = events_tree.array("ReconstructedChargedParticleAssociations.simID")
+recoAssoc = events_tree["ReconstructedChargedParticleAssociations.recID"].array()
+simuAssoc = events_tree["ReconstructedChargedParticleAssociations.simID"].array()
 
 # Define histograms below
 trackMomentumRes = ROOT.TH1D("trackMomentumRes","Track Momentum Resolution", 400, -2, 2)
