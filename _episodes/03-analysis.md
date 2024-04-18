@@ -253,8 +253,17 @@ Note that we are using the module uproot to access the data here. See [further d
 >  ```python
 > # Open input file and define branches we want to look at with uproot
 > events_tree = up.open(infile)["events"]
-> # Get particle information
-> partGenStat = events_tree.["MCParticles.generatorStatus"].array()
+> # Get particle information# Get particle information
+> partGenStat = events_tree["MCParticles.generatorStatus"].array()
+> partMomX = events_tree["MCP articles.momentum.x"].array() 
+> partMomY = events_tree["MCParticles.momentum.y"].array()
+> partMomZ = events_tree["MCParticles.momentum.z"].array()
+> partPdg = events_tree["MCParticles.PDG"].array()
+>
+> # Get reconstructed track information
+> trackMomX = events_tree["ReconstructedChargedParticles.momentum.x"].array()
+> trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
+> trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 >  ...
 > ```
 >  We can then access them as an array in a loop -
@@ -267,6 +276,7 @@ Note that we are using the module uproot to access the data here. See [further d
 >             ...
 > ```
 > Uproot effectively takes the information in the tree, and turns it into an array. We can then acces and manipulate this array in the same way that we can with any array in python.
+>
 > Note that if you are using an older version of uproot (v2.x.x), you will need to access the branches slightly differently via -
 > ```python
 > partGenStat = events_tree.array("MCParticles.generatorStatus")
@@ -295,6 +305,10 @@ The basic strategy is the same:
 Here is the sample code to implement these steps:
 
 ```python
+# Get assocations between MCParticles and ReconstructedChargedParticles
+recoAssoc = events_tree["ReconstructedChargedParticleAssociations.recID"].array()
+simuAssoc = events_tree["ReconstructedChargedParticleAssociations.simID"].array()
+
 # Define histograms below
 partEta = ROOT.TH1D("partEta","Eta of Thrown Charged Particles;Eta",100, -5 ,5 )
 matchedPartEta = ROOT.TH1D("matchedPartEta","Eta of Thrown Charged Particles That Have Matching Track", 100, -5 ,5);
