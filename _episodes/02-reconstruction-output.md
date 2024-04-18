@@ -88,3 +88,11 @@ gPad->SetLogz()
 ## The MCParticles Record
 
 In the last section, the example quantities we were plotting involved the MCparticles branch. Nearly every analysis will include some comparison to the truth level, so it is important to understand how to access generator level information. Particles produced by the Monte Carlo Event Generator and during the interaction of these primary particles with the detector material as modeled by GEANT are stored in the MCParticles branch, whoes structure is defined by the datatype [edm4hep::MCParticle](https://github.com/key4hep/EDM4hep/blob/main/edm4hep.yaml#L140). The particle's [PDG](https://pdg.lbl.gov/2020/reviews/rpp2020-rev-monte-carlo-numbering.pdf) code, charge, production time, mass, production vertex, endpoint, momentum at the production vertex, and momentum at the endpoint are all available. In addition, the status of the particle as defined by the event generator and the detector simulation are stored. For example, if one wanted to look at stable particles from the event generator, they would require `MCParticles.generatorStatus == 1`. The field `MCParticles.simulatorStatus` is a bit-field which encodes some information on how the particle propagated through the detector. The detailed definition of the bit assignments can be found in the [edm4hep yaml file](https://github.com/key4hep/EDM4hep/blob/main/edm4hep.yaml#L140).
+
+## How is the tree populated?
+
+You may wonder how the specific branches of the tree have actually been populated. As this is the output after EICrecon, the trees in the file are those specified as EICrecon was run by the algorithms and factories that were enabled at run time.
+
+> After the algorithms and factories tutorial later, take a closer look at this file.
+> See if you can figure out which algorithm or factory was responsible for creating some of the included branches in this file.
+{: .callout}
