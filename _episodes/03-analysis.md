@@ -254,7 +254,7 @@ Note that we are using the module uproot to access the data here. See [further d
 > # Open input file and define branches we want to look at with uproot
 > events_tree = up.open(infile)["events"]
 > # Get particle information
-> partGenStat = events_tree.array("MCParticles.generatorStatus")
+> partGenStat = events_tree.["MCParticles.generatorStatus"].array()
 >  ...
 > ```
 >  We can then access them as an array in a loop -
@@ -267,6 +267,10 @@ Note that we are using the module uproot to access the data here. See [further d
 >             ...
 > ```
 > Uproot effectively takes the information in the tree, and turns it into an array. We can then acces and manipulate this array in the same way that we can with any array in python.
+> Note that if you are using an older version of uproot (v2.x.x), you will need to access the branches slightly differently via -
+> ```python
+> partGenStat = events_tree.array("MCParticles.generatorStatus")
+> ```
 {: .callout}
 
 You can run this file with ``python3 trackAnalysis.py``. It should open your file and create an empty output root file as specified. We will add histograms to this script and fill them in the next step.
@@ -368,9 +372,6 @@ Remember to write this histogram to the output file too! While this plot will gi
 > Question:
 > - Will the histogram ranges for each particle species be the same?
 > - Could we present the resolution values in a more understandable way?
-{: .callout}
-
-> Note: Need to test python section behaves when used within eic-shell.
 {: .callout}
 
 ## ROOT RDataFrames
