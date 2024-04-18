@@ -231,7 +231,7 @@ from ROOT import TH1F, TH2F, TMath, TTree, TVector3, TVector2
 import uproot as up
 
 # Define and open files
-infile="/home/sjdkay/Work/EIC/ePIC/ePIC_Tutorials/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_5.0001.eicrecon.tree.edm4eic.root" 
+infile="PATH_TO_FILE" 
 ofile=ROOT.TFile.Open("TrackAnalysis_OutPy.root", "RECREATE")
 
 # Open input file and define branches we want to look at with uproot
