@@ -1,7 +1,7 @@
 ---
 title: "The Reconstruction Output Tree"
-teaching: 30
-exercises: 10
+teaching: 20
+exercises: 20
 questions:
 - "What information is stored in the reconstruction output and how can we access it?"
 objectives:
