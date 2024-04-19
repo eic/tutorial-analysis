@@ -310,5 +310,80 @@ matchedPartTrackDeltaMom.Write()
 ofile.Close()
 
 ```
+## RDataFrames Example
+
+Note that only the initial stage of the efficiency example is presented here in RDF format. This example was kindly created by [Simon](https://github.com/simonge/EIC_Analysis/blob/main/Analysis-Tutorial/EfficiencyAnalysisRDF.C).
+
+### EfficiencyAnalysisRDF.C
+
+Create a file called `EfficiencyAnalysisRDF.C` and paste the code below in. Remember to change the file path. 
+
+Execute this script via - `root -l -q EfficiencyAnalysisRDF.C++`. Do this within eic-shell or somewhere else with the correct EDM4hep/EDM4eic libraries installed.
+
+```c++
+#include <edm4hep/utils/vector_utils.h>
+#include <edm4hep/MCParticle.h>
+#include <edm4eic/ReconstructedParticle.h>
+#include <ROOT/RDataFrame.hxx>
+#include <ROOT/RVec.hxx>
+#include <TFile.h>
+
+// Define aliases for the data types 
+using MCP = edm4hep::MCParticleData;
+using RecoP = edm4eic::ReconstructedParticleData;
+
+// Define function to vectorize the edm4hep::utils methods
+template <typename T>
+auto getEta = [](ROOT::VecOps::RVec<T> momenta) {
+  return ROOT::VecOps::Map(momenta, [](const T& p) { return edm4hep::utils::eta(p.momentum); });
+};
+
+template <typename T>
+auto getPhi = [](ROOT::VecOps::RVec<T> momenta) {
+  return ROOT::VecOps::Map(momenta, [](const T& p) { return edm4hep::utils::angleAzimuthal(p.momentum); });
+};
+
+// Define the function to perform the efficiency analysis
+void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
+   
+  // Set up input file 
+  ROOT::RDataFrame df("events", infile);
+
+  // Define new dataframe node with additional columns
+  auto df1 =  df.Define("statusFilter",  "MCParticles.generatorStatus == 1"    )
+                .Define("absPDG",        "abs(MCParticles.PDG)"                )
+                .Define("pdgFilter",     "absPDG == 11 || absPDG == 13 || absPDG == 211 || absPDG == 321 || absPDG == 2212")
+                .Define("particleFilter","statusFilter && pdgFilter"           )
+                .Define("filtMCParts",   "MCParticles[particleFilter]"         )
+                .Define("assoFilter",    "Take(particleFilter,ReconstructedChargedParticleAssociations.simID)") // Incase any of the associated particles happen to not be charged
+                .Define("assoMCParts",   "Take(MCParticles,ReconstructedChargedParticleAssociations.simID)[assoFilter]")
+                .Define("assoRecParts",  "Take(ReconstructedChargedParticles,ReconstructedChargedParticleAssociations.recID)[assoFilter]")
+                .Define("filtMCEta",     getEta<MCP>   , {"filtMCParts"} )
+                .Define("filtMCPhi",     getPhi<MCP>   , {"filtMCParts"} )
+                .Define("accoMCEta",     getEta<MCP>   , {"assoMCParts"} )
+                .Define("accoMCPhi",     getPhi<MCP>   , {"assoMCParts"} )
+                .Define("assoRecEta",    getEta<RecoP> , {"assoRecParts"})
+                .Define("assoRecPhi",    getPhi<RecoP> , {"assoRecParts"})
+                .Define("deltaR",        "ROOT::VecOps::DeltaR(assoRecEta, accoMCEta, assoRecPhi, accoMCPhi)");
+
+  // Define histograms
+  auto partEta                = df1.Histo1D({"partEta","Eta of Thrown Charged Particles;Eta",100,-5.,5.},"filtMCEta");
+  auto matchedPartEta         = df1.Histo1D({"matchedPartEta","Eta of Thrown Charged Particles That Have Matching Track",100,-5.,5.},"accoMCEta");
+  auto matchedPartTrackDeltaR = df1.Histo1D({"matchedPartTrackDeltaR","Delta R Between Matching Thrown and Reconstructed Charged Particle",5000,0.,5.},"deltaR");
+
+  // Write histograms to file
+  TFile *ofile = TFile::Open("EfficiencyAnalysis_Out_RDF.root","RECREATE");
+
+  // Booked Define and Histo1D lazy actions are only performed here
+  partEta->Write();
+  matchedPartEta->Write();
+  matchedPartTrackDeltaR->Write();
+      
+  ofile->Close(); // Close output file
+}
+```
+> Note:
+> I'm not as familiar with RDF's and I have not created a "complete" example using this approach or a resolution analysis version. If I get time, I might make them before the tutorial, but no promises on that!
+> {: .callout}
 
 {% include links.md %}
