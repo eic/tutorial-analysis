@@ -81,7 +81,7 @@ Grab a file from -
 For example -
 
 ```console
-xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/23.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=0.025_hiDiv_5.0001.eicrecon.tree.edm4eic.root ./
+xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/23.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_5.0001.eicrecon.tree.edm4eic.root ./
 ```
 Note that the ./ at the end is the target location to copy to. Change this as desired.
 
