@@ -456,7 +456,6 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
       
   ofile->Close(); // Close output file
 }
-}
 ```
 
 > Note:
