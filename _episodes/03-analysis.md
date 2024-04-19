@@ -456,10 +456,9 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
   ofile->Close(); // Close output file
 }
 ```
-
 > Note:
 > - You will need to run this script with the command `root -l -q EfficiencyAnalysisRDF.C++`, within eic-shell (or somewhere else with the correct EDM4hep/EDM4eic libraries installed).
 > - Remember to put in the correct file path.
-> {: .callout}
+{: .callout}
 
 If you like, you can try completing the exercises using this example to start from.
