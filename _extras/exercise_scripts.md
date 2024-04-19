@@ -383,7 +383,8 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
 }
 ```
 > Note:
-> I'm not as familiar with RDF's and I have not created a "complete" example using this approach or a resolution analysis version. If I get time, I might make them before the tutorial, but no promises on that!
-> {: .callout}
+> - I'm not as familiar with RDF's and I have not created a "complete" example using this approach or a resolution analysis version. 
+> - If I get time, I might make them before the tutorial, but no promises on that!
+{: .callout}
 
 {% include links.md %}
