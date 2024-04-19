@@ -395,6 +395,29 @@ Newer versions of root, such as the version in eic-shell, have access to a relat
 Included below is a quick script from [Simon Gardner](https://github.com/simonge/EIC_Analysis/blob/main/Analysis-Tutorial/EfficiencyAnalysisRDF.C) that utilises RDataFrames to analyse a data file. Copy the following into a new file called `EfficiencyAnalysisRDF.C` -
 
 ```c++
+#include <edm4hep/utils/vector_utils.h>
+#include <edm4hep/MCParticle.h>
+#include <edm4eic/ReconstructedParticle.h>
+#include <ROOT/RDataFrame.hxx>
+#include <ROOT/RVec.hxx>
+#include <TFile.h>
+
+// Define aliases for the data types 
+using MCP = edm4hep::MCParticleData;
+using RecoP = edm4eic::ReconstructedParticleData;
+
+
+// Define function to vectorize the edm4hep::utils methods
+template <typename T>
+auto getEta = [](ROOT::VecOps::RVec<T> momenta) {
+  return ROOT::VecOps::Map(momenta, [](const T& p) { return edm4hep::utils::eta(p.momentum); });
+};
+
+template <typename T>
+auto getPhi = [](ROOT::VecOps::RVec<T> momenta) {
+  return ROOT::VecOps::Map(momenta, [](const T& p) { return edm4hep::utils::angleAzimuthal(p.momentum); });
+};
+
 // Define the function to perform the efficiency analysis
 void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
    
@@ -433,11 +456,12 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
       
   ofile->Close(); // Close output file
 }
+}
 ```
 
 > Note:
-> You will need to run this script with the command 'root -l -q EfficiencyAnalysisRDF.C++', within eic-shell (or somewhere else with the correct EDM4hep/EDM4eic libraries installed).
+> You will need to run this script with the command `root -l -q EfficiencyAnalysisRDF.C++`, within eic-shell (or somewhere else with the correct EDM4hep/EDM4eic libraries installed).
 > Remember to put in the correct file path.
 > {: .callout}
-
+> 
 If you like, you can try completing the exercises using this example to start from.
