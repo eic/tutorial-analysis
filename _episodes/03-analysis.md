@@ -392,4 +392,52 @@ Remember to write this histogram to the output file too! While this plot will gi
 
 Newer versions of root, such as the version in eic-shell, have access to a relatively new class, [RDataFrames](https://root.cern/doc/master/classROOT_1_1RDataFrame.html). These are similar to pythonic data frame style strucutres that you may be familiar with. Some people are moving towards utilising RDataFrames in their analysis. If you are more familiar with working with data frames, you may wish to investigate these further.
 
-RDataFrames will not be covered in this (April 2024) tutorial, but may be included in future. If you have an example analysis utilising an RDataFrame that you would be happy to share, please let us know so we can refer to it as an example!
+Included below is a quick script from [Simon Gardner](https://github.com/simonge/EIC_Analysis/blob/main/Analysis-Tutorial/EfficiencyAnalysisRDF.C) that utilises RDataFrames to analyse a data file. Copy the following into a new file called `EfficiencyAnalysisRDF.C` -
+
+```c++
+// Define the function to perform the efficiency analysis
+void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
+   
+  // Set up input file 
+  ROOT::RDataFrame df("events", infile);
+
+  // Define new dataframe node with additional columns
+  auto df1 =  df.Define("statusFilter",  "MCParticles.generatorStatus == 1"    )
+                .Define("absPDG",        "abs(MCParticles.PDG)"                )
+                .Define("pdgFilter",     "absPDG == 11 || absPDG == 13 || absPDG == 211 || absPDG == 321 || absPDG == 2212")
+                .Define("particleFilter","statusFilter && pdgFilter"           )
+                .Define("filtMCParts",   "MCParticles[particleFilter]"         )
+                .Define("assoFilter",    "Take(particleFilter,ReconstructedChargedParticleAssociations.simID)") // Incase any of the associated particles happen to not be charged
+                .Define("assoMCParts",   "Take(MCParticles,ReconstructedChargedParticleAssociations.simID)[assoFilter]")
+                .Define("assoRecParts",  "Take(ReconstructedChargedParticles,ReconstructedChargedParticleAssociations.recID)[assoFilter]")
+                .Define("filtMCEta",     getEta<MCP>   , {"filtMCParts"} )
+                .Define("filtMCPhi",     getPhi<MCP>   , {"filtMCParts"} )
+                .Define("accoMCEta",     getEta<MCP>   , {"assoMCParts"} )
+                .Define("accoMCPhi",     getPhi<MCP>   , {"assoMCParts"} )
+                .Define("assoRecEta",    getEta<RecoP> , {"assoRecParts"})
+                .Define("assoRecPhi",    getPhi<RecoP> , {"assoRecParts"})
+                .Define("deltaR",        "ROOT::VecOps::DeltaR(assoRecEta, accoMCEta, assoRecPhi, accoMCPhi)");
+
+  // Define histograms
+  auto partEta                = df1.Histo1D({"partEta","Eta of Thrown Charged Particles;Eta",100,-5.,5.},"filtMCEta");
+  auto matchedPartEta         = df1.Histo1D({"matchedPartEta","Eta of Thrown Charged Particles That Have Matching Track",100,-5.,5.},"accoMCEta");
+  auto matchedPartTrackDeltaR = df1.Histo1D({"matchedPartTrackDeltaR","Delta R Between Matching Thrown and Reconstructed Charged Particle",5000,0.,5.},"deltaR");
+
+  // Write histograms to file
+  TFile *ofile = TFile::Open("EfficiencyAnalysis_Out_RDF.root","RECREATE");
+
+  // Booked Define and Histo1D lazy actions are only performed here
+  partEta->Write();
+  matchedPartEta->Write();
+  matchedPartTrackDeltaR->Write();
+      
+  ofile->Close(); // Close output file
+}
+```
+
+> Note:
+> You will need to run this script with the command 'root -l -q EfficiencyAnalysisRDF.C++', within eic-shell (or somewhere else with the correct EDM4hep/EDM4eic libraries installed).
+> Remember to put in the correct file path.
+> {: .callout}
+
+If you like, you can try completing the exercises using this example to start from.
