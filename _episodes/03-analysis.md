@@ -406,7 +406,6 @@ Included below is a quick script from [Simon Gardner](https://github.com/simonge
 using MCP = edm4hep::MCParticleData;
 using RecoP = edm4eic::ReconstructedParticleData;
 
-
 // Define function to vectorize the edm4hep::utils methods
 template <typename T>
 auto getEta = [](ROOT::VecOps::RVec<T> momenta) {
@@ -459,8 +458,8 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
 ```
 
 > Note:
-> You will need to run this script with the command `root -l -q EfficiencyAnalysisRDF.C++`, within eic-shell (or somewhere else with the correct EDM4hep/EDM4eic libraries installed).
-> Remember to put in the correct file path.
+> - You will need to run this script with the command `root -l -q EfficiencyAnalysisRDF.C++`, within eic-shell (or somewhere else with the correct EDM4hep/EDM4eic libraries installed).
+> - Remember to put in the correct file path.
 > {: .callout}
-> 
+
 If you like, you can try completing the exercises using this example to start from.
