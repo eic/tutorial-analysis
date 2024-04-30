@@ -82,7 +82,7 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
 
 A "solution" version of the script for the exercise is included below -
 
-```c++
+```
 void EfficiencyAnalysis_Exercise(TString infile="PATH_TO_FILE"){
   
   // Set output file for the histograms
