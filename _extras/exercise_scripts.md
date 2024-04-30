@@ -80,7 +80,7 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
 }
 ```
 
-A "solution" version of the script is included below -
+A "solution" version of the script for the exercise is included below -
 
 ```c++
 void EfficiencyAnalysis_Exercise(TString infile="PATH_TO_FILE"){
@@ -301,7 +301,7 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
 }
 ```
 
-A "solution" version of the script is included below -
+A "solution" version of the script for the exercise is included below -
 
 ```c++
 void ResolutionAnalysis_Exercise(TString infile="PATH_TO_FILE"){
@@ -513,7 +513,7 @@ matchedPartTrackDeltaR.Write()
 ofile.Close()
 ```
 
-A "solution" version of the script is included below -
+A "solution" version of the script for the exercise is included below -
 
 ```python
 #! /usr/bin/python
@@ -737,7 +737,7 @@ matchedPartTrackDeltaMom.Write()
 ofile.Close()
 ```
 
-A "solution" version of the script is included below -
+A "solution" version of the script for the exercise is included below -
 
 ```python
 #! /usr/bin/python
