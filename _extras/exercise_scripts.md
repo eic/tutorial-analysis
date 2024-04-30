@@ -461,7 +461,7 @@ Note that any entry in the above without a file extension is a directory.
 
 The contents of README.md are -
 
-> README.md
+>```
 > To build using cmake, create a build directory, navigate to it and run cmake. e.g.:
 > 
 > ```
@@ -486,6 +486,7 @@ The contents of README.md are -
 > you can do
 > xargs rm < install_manifest.txt
 > from the cmake build directory.
+> ```
 {: .callout}
 
 The contents of CMakeLists.txt are -
