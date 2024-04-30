@@ -461,7 +461,7 @@ Note that any entry in the above without a file extension is a directory.
 
 The contents of README.md are -
 
-```md
+``c++
 To build using cmake, create a build directory, navigate to it and run cmake. e.g.:
 
 ```
