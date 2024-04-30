@@ -461,32 +461,32 @@ Note that any entry in the above without a file extension is a directory.
 
 The contents of README.md are -
 
-``c++
-To build using cmake, create a build directory, navigate to it and run cmake. e.g.:
-
-```
-mkdir build
-cd build
-cmake .. 
-make 
-```
-You can specify a number of parallel build threads with the -j flag, e.g.
-```
-make -j4
-```
-
-You can specify an install directory to cmake with
--DCMAKE_INSTALL_PREFIX=<path>
-then, after building, 
-```
-make install
-```
-to install the headers and libraries under that location.
-There is no "make uninstall" but (on Unix-like systems)
-you can do
-xargs rm < install_manifest.txt
-from the cmake build directory.
-```
+> README.md
+> To build using cmake, create a build directory, navigate to it and run cmake. e.g.:
+> 
+> ```
+> mkdir build
+> cd build
+> cmake .. 
+> make 
+> ```
+> You can specify a number of parallel build threads with the -j flag, e.g.
+> ```
+> make -j4
+> ```
+>
+> You can specify an install directory to cmake with
+> -DCMAKE_INSTALL_PREFIX=<path>
+> then, after building, 
+> ```
+> make install
+> ```
+> to install the headers and libraries under that location.
+> There is no "make uninstall" but (on Unix-like systems)
+> you can do
+> xargs rm < install_manifest.txt
+> from the cmake build directory.
+{: .callout}
 
 The contents of CMakeLists.txt are -
 
