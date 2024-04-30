@@ -488,6 +488,8 @@ xargs rm < install_manifest.txt
 from the cmake build directory.
 ```
 
+Note that you should delete the \ characters in this block.
+
 The contents of CMakeLists.txt are -
 
 ```c++
