@@ -1289,6 +1289,7 @@ Insert your input file path and execute as the example code above.
 >   - The script itself seems to be very slow when running.
 >   - I don't think they're a good starting point for someone new to ROOT/Nuclear Physics data analysis. Too much is going on behind the scenes.
 >  - In summary, I personally would *not* recommend using RDataFrames for your analysis (at this point in time).
+>  - Note that this just my (SKay) thoughts and opinions though.
 {: .callout}
 
 Note that due to how much "fun" I had making the efficiency analysis exercise with RDataFrames, I won't be creating a solution for the resolution analysis exercises.
