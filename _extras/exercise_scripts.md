@@ -1073,7 +1073,6 @@ ofile.Close()
 ```
 Insert your input file path and execute as the example code above.
 
-
 ## RDataFrames Example
 
 Note that only the initial stage of the efficiency example is presented here in RDF format. This example was kindly created by [Simon](https://github.com/simonge/EIC_Analysis/blob/main/Analysis-Tutorial/EfficiencyAnalysisRDF.C).
@@ -1146,9 +1145,152 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
   ofile->Close(); // Close output file
 }
 ```
+
+A "solution" using RDataFrames is included below, please see the notes following this script for some of my thoughts on RDataFrames -
+
+```c++
+#include <edm4hep/utils/vector_utils.h>
+#include <edm4hep/MCParticle.h>
+#include <edm4eic/ReconstructedParticle.h>
+#include <ROOT/RDataFrame.hxx>
+#include <ROOT/RVec.hxx>
+#include <TFile.h>
+
+// Define aliases for the data types 
+using MCP = edm4hep::MCParticleData;
+using RecoP = edm4eic::ReconstructedParticleData;
+
+// Define function to vectorize the edm4hep::utils methods
+template <typename T>
+auto getEta = [](ROOT::VecOps::RVec<T> momenta) {
+  return ROOT::VecOps::Map(momenta, [](const T& p) { return edm4hep::utils::eta(p.momentum); });
+};
+
+template <typename T>
+auto getPhi = [](ROOT::VecOps::RVec<T> momenta) {
+  return ROOT::VecOps::Map(momenta, [](const T& p) { return edm4hep::utils::angleAzimuthal(p.momentum); });
+};
+
+template <typename T>
+auto getP = [](ROOT::VecOps::RVec<T> momenta) {
+  //return ROOT::VecOps::Map(momenta, [](const T& p) { return (p.momentum); }); // This is a vector3f
+  return ROOT::VecOps::Map(momenta, [](const T& p) { return edm4hep::utils::magnitude(p.momentum); }); // This is a the magnitude of that vector3f
+};
+
+// Define the function to perform the efficiency analysis
+void EfficiencyAnalysisRDF_Exercise(TString infile="PATH_TO_INPUT_FILE"){
+   
+  // Set up input file 
+  ROOT::RDataFrame df("events", infile);
+
+  // Define new dataframe node with additional columns
+  auto df1 =  df.Define("statusFilter",  "MCParticles.generatorStatus == 1"    )
+    .Define("absPDG",        "abs(MCParticles.PDG)"                )
+    .Define("pdgFilter",     "absPDG == 11 || absPDG == 13 || absPDG == 211 || absPDG == 321 || absPDG == 2212")
+    .Define("particleFilter","statusFilter && pdgFilter"           )
+    .Define("filtMCParts",   "MCParticles[particleFilter]"         )
+    .Define("assoFilter",    "Take(particleFilter,ReconstructedChargedParticleAssociations.simID)") // Incase any of the associated particles happen to not be charged
+    .Define("assoMCParts",   "Take(MCParticles,ReconstructedChargedParticleAssociations.simID)[assoFilter]")
+    .Define("assoRecParts",  "Take(ReconstructedChargedParticles,ReconstructedChargedParticleAssociations.recID)[assoFilter]")
+    .Define("filtMCEta",     getEta<MCP>   , {"filtMCParts"} )
+    .Define("filtMCPhi",     getPhi<MCP>   , {"filtMCParts"} )
+    .Define("filtMCp",       getP<MCP>     , {"filtMCParts"} )
+    .Define("assoMCEta",     getEta<MCP>   , {"assoMCParts"} )
+    .Define("assoMCPhi",     getPhi<MCP>   , {"assoMCParts"} )
+    .Define("assoMCp",       getP<MCP>     , {"assoMCParts"} )
+    .Define("assoRecEta",    getEta<RecoP> , {"assoRecParts"})
+    .Define("assoRecPhi",    getPhi<RecoP> , {"assoRecParts"})
+    .Define("assoRecp",      getP<RecoP>   , {"assoRecParts"})
+    .Define("deltaEta",      "assoMCEta - assoRecEta"        )
+    .Define("deltaPhi",      "ROOT::VecOps::DeltaPhi(assoRecPhi, assoMCPhi)")
+    .Define("deltaR",        "ROOT::VecOps::DeltaR(assoRecEta, assoMCEta, assoRecPhi, assoMCPhi)")
+    .Define("deltaMom",      "assoMCp - assoRecp")
+    .Define("recoEta",       getEta<RecoP>,  {"ReconstructedChargedParticles"})
+    .Define("recoPhi",       getPhi<RecoP>,  {"ReconstructedChargedParticles"})
+    .Define("recoP",         getP<RecoP>,    {"ReconstructedChargedParticles"});
+
+  // Define histograms. We create a histogram with the usual naming/titles/bins/range etc, then specify how to fill the histogram based upon things we have defined for our dataframe
+  auto partEta                = df1.Histo1D({"partEta","#eta of Thrown Charged Particles;#eta",120,-6.,6.},"filtMCEta");
+  auto matchedPartEta         = df1.Histo1D({"matchedPartEta","#eta of Thrown Charged Particles That Have Matching Track;#eta",120,-6.,6.},"assoMCEta");
+  auto partMom = df1.Histo1D({"partMom", "Momentum of Thrown Charged Particles (truth); P(GeV/c)", 150, 0, 150}, "filtMCp");
+  auto matchedPartMom = df1.Histo1D({"matchedPartMom", "Momentum of Thrown Charged Particles (truth), with matching track; P(GeV/c)", 150, 0, 150}, "assoMCp");
+  auto partPhi = df1.Histo1D({"partPhi", "#phi of Thrown Charged Particles (truth); #phi(rad)", 320, -3.2, 3.2},"filtMCPhi");
+  auto matchedPartPhi = df1.Histo1D({"matchedPartPhi", "#phi of Thrown Charged Particles (truth), with matching track; #phi(rad)", 320, -3.2, 3.2}, "assoMCPhi");
+  
+  auto partPEta = df1.Histo2D({"partPEta", "P vs #eta of Thrown Charged Particles; P(GeV/c); #eta", 150, 0, 150, 120, -6, 6}, "filtMCp", "filtMCEta");
+  auto matchedPartPEta = df1.Histo2D({"matchedPartPEta", "P vs #eta of Thrown Charged Particles, with matching track; P(GeV/c); #eta", 150, 0, 150, 120, -6, 6}, "assoMCp", "assoMCEta");
+  auto partPhiEta = df1.Histo2D({"partPhiEta", "#phi vs #eta of Thrown Charged Particles; #phi(rad); #eta", 160, -3.2, 3.2, 120, -6, 6}, "filtMCPhi", "filtMCEta");
+  auto matchedPartPhiEta = df1.Histo2D({"matchedPartPhiEta", "#phi vs #eta of Thrown Charged Particles; #phi(rad); #eta", 160, -3.2, 3.2, 120, -6, 6}, "assoMCPhi", "assoMCEta");
+  
+  auto matchedPartTrackDeltaEta = df1.Histo1D({"matchedPartTrackDeltaEta","#Delta#eta Between Matching Thrown and Reconstructed Charged Particle; #Delta#eta", 100, -0.25, 0.25}, "deltaEta");
+  auto matchedPartTrackDeltaPhi = df1.Histo1D({"matchedPartTrackDeltaPhi","#Detla #phi Between Matching Thrown and Reconstructed Charged Particle; #Delta#phi", 200, -0.2, 0.2}, "deltaPhi");
+  auto matchedPartTrackDeltaR = df1.Histo1D({"matchedPartTrackDeltaR","#Delta R Between Matching Thrown and Reconstructed Charged Particle;#Delta R",300,0.,0.3}, "deltaR");
+  auto matchedPartTrackDeltaMom = df1.Histo1D({"matchedPartTrackDeltaMom","#Delta P Between Matching Thrown and Reconstructed Charged Particle; #Delta P", 200, -10, 10}, "deltaMom");
+    
+  // Define some histograms for our efficiencies - Done "old school" root style - Maybe the division can be done direct from a DF?
+  TH1D *TrackEff_Eta = new TH1D("TrackEff_Eta", "Tracking efficiency as fn of #eta; #eta; Eff(%)", 120, -6, 6); 
+  TH1D *TrackEff_Mom = new TH1D("TrackEff_Mom", "Tracking efficiency as fn of P; P(GeV/c); Eff(%)", 150, 0, 150); 
+  TH1D *TrackEff_Phi = new TH1D("TrackEff_Phi", "Tracking efficiency as fn of #phi; #phi(rad); Eff(%)", 320, -3.2, 3.2);
+  // 2D Efficiencies
+  TH2D* TrackEff_PEta = new TH2D("TrackEff_PEta", "Tracking efficiency as fn of P and #eta; P(GeV/c); #eta", 150, 0, 150, 120, -6, 6);
+  TH2D* TrackEff_PhiEta = new TH2D("TrackEff_PhiEta", "Tracking efficiency as fn of #phi and #eta; #phi(rad); #eta", 160, -3.2, 3.2, 120, -6, 6);
+
+  auto ChargedEta = df1.Histo1D({"ChargedEta", "#eta of all charged particles; #eta", 120, -6, 6}, "recoEta");
+  auto ChargedPhi = df1.Histo1D({"ChargedPhi", "#phi of all charged particles; #phi (rad)", 120, -3.2, 3.2}, "recoPhi");
+  auto ChargedP = df1.Histo1D({"ChargedP", "P of all charged particles; P(GeV/c)", 150, 0, 150}, "recoP");
+
+  // Write histograms to file
+  TFile *ofile = TFile::Open("EfficiencyAnalysis_Exercise_Out_RDF.root","RECREATE");
+
+  // Booked Define and Histo1D lazy actions are only performed here
+  partEta->Write();
+  matchedPartEta->Write();
+  partPhi->Write();
+  matchedPartPhi->Write();
+  partMom->Write();
+  matchedPartMom->Write();
+  partPEta->Write();
+  matchedPartPEta->Write();
+  partPhiEta->Write();
+  matchedPartPhiEta->Write();
+  matchedPartTrackDeltaEta->Write();
+  matchedPartTrackDeltaPhi->Write();
+  matchedPartTrackDeltaR->Write();
+  matchedPartTrackDeltaMom->Write();
+
+  // Create efficiency histograms by dividing appropriately. Note we must actually get the pointer explicitly.
+  TrackEff_Eta->Divide(matchedPartEta.GetPtr(), partEta.GetPtr(), 1, 1, "b");
+  TrackEff_Mom->Divide(matchedPartMom.GetPtr(), partMom.GetPtr(), 1, 1, "b");  
+  TrackEff_Phi->Divide(matchedPartPhi.GetPtr(), partPhi.GetPtr(), 1, 1, "b");
+  TrackEff_PEta->Divide(matchedPartPEta.GetPtr(), partPEta.GetPtr(), 1, 1, "b");
+  TrackEff_PhiEta->Divide(matchedPartPhiEta.GetPtr(), partPhiEta.GetPtr(), 1, 1, "b");
+  
+  TrackEff_Eta->Write();
+  TrackEff_Mom->Write();
+  TrackEff_Phi->Write();
+  TrackEff_PEta->Write();
+  TrackEff_PhiEta->Write();
+
+  ChargedEta->Write();
+  ChargedPhi->Write();
+  ChargedP->Write();
+				
+  ofile->Close(); // Close output file
+}
+```
+Insert your input file path and execute as the example code above.
+
 > Note:
-> - I'm not as familiar with RDF's and I have not created a "complete" example using this approach or a resolution analysis version. 
-> - Working on a full version of this still as of 30/04/24 - Check back in the future for updates.
+> - Before writing this example and solution, I have never used RDataFrames before. Some thoughts below.
+>   - I find them very difficult to work with. The processes that are "actually" going on are very obscured with RDataFrames.
+>   - Finding resources and examples online is much more difficult due to how new RDataFrames are.
+>     - This further complicates writing and working with them. 
+>   - Getting this example working and producing the same result as the python and ROOT examples took me as much time as preparing the rest of the tutorial.
+>   - The script itself seems to be very slow when running.
+>   - I don't think they're a good starting point for someone new to ROOT/Nuclear Physics data analysis. Too much is going on behind the scenes.
+>  - In summary, I personally would *not* recommend using RDataFrames for your analysis (at this point in time).
 {: .callout}
+
+Note that due to how much "fun" I had making the efficiency analysis exercise with RDataFrames, I won't be creating a solution for the resolution analysis exercises.
 
 {% include links.md %}
