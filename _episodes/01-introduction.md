@@ -69,6 +69,11 @@ It is also possible to open a file directly in ROOT. Note that the following com
 ```console
 auto f = TFile::Open("root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/path-to-file")
 ```
+or alternatively
+```console
+auto f = TFile::Open("s3https://eics3.sdcc.bnl.gov:9000/eictest/EPIC/RECO/path-to-file");
+```
+
 ## Reminder - Download a file for the next step!
 
 We will need a file to analyse going forward, if you have not done so, download a file now!
