@@ -47,7 +47,7 @@ We will need momentum, generator status, and particle species information for th
 > ```c++
 > // Set up input file chain
 > TChain *mychain = new TChain("events");
-> mychain->Add(input_file_name);
+> mychain->Add(infile);
 >
 > // Initialize reader
 > TTreeReader tree_reader(mychain);
