@@ -19,13 +19,12 @@ nicely explained in the chapter [Contributing to a Project](http://git-scm.com/b
 by Scott Chacon.
 Look for the tag ![good_first_issue](https://img.shields.io/badge/-good%20first%20issue-gold.svg). This indicates that the maintainers will welcome a pull request fixing this issue.  
 
-
 ## Maintainer(s)
 
 Current maintainers of this lesson are 
 
 * Brian Page, @bspage912, bpage@bnl.gov
-* Stephen JD Kay, @sjdkay, stephen.kay@york.ac.uk - April 2024 Version
+* Stephen JD Kay, @sjdkay, stephen.kay@york.ac.uk - April and September 2024 Versions
 
 ## Authors
 
