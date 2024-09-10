@@ -79,7 +79,7 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   ofile->Close(); // Close output file
 }
 ```
-
+<!--
 A "solution" version of the script for the exercise is included below -
 
 ```c++
@@ -222,6 +222,7 @@ void EfficiencyAnalysis_Exercise(TString infile="PATH_TO_FILE"){
 }
 ```
 Insert your input file path and execute as the example code above.
+-->
 
 ### ResolutionAnalysis.C
 
@@ -300,7 +301,7 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   ofile->Close(); // Close output file
 }
 ```
-
+<!--
 A "solution" version of the script for the exercise is included below -
 
 ```c++
@@ -440,6 +441,7 @@ void ResolutionAnalysis_Exercise(TString infile="PATH_TO_FILE"){
 ```
 
 Insert your input file path and execute as the example code above.
+-->
 
 ### Compiled ROOT Scripts 
 
@@ -705,6 +707,7 @@ matchedPartTrackDeltaR.Write()
 # Close files
 ofile.Close()
 ```
+<!--
 
 A "solution" version of the script for the exercise is included below -
 
@@ -848,7 +851,7 @@ TrackEff_PhiEta.Write()
 ofile.Close()
 ```
 Insert your input file path and execute as the example code above.
-
+-->
 ### ResolutionAnalysis.py
 
 Create a file called `ResolutionAnalysis.py` and copy in the code below to get started on the resolution analysis exercise. Note that you will need to correctly specifiy your input file path in the variable `infile`.
@@ -929,6 +932,7 @@ matchedPartTrackDeltaMom.Write()
 # Close files
 ofile.Close()
 ```
+<!--
 
 A "solution" version of the script for the exercise is included below -
 
@@ -1072,7 +1076,7 @@ matchedPartTrackDeltaMom.Write()
 ofile.Close()
 ```
 Insert your input file path and execute as the example code above.
-
+-->
 ## RDataFrames Example
 
 Note that only the initial stage of the efficiency example is presented here in RDF format. This example was kindly created by [Simon](https://github.com/simonge/EIC_Analysis/blob/main/Analysis-Tutorial/EfficiencyAnalysisRDF.C).
@@ -1145,6 +1149,7 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
   ofile->Close(); // Close output file
 }
 ```
+<!--
 
 A "solution" using RDataFrames is included below, please see the notes following this script for some of my thoughts on RDataFrames -
 
@@ -1293,5 +1298,6 @@ Insert your input file path and execute as the example code above.
 {: .callout}
 
 Note that due to how much "fun" I had making the efficiency analysis exercise with RDataFrames, I won't be creating a solution for the resolution analysis exercises.
+-->
 
 {% include links.md %}
