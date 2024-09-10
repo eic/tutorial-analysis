@@ -350,6 +350,10 @@ ofile.Close()
 ```
 Insert this block of code appropriately. We should now have everything we need to find the track efficiency as a function of pseudorapidity. Run the script with `python3 trackAnalysis.py``. This should produce a root file with a few histograms in place. The efficiency can be found by taking the ratio of matchedPartEta over partEta.
 
+> Note:
+> - More recent simulation files (May 2024 or later) seem to have some issue or conflict when processed via Uproot (issue slicing into arrays) - Investigating further (10/09/24)
+{: .callout}
+
 > Question:
 > - Do the hisotgram ranges make sense?
 > - We plot the distance between thrown and reconstructed charged partices, does this distribution look reasonable?
