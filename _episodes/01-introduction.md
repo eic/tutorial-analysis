@@ -83,7 +83,7 @@ We will need a file to analyse going forward, if you have not done so, download 
 Grab a file from -
 
 ```console
-/work/eic2/EPIC/RECO/24.07.0/epic_craterlake/DIS/NC/18x275/minQ2=10/
+/work/eic2/EPIC/RECO/24.04.0/epic_craterlake/DIS/NC/18x275/minQ2=10/
 ```
 For example -
 
