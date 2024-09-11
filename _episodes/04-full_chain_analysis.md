@@ -178,6 +178,8 @@ This just starts eic-shell and runs our earlier script. We can run this WITHOUT 
 
 With changes like this made, we could then make a quick job and submit it. This is a bit beyond the tutorials, but for some farm examples, see [this job script](https://github.com/sjdkay/ePIC_PairSpec_Sim/blob/main/Farm_Bash_Scripts/PairSpec_Sim_Job.sh) and this [job submission script](https://github.com/sjdkay/ePIC_PairSpec_Sim/blob/main/Farm_Bash_Scripts/PairSpec_Sim_Job.sh) I use as a template. Feel free to use these as a template for your own jobs, but please thoroughly read through and understand them before submitting a huge number of jobs. Keep the comments above in mind too.
 
+Also a quick disclaimer, my experience in running jobs is limited to systems I know (which does not include the BNL systems). As such, I can't advise much beyond general slurm job style questions on BNL/Condor. I'm also aware that using EOF in scripts was not encouraged in BNL jobs, see [this discussion on mattermost](https://chat.epic-eic.org/main/pl/fo9954siwigyjckasrnd4xufxw) for more.
+
 ## Warnings
 
 Finally, a major disclaimer. A lot of the time, you should NOT be starting from scratch and processing through the simulation and reconstruction yourself. There are numerous reasons -
