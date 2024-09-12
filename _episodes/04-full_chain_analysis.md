@@ -11,7 +11,7 @@ keypoints:
 - "Good for testing, but use simulation campaign output where possible!."
 ---
 
-In this short session, we'll go through a brief run through of how we actually ended up with a file like the one we ran our script on before. There are X basic steps which we'll look at individually, and then combine together:
+In this short session, we'll go through a brief run through of how we actually ended up with a file like the one we ran our script on before. There are 5 basic steps which we'll look at individually, and then combine together:
 
 1. Generate an input file (typically hepmc, other formats are useable). This is usually from some external event generator.
 2. Afterburn the file and apply beam effects (might be skipped in some cases).
