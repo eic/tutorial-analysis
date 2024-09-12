@@ -3,7 +3,7 @@ title: Setup
 ---
 If you have not done so already, please follow the instructions [here](https://eic.github.io/tutorial-setting-up-environment/setup.html) well before the start of the tutorial to ensure your system is ready.
 
-This tutorial will go over how to analyze the reconstructed simulation, so you will need to download a file to work with locally. The files are on the order of 50-80MB each. For consistency, we will use neutral current DIS events from the April 2024 campaign (24.04.0) with minimum Q2 = 10 GeV2 and top beam energy (if you wish to make an energy comparison, you can download additional files). To browse the available files, you can run the following commands from within the eic-shell environment:
+This tutorial will go over how to analyze the reconstructed simulation, so you will need to download a file to work with locally. The files are on the order of 50-80MB each. For consistency, we will use neutral current DIS events from the April 2024 campaign (24.04.0) with minimum Q2 = 10 GeV2 and at the highest electron-proton beam energy combination (if you wish to make an energy comparison, you can download additional files). To browse the available files, you can run the following commands from within the eic-shell environment:
 
 ```console
 xrdfs root://dtn-eic.jlab.org
