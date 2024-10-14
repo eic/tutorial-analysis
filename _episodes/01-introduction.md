@@ -29,6 +29,10 @@ There are three broad classes of files stored on xrootd/S3, each in their own di
 
 Most users will interact with the files in the RECO directory and that is what we will focus on in this tutorial. Within the RECO directory, files are organized by campaign (24.04.0 for the April 2024 campaign, for example), detector configuration and then physics process. Each physics process will have different sub directories, for example generator version, energy, or Q2. The directory structure and number of reconstructed files for each campaign can be found on the Simulation Website [here](https://eic.github.io/epic-prod/campaigns/campaigns_reco.html).
 
+> Note that S3 is being phased out. Simulation campaigns from ~Summer 2024 onwards will only be available on xrootd.
+> Instructions for S3 access are provided for reference only at this point.
+{: .callout}
+
 ## Access Simulation from Jefferson Lab xrootd
 
 The prefered method for browsing the simulation output is to use xrootd from within the eic-shell. To browse the directory structure and exit, one can run the commands:
@@ -45,6 +49,10 @@ xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/24.04.0/path-to-file .
 exit
 ```
 ## Access Simulation from BNL S3
+
+> Note that S3 is being phased out. Simulation campaigns from ~Summer 2024 onwards will only be available on xrootd.
+> Instructions for S3 access are provided for reference only at this point.
+{: .callout}
 
 The simulation files can also be accessed from S3 storage at BNL using the MinIO client for S3 storage. It is included in eic-shell. To install it natively, you can issue the following commands to install minio:
 ```console
