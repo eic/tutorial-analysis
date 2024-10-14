@@ -7,11 +7,9 @@ questions:
 objectives:
 - "Understand how the simulation output is organized"
 - "Know how to access the simulation output using Jefferson Lab xrootd"
-- "Know how to access the simulation output using BNL S3"
 keypoints:
 - "Use `xrdfs` from within the eic-shell to browse available files from simulations campaigns."
 - "Use `xrdcp` from within eic-shell to copy files to your local environment."
-- "Alternatively, use the minio client to access simulation files."
 - "Within eic-shell, you can also stream files directly in your root macros."
 ---
 
@@ -29,7 +27,7 @@ There are three broad classes of files stored on xrootd/S3, each in their own di
 
 Most users will interact with the files in the RECO directory and that is what we will focus on in this tutorial. Within the RECO directory, files are organized by campaign (24.04.0 for the April 2024 campaign, for example), detector configuration and then physics process. Each physics process will have different sub directories, for example generator version, energy, or Q2. The directory structure and number of reconstructed files for each campaign can be found on the Simulation Website [here](https://eic.github.io/epic-prod/campaigns/campaigns_reco.html).
 
-> Note that S3 is being phased out. Simulation campaigns from ~Summer 2024 onwards will only be available on xrootd.
+> Note that S3 is being phased out. Simulation campaigns from Summer 2024 onwards will only be available on xrootd.
 > Instructions for S3 access are provided for reference only at this point.
 {: .callout}
 
@@ -47,28 +45,6 @@ It is also possible to copy a file and open it locally using the `xrdcp` command
 ./eic-shell
 xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/24.04.0/path-to-file .
 exit
-```
-## Access Simulation from BNL S3
-
-> Note that S3 is being phased out. Simulation campaigns from ~Summer 2024 onwards will only be available on xrootd.
-> Instructions for S3 access are provided for reference only at this point.
-{: .callout}
-
-The simulation files can also be accessed from S3 storage at BNL using the MinIO client for S3 storage. It is included in eic-shell. To install it natively, you can issue the following commands to install minio:
-```console
-mkdir --parent ~/bin
-curl https://dl.min.io/client/mc/release/linux-amd64/mc --create-dirs -o ~/bin/mc
-chmod +x ~/bin/mc
-```
-From here on out, we assume `mc` is in your PATH variable, otherwise you can use the full path, in the above example `~/bin/mc`.
-After the client is installed, it needs to be configured for read access:
-```console
-export S3_ACCESS_KEY=<credential>; export S3_SECRET_KEY=<credential>
-mc config host add S3 https://eics3.sdcc.bnl.gov:9000 $S3_ACCESS_KEY $S3_SECRET_KEY
-```
-The <credential> for read access values can be obtained by asking on Mattermost. Assuming the minio client is installed and configured as above, one can browse the file structure using the minio `ls` command:
-```console
-mc ls S3/eictest/EPIC/RECO
 ```
 
 Files can also be coppied locally by replacing `ls` with `cp`.
@@ -112,11 +88,8 @@ If you're moving a lot of files around, you might normally resort to using a wil
 cp File* My_Folder/
 ```
 
-or similar. However, with the mc or xrdcp, this isn't so trivial. Some methods to test and try are include below. 
+or similar. However, with xrdcp, this isn't so trivial. Some methods to test and try are include below. 
 
-```console
-mc find S3/eictest/EPIC/RECO/main/CI/ --name "*0001*.root" --exec "mc cp {} ."
-```
 where here we're finding things in the given path that match the name pattern provided, and copying them to our current directory.
 
 Alternatively, you could grab a list of the files you want and pipe them to a file -
@@ -145,3 +118,26 @@ events.Scan("@MCParticles.size()","","",10)
 Where in the final line we're only going to skim over the first 10 events.
 
 It should be noted that the best solution may just be to run the files from the server, rather than copying them to somewhere else and running them there.
+
+## OUTDATED - Access Simulation from BNL S3
+
+> Note that S3 is being phased out. Simulation campaigns from Summer 2024 onwards will only be available on xrootd.
+> Instructions for S3 access are provided for reference only at this point.
+{: .callout}
+
+The simulation files can also be accessed from S3 storage at BNL using the MinIO client for S3 storage. It is included in eic-shell. To install it natively, you can issue the following commands to install minio:
+```console
+mkdir --parent ~/bin
+curl https://dl.min.io/client/mc/release/linux-amd64/mc --create-dirs -o ~/bin/mc
+chmod +x ~/bin/mc
+```
+From here on out, we assume `mc` is in your PATH variable, otherwise you can use the full path, in the above example `~/bin/mc`.
+After the client is installed, it needs to be configured for read access:
+```console
+export S3_ACCESS_KEY=<credential>; export S3_SECRET_KEY=<credential>
+mc config host add S3 https://eics3.sdcc.bnl.gov:9000 $S3_ACCESS_KEY $S3_SECRET_KEY
+```
+The <credential> for read access values can be obtained by asking on Mattermost. Assuming the minio client is installed and configured as above, one can browse the file structure using the minio `ls` command:
+```console
+mc ls S3/eictest/EPIC/RECO
+```
