@@ -55,10 +55,6 @@ It is also possible to open a file directly in ROOT. Note that the following com
 ```console
 auto f = TFile::Open("root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/path-to-file")
 ```
-or alternatively
-```console
-auto f = TFile::Open("s3https://eics3.sdcc.bnl.gov:9000/eictest/EPIC/RECO/path-to-file");
-```
 
 ## Reminder - Download a file for the next step!
 
@@ -118,26 +114,3 @@ events.Scan("@MCParticles.size()","","",10)
 Where in the final line we're only going to skim over the first 10 events.
 
 It should be noted that the best solution may just be to run the files from the server, rather than copying them to somewhere else and running them there.
-
-## OUTDATED - Access Simulation from BNL S3
-
-> Note that S3 is being phased out. Simulation campaigns from Summer 2024 onwards will only be available on xrootd.
-> Instructions for S3 access are provided for reference only at this point.
-{: .callout}
-
-The simulation files can also be accessed from S3 storage at BNL using the MinIO client for S3 storage. It is included in eic-shell. To install it natively, you can issue the following commands to install minio:
-```console
-mkdir --parent ~/bin
-curl https://dl.min.io/client/mc/release/linux-amd64/mc --create-dirs -o ~/bin/mc
-chmod +x ~/bin/mc
-```
-From here on out, we assume `mc` is in your PATH variable, otherwise you can use the full path, in the above example `~/bin/mc`.
-After the client is installed, it needs to be configured for read access:
-```console
-export S3_ACCESS_KEY=<credential>; export S3_SECRET_KEY=<credential>
-mc config host add S3 https://eics3.sdcc.bnl.gov:9000 $S3_ACCESS_KEY $S3_SECRET_KEY
-```
-The <credential> for read access values can be obtained by asking on Mattermost. Assuming the minio client is installed and configured as above, one can browse the file structure using the minio `ls` command:
-```console
-mc ls S3/eictest/EPIC/RECO
-```
