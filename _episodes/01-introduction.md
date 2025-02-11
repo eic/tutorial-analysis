@@ -17,7 +17,7 @@ More detailed information on the simulation productions, including the informati
 
 ## Simulation Files Organization
 
-There are three broad classes of files stored on xrootd/S3, each in their own directory:
+There are three broad classes of files stored on xrootd, each in their own directory:
 - EVGEN: The input hepmc3 datasets
     - E.g. some files that have been supplied by a physics event generator
 - FULL: The full GEANT4 output root files (usually only saved for a fraction of runs)
@@ -26,10 +26,6 @@ There are three broad classes of files stored on xrootd/S3, each in their own di
     - And again, if running yourself, this would be your output from EICrecon (after you've used your awesome new reconstruction algorithm from the later tutorial of course)
 
 Most users will interact with the files in the RECO directory and that is what we will focus on in this tutorial. Within the RECO directory, files are organized by campaign (24.04.0 for the April 2024 campaign, for example), detector configuration and then physics process. Each physics process will have different sub directories, for example generator version, energy, or Q2. The directory structure and number of reconstructed files for each campaign can be found on the Simulation Website [here](https://eic.github.io/epic-prod/campaigns/campaigns_reco.html).
-
-> Note that S3 is being phased out. Simulation campaigns from Summer 2024 onwards will only be available on xrootd.
-> Instructions for S3 access are provided for reference only at this point.
-{: .callout}
 
 ## Access Simulation from Jefferson Lab xrootd
 
