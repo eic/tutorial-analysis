@@ -25,7 +25,7 @@ There are three broad classes of files stored on xrootd, each in their own direc
 - RECO: The output root files from the reconstruction
     - And again, if running yourself, this would be your output from EICrecon (after you've used your awesome new reconstruction algorithm from the later tutorial of course)
 
-Most users will interact with the files in the RECO directory and that is what we will focus on in this tutorial. Within the RECO directory, files are organized by campaign (24.12.0 for the December 2024 campaign, for example), detector configuration and then physics process. Each physics process will have different sub directories, for example generator version, energy, or Q2. The directory structure and number of reconstructed files for each campaign can be found on the Simulation Website [here](https://eic.github.io/epic-prod/campaigns/campaigns_reco.html).
+Most users will interact with the files in the RECO directory and that is what we will focus on in this tutorial. Within the RECO directory, files are organized by campaign (25.01.1 for the January 2025 campaign, for example), detector configuration and then physics process. Each physics process will have different sub directories, for example generator version, energy, or Q2. The directory structure and number of reconstructed files for each campaign can be found on the Simulation Website [here](https://eic.github.io/epic-prod/campaigns/campaigns_reco.html).
 
 ## Access Simulation from Jefferson Lab xrootd
 
@@ -33,23 +33,26 @@ The prefered method for browsing the simulation output is to use xrootd from wit
 ```console
 ./eic-shell
 xrdfs root://dtn-eic.jlab.org
-ls /work/eic2/EPIC/RECO/24.12.0
+ls /volatile/eic/EPIC/RECO/25.01.1
 exit
 ```
 It is also possible to copy a file and open it locally using the `xrdcp` command:
 ```console
 ./eic-shell
-xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/24.12.0/path-to-file .
+xrdcp root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/25.01.1/path-to-file .
 exit
 ```
 
 Files can also be coppied locally by replacing `ls` with `cp`.
 
+> For earlier simulation campaigns, the destination is /work/eic2/EPIC rather than /volatile/eic/EPIC
+{: .callout}
+
 ## Streaming Files
 
 It is also possible to open a file directly in ROOT. Note that the following command should be executed after opening root and `TFile::Open()` should be used:
 ```console
-auto f = TFile::Open("root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/path-to-file")
+auto f = TFile::Open("root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/path-to-file")
 ```
 
 ## Reminder - Download a file for the next step!
@@ -59,17 +62,17 @@ We will need a file to analyse going forward, if you have not done so, download 
 Grab a file from -
 
 ```console
-/work/eic2/EPIC/RECO/24.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10/
+/volatile/eic/EPIC/RECO/25.01.1/epic_craterlake/DIS/NC/18x275/minQ2=10/
 ```
 For example -
 
 ```console
-xrdcp root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/24.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_5.0001.eicrecon.tree.edm4eic.root ./
+xrdcp root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/25.01.1/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_5.0001.eicrecon.tree.edm4eic.root ./
 ```
 Note that the ./ at the end is the target location to copy to. Change this as desired.
 
 > Note that we can also specify a different filename to copy to as we could with a normal cp command. You might want to do this as the filename is a little cumbersome.
-> I called mine NC_DIS_18x275_DecCampaign.root, just replace ./ with your file name of choice.
+> I called mine NC_DIS_18x275_JanCampaign.root, just replace ./ with your file name of choice.
 {: .callout}
 
 You can also stream the file if you prefer, just copy the path of the file above. You will need to modify the scripts later in the tutorial accordingly to account for this.
@@ -91,15 +94,15 @@ where here we're finding things in the given path that match the name pattern pr
 Alternatively, you could grab a list of the files you want and pipe them to a file -
 
 ```console
-xrdfs root://dtn-eic.jlab.org ls /work/eic2/EPIC/RECO/24.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10 | sed 's|^|root://dtn-eic.jlab.org/|g' > list.txt
+xrdfs root://dtn-eic.jlab.org ls /volatile/eic/EPIC/RECO/25.01.1/epic_craterlake/DIS/NC/18x275/minQ2=10 | sed 's|^|root://dtn-eic.jlab.org/|g' > list.txt
 ```
 
 In this case, we're listing all files on the server in that path, piping them to sed and inserting "root://dtn-eic.jlab.org/" at the front and then feeding the output to the file "list.txt".
 
 ```console
 more list.txt
-root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/24.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0000.eicrecon.tree.edm4eic.root
-root://dtn-eic.jlab.org//work/eic2/EPIC/RECO/24.12.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0001.eicrecon.tree.edm4eic.root
+root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/25.01.1/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0000.eicrecon.tree.edm4eic.root
+root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/25.01.1/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0001.eicrecon.tree.edm4eic.root
 ...
 ```
 We could then, for example, feed this list to a TChain -
