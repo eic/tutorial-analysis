@@ -106,7 +106,6 @@ The last two lines encode the association between a ReconstructedChargedParticle
 > - If you are analysing a large number of events, you may wish to compile your macro to increase throughput. An example of how you can create and compile a root macro is included in the [Exercise Scripts section](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#compiled-root-scripts)
 {: .callout}
 
-
 ### Efficiency Analysis
 
 > Hint:
@@ -221,6 +220,10 @@ While this plot will give us a sense of what the tracking resolution is, we don'
 
 ## Sample Analysis with Python/uproot: Track Efficiency and Resolution
 
+> Comment:
+> Despite using python/uproot, I have written these in a very "ROOT"/C way. Uproot converts our branches to arrays, so you can manipulate them in various fun ways using more pythonic methods if you want.
+{: .callout}
+
 If you are more familiar with python than you are with C/C++, you might find that using a python based root macro is easier for you. Outlined below are sample blocks of code for creating and running a python based analysis script.
 
 With python, some tasks become easier, e.g. string manipulation and writing to (non ROOT) files.
@@ -274,7 +277,7 @@ Note that we are using the module uproot to access the data here. See [further d
 >  We can then access them as an array in a loop -
 > ```python
 > # Add main analysis loop(s) below
-> for i in range(0, len(events_tree)): # Loop over all events
+> for i in range(0, len(partGenStat)): # Loop over all events
 >     for j in range(0, len(partGenStat[i])): # Loop over all thrown particles
 >         if partGenStat[i][j] == 1: # Select stable particles
 >             pdg = abs(partPdg[i][j]) # Get PDG for each stable particle
@@ -320,7 +323,7 @@ matchedPartEta = ROOT.TH1D("matchedPartEta","Eta of Thrown Charged Particles Tha
 matchedPartTrackDeltaR = ROOT.TH1D("matchedPartTrackDeltaR","Delta R Between Matching Thrown and Reconstructed Charge Particle", 5000, 0, 5);
 
 # Add main analysis loop(s) below
-for i in range(0, len(events_tree)): # Loop over all events
+for i in range(0, len(partGenStat)): # Loop over all events
     for j in range(0, len(partGenStat[i])): # Loop over all thrown particles
         if partGenStat[i][j] == 1: # Select stable particles
             pdg = abs(partPdg[i][j]) # Get PDG for each stable particle
@@ -328,7 +331,6 @@ for i in range(0, len(events_tree)): # Loop over all events
                 trueMom = ROOT.TVector3(partMomX[i][j], partMomY[i][j], partMomZ[i][j])
                 trueEta = trueMom.PseudoRapidity()
                 truePhi = trueMom.Phi()
-                
                 partEta.Fill(trueEta)
                 for k in range(0,len(simuAssoc[i])): # Loop over associations to find matching ReconstructedChargedParticle
                     if (simuAssoc[i][k] == j):
@@ -336,7 +338,6 @@ for i in range(0, len(events_tree)): # Loop over all events
                         deltaEta = trueEta - recMom.PseudoRapidity()
                         deltaPhi = TVector2. Phi_mpi_pi(truePhi - recMom.Phi())
                         deltaR = math.sqrt((deltaEta*deltaEta) + (deltaPhi*deltaPhi))
-
                         matchedPartEta.Fill(trueEta)
                         matchedPartTrackDeltaR.Fill(deltaR)
                         
@@ -349,10 +350,6 @@ matchedPartTrackDeltaR.Write()
 ofile.Close()
 ```
 Insert this block of code appropriately. We should now have everything we need to find the track efficiency as a function of pseudorapidity. Run the script with `python3 trackAnalysis.py``. This should produce a root file with a few histograms in place. The efficiency can be found by taking the ratio of matchedPartEta over partEta.
-
-> Note:
-> - More recent simulation files (May 2024 or later) seem to have some issue or conflict when processed via Uproot (issue slicing into arrays) - Investigating further (10/09/24)
-{: .callout}
 
 > Question:
 > - Do the hisotgram ranges make sense?
@@ -398,6 +395,10 @@ Remember to write this histogram to the output file too! While this plot will gi
 {: .callout}
 
 ## ROOT RDataFrames
+
+> Note:
+> - This method does actually need you to be within eic-shell (or somewhere else with the correct EDM4hep/EDM4eic libraries installed).
+{: .callout}
 
 Newer versions of root, such as the version in eic-shell, have access to a relatively new class, [RDataFrames](https://root.cern/doc/master/classROOT_1_1RDataFrame.html). These are similar to pythonic data frame style strucutres that you may be familiar with. Some people are moving towards utilising RDataFrames in their analysis. If you are more familiar with working with data frames, you may wish to investigate these further.
 

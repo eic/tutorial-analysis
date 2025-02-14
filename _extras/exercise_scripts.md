@@ -550,7 +550,6 @@ target_include_directories(helloexec
 
 install(TARGETS helloexec DESTINATION bin)
 
-
 ##############################################################################################################
 
 ## Install library
@@ -679,7 +678,7 @@ matchedPartEta = ROOT.TH1D("matchedPartEta","Eta of Thrown Charged Particles Tha
 matchedPartTrackDeltaR = ROOT.TH1D("matchedPartTrackDeltaR","Delta R Between Matching Thrown and Reconstructed Charge Particle", 5000, 0, 5);
 
 # Add main analysis loop(s) below
-for i in range(0, len(events_tree)): # Loop over all events
+for i in range(0, len(partGenStat)): # Loop over all events
     for j in range(0, len(partGenStat[i])): # Loop over all thrown particles
         if partGenStat[i][j] == 1: # Select stable particles
             pdg = abs(partPdg[i][j]) # Get PDG for each stable particle
@@ -687,7 +686,6 @@ for i in range(0, len(events_tree)): # Loop over all events
                 trueMom = ROOT.TVector3(partMomX[i][j], partMomY[i][j], partMomZ[i][j])
                 trueEta = trueMom.PseudoRapidity()
                 truePhi = trueMom.Phi()
-                
                 partEta.Fill(trueEta)
                 for k in range(0,len(simuAssoc[i])): # Loop over associations to find matching ReconstructedChargedParticle
                     if (simuAssoc[i][k] == j):
@@ -695,7 +693,6 @@ for i in range(0, len(events_tree)): # Loop over all events
                         deltaEta = trueEta - recMom.PseudoRapidity()
                         deltaPhi = TVector2. Phi_mpi_pi(truePhi - recMom.Phi())
                         deltaR = math.sqrt((deltaEta*deltaEta) + (deltaPhi*deltaPhi))
-
                         matchedPartEta.Fill(trueEta)
                         matchedPartTrackDeltaR.Fill(deltaR)
                         
@@ -775,7 +772,7 @@ ChargedPhi = ROOT.TH1D("ChargedPhi", "#phi of all charged particles; #phi (rad)"
 ChargedP = ROOT.TH1D("ChargedP", "P of all charged particles; P(GeV/c)", 150, 0, 150)
 
 # Add main analysis loop(s) below
-for i in range(0, len(events_tree)): # Loop over all events
+for i in range(0, len(partGenStat)): # Loop over all events
     for j in range(0, len(partGenStat[i])): # Loop over all thrown particles
         if partGenStat[i][j] == 1: # Select stable particles
             pdg = abs(partPdg[i][j]) # Get PDG for each stable particle
@@ -783,7 +780,6 @@ for i in range(0, len(events_tree)): # Loop over all events
                 trueMom = ROOT.TVector3(partMomX[i][j], partMomY[i][j], partMomZ[i][j])
                 trueEta = trueMom.PseudoRapidity()
                 truePhi = trueMom.Phi()
-                
                 partEta.Fill(trueEta)
                 partPhi.Fill(truePhi)
                 partMom.Fill(trueMom.Mag())
@@ -796,12 +792,10 @@ for i in range(0, len(events_tree)): # Loop over all events
                         deltaPhi = TVector2. Phi_mpi_pi(truePhi - recMom.Phi())
                         deltaR = math.sqrt((deltaEta*deltaEta) + (deltaPhi*deltaPhi))
                         deltaMom = ((trueMom.Mag()) - (recMom.Mag()))
-
                         matchedPartTrackDeltaEta.Fill(deltaEta)
                         matchedPartTrackDeltaPhi.Fill(deltaPhi)
                         matchedPartTrackDeltaR.Fill(deltaR)
                         matchedPartTrackDeltaMom.Fill(deltaMom)
-                        
                         matchedPartEta.Fill(trueEta)
                         matchedPartPhi.Fill(truePhi)
                         matchedPartMom.Fill(trueMom.Mag())
@@ -811,11 +805,10 @@ for i in range(0, len(events_tree)): # Loop over all events
         CPartMom = ROOT.TVector3(trackMomX[i][x], trackMomY[i][x], trackMomZ[i][x])
         CPartEta = CPartMom.PseudoRapidity()
         CPartPhi = CPartMom.Phi()
-
         ChargedEta.Fill(CPartEta)
         ChargedPhi.Fill(CPartPhi)
         ChargedP.Fill(CPartMom.Mag())
-        
+	
 # Write output histograms to file below
 partEta.Write()
 matchedPartEta.Write()
@@ -834,13 +827,11 @@ matchedPartTrackDeltaMom.Write()
 ChargedEta.Write()
 ChargedPhi.Write()
 ChargedP.Write()
-
 TrackEff_Eta.Divide(matchedPartEta, partEta, 1, 1, "b")
 TrackEffMom.Divide(matchedPartMom, partMom, 1, 1, "b")
 TrackEffPhi.Divide(matchedPartPhi, partPhi, 1, 1, "b")
 TrackEff_PEta.Divide(matchedPartPEta, partPEta, 1, 1, "b")
 TrackEff_PhiEta.Divide(matchedPartPhiEta, partPhiEta, 1, 1, "b")
-
 TrackEff_Eta.Write()
 TrackEffMom.Write()
 TrackEffPhi.Write()
@@ -896,7 +887,7 @@ matchedPartTrackDeltaR = ROOT.TH1D("matchedPartTrackDeltaR","#Delta R Between Ma
 matchedPartTrackDeltaMom = ROOT.TH1D("matchedPartTrackDeltaMom","#Delta P Between Matching Thrown and Reconstructed Charged Particle; #Delta P", 200, -10, 10)
 
 # Add main analysis loop(s) below
-for i in range(0, len(events_tree)): # Loop over all events
+for i in range(0, len(partGenStat)): # Loop over all events
     for j in range(0, len(partGenStat[i])): # Loop over all thrown particles
         if partGenStat[i][j] == 1: # Select stable particles
             pdg = abs(partPdg[i][j]) # Get PDG for each stable particle
@@ -904,7 +895,6 @@ for i in range(0, len(events_tree)): # Loop over all events
                 trueMom = ROOT.TVector3(partMomX[i][j], partMomY[i][j], partMomZ[i][j])
                 trueEta = trueMom.PseudoRapidity()
                 truePhi = trueMom.Phi()
-                
                 for k in range(0,len(simuAssoc[i])): # Loop over associations to find matching ReconstructedChargedParticle
                     if (simuAssoc[i][k] == j):
                         recMom = ROOT.TVector3(trackMomX[i][recoAssoc[i][k]], trackMomY[i][recoAssoc[i][k]], trackMomZ[i][recoAssoc[i][k]])
@@ -912,14 +902,11 @@ for i in range(0, len(events_tree)): # Loop over all events
                         deltaPhi = TVector2. Phi_mpi_pi(truePhi - recMom.Phi())
                         deltaR = math.sqrt((deltaEta*deltaEta) + (deltaPhi*deltaPhi))
                         deltaMom = ((trueMom.Mag()) - (recMom.Mag()))
-
                         momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag()
-                        
                         matchedPartTrackDeltaEta.Fill(deltaEta)
                         matchedPartTrackDeltaPhi.Fill(deltaPhi)
                         matchedPartTrackDeltaR.Fill(deltaR)
-                        matchedPartTrackDeltaMom.Fill(deltaMom)                        
-
+                        matchedPartTrackDeltaMom.Fill(deltaMom)
                         trackMomentumRes.Fill(momRes)
                         
 # Write output histograms to file below
@@ -998,7 +985,7 @@ matchedPartTrackDeltaR = ROOT.TH1D("matchedPartTrackDeltaR","#Delta R Between Ma
 matchedPartTrackDeltaMom = ROOT.TH1D("matchedPartTrackDeltaMom","#Delta P Between Matching Thrown and Reconstructed Charged Particle; #Delta P", 200, -10, 10)
 
 # Add main analysis loop(s) below
-for i in range(0, len(events_tree)): # Loop over all events
+for i in range(0, len(partGenStat)): # Loop over all events
     for j in range(0, len(partGenStat[i])): # Loop over all thrown particles
         if partGenStat[i][j] == 1: # Select stable particles
             pdg = abs(partPdg[i][j]) # Get PDG for each stable particle
@@ -1006,7 +993,6 @@ for i in range(0, len(events_tree)): # Loop over all events
                 trueMom = ROOT.TVector3(partMomX[i][j], partMomY[i][j], partMomZ[i][j])
                 trueEta = trueMom.PseudoRapidity()
                 truePhi = trueMom.Phi()
-                
                 for k in range(0,len(simuAssoc[i])): # Loop over associations to find matching ReconstructedChargedParticle
                     if (simuAssoc[i][k] == j):
                         recMom = ROOT.TVector3(trackMomX[i][recoAssoc[i][k]], trackMomY[i][recoAssoc[i][k]], trackMomZ[i][recoAssoc[i][k]])
@@ -1014,13 +1000,10 @@ for i in range(0, len(events_tree)): # Loop over all events
                         deltaPhi = TVector2. Phi_mpi_pi(truePhi - recMom.Phi())
                         deltaR = math.sqrt((deltaEta*deltaEta) + (deltaPhi*deltaPhi))
                         deltaMom = ((trueMom.Mag()) - (recMom.Mag()))
-
                         momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag()
-
                         trackMomentumRes.Fill(momRes)
                         trackMomResP.Fill(momRes, trueMom.Mag())
                         trackMomResEta.Fill(momRes, trueEta)
-                        
                         if( pdg == 11):
                             trackMomentumRes_e.Fill(momRes)
                             trackMomResP_e.Fill(momRes, trueMom.Mag())
@@ -1040,8 +1023,7 @@ for i in range(0, len(events_tree)): # Loop over all events
                         elif( pdg == 2212):
                             trackMomentumRes_p.Fill(momRes)
                             trackMomResP_p.Fill(momRes, trueMom.Mag())
-                            trackMomResEta_p.Fill(momRes, trueEta)
-                            
+                            trackMomResEta_p.Fill(momRes, trueEta)                            
                         matchedPartTrackDeltaEta.Fill(deltaEta)
                         matchedPartTrackDeltaPhi.Fill(deltaPhi)
                         matchedPartTrackDeltaR.Fill(deltaR)
@@ -1066,7 +1048,6 @@ trackMomResEta_K.Write()
 trackMomentumRes_p.Write()
 trackMomResP_p.Write()
 trackMomResEta_p.Write()
-
 matchedPartTrackDeltaEta.Write()
 matchedPartTrackDeltaPhi.Write()
 matchedPartTrackDeltaR.Write()
