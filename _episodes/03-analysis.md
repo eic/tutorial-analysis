@@ -17,6 +17,7 @@ So far, we have only looked at (and plotted) some information from our file inte
 
 > Note:
 > The [branch dictionary]({{ page.root }}{% link _extras/branch_dictionary.md %}) outlines all of the branches we will need to utilise in this section.
+> If you want, you can prune the branches you don't need from the input file using the [TreePrune.C script]({{ page.root }}{% link _extras/tree_pruning_script.md %})
 {: .callout}
 
 ## Reading the Output Trees
