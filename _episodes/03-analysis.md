@@ -16,8 +16,8 @@ keypoints:
 So far, we have only looked at (and plotted) some information from our file interactively. This is very useful and can help us identify the variables we want to deal with. However, we can't really use these techniques to conduct a full analysis of the data. To do so, we typically use a script or macro. In this part of the tutorial, we will create a script that we can use to do a relatively straightforward analysis of our file.
 
 > Note:
-> The [branch dictionary]({{ page.root }}{% link _extras/branch_dictionary.md %}) outlines all of the branches we will need to utilise in this section.
-> If you want, you can prune the branches you don't need from the input file using the [TreePrune.C script]({{ page.root }}{% link _extras/tree_pruning_script.md %})
+> - The [branch dictionary]({{ page.root }}{% link _extras/branch_dictionary.md %}) outlines all of the branches we will need to utilise in this section.
+> - If you want, you can prune the branches you don't need from the input file using the [TreePrune.C script]({{ page.root }}{% link _extras/tree_pruning_script.md %}).
 {: .callout}
 
 ## Reading the Output Trees
