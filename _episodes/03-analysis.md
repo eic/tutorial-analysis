@@ -107,7 +107,7 @@ TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParti
 The last two lines encode the association between a ReconstructedChargedParticle and a MCParticle where the matching is determined in the [ParticlesWithPID](https://github.com/eic/EICrecon/blob/main/src/algorithms/pid/ParticlesWithPID.cc) algorithm which generates the ReconstructedChargedParticle objects.
 
 > Compiling ROOT Macros:
-> - If you are analysing a large number of events, you may wish to compile your macro to increase throughput. An example of how you can create and compile a root macro is included in the [Exercise Scripts section]({{ page.root }}{% link _extras/exercise_scripts.md#compiled-root-scripts %})
+> - If you are analysing a large number of events, you may wish to compile your macro to increase throughput. An example of how you can create and compile a root macro is included in the [Exercise Scripts section]({{ page.root }}{% link _extras/exercise_scripts.md %})
 {: .callout}
 
 ### Efficiency Analysis
