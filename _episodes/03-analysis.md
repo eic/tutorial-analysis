@@ -15,6 +15,10 @@ keypoints:
 
 So far, we have only looked at (and plotted) some information from our file interactively. This is very useful and can help us identify the variables we want to deal with. However, we can't really use these techniques to conduct a full analysis of the data. To do so, we typically use a script or macro. In this part of the tutorial, we will create a script that we can use to do a relatively straightforward analysis of our file.
 
+> Note:
+> The [branch dictionary]({{ page.root }}{% link _extras/branch_dictionary.md %}) outlines all of the branches we will need to utilise in this section.
+{: .callout}
+
 ## Reading the Output Trees
 
 The simulation output trees are "flat" in the sense that there is no event class structure embedded within the tree and no additional libraries are needed to handle the output. Therefore, the end user can simply read the values stored in each branch using whatever method/workflow they are most comfortable with. Examples of several common methods for reading the trees are provided below. We will see a ROOT TTreeReader based example using a ROOT macro and a python/uproot based version. During the tutorial, you should try the exercise using whichever language you feel most comfortable with.
@@ -103,13 +107,13 @@ TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParti
 The last two lines encode the association between a ReconstructedChargedParticle and a MCParticle where the matching is determined in the [ParticlesWithPID](https://github.com/eic/EICrecon/blob/main/src/algorithms/pid/ParticlesWithPID.cc) algorithm which generates the ReconstructedChargedParticle objects.
 
 > Compiling ROOT Macros:
-> - If you are analysing a large number of events, you may wish to compile your macro to increase throughput. An example of how you can create and compile a root macro is included in the [Exercise Scripts section](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#compiled-root-scripts)
+> - If you are analysing a large number of events, you may wish to compile your macro to increase throughput. An example of how you can create and compile a root macro is included in the [Exercise Scripts section]({{ page.root }}{% link _extras/exercise_scripts.md#compiled-root-scripts %})
 {: .callout}
 
 ### Efficiency Analysis
 
 > Hint:
-> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#efficiencyanalysisc) if you're having trouble putting things in the right place.
+> Refer to [the script template]({{ page.root }}{% link _extras/exercise_scripts.md#efficiencyanalysisc %}) if you're having trouble putting things in the right place.
 {: .callout}
 
 Now that we have access to the data we need we will begin constructing our efficiency plots, starting with efficiency as a function of the true particle pseudorapidity. The basic strategy is outlined below:
@@ -185,7 +189,7 @@ We should now have everything we need to find the track efficiency as a function
 ### Resolution Analysis
 
 > Hint:
-> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#resolutionanalysisc) if you're having trouble putting things in the right place.
+> Refer to [the script template]({{ page.root }}{% link _extras/exercise_scripts.md#resolutionanalysisc %}) if you're having trouble putting things in the right place.
 {: .callout}
 
 Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram:
@@ -298,7 +302,7 @@ Note that depending upon your setup, ``python trackAnalysis.py`` may work too.
 ### Efficiency Analysis
 
 > Hint:
-> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#efficiencyanalysispy) if you're having trouble putting things in the right place.
+> Refer to [the script template]({{ page.root }}{% link _extras/exercise_scripts.md#efficiencyanalysispy %}) if you're having trouble putting things in the right place.
 {: .callout}
 
 As with the ROOT TTreeReader example, we will find the tracking eficiency and resolution. We will need to access the reconstructed track information and the truth particle information and we will have to associate the individual tracks and particles to one another.
@@ -366,7 +370,7 @@ Insert this block of code appropriately. We should now have everything we need t
 ### Resolution Analysis
 
 > Hint:
-> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#resolutionanalysispy) if you're having trouble putting things in the right place.
+> Refer to [the script template]({{ page.root }}{% link _extras/exercise_scripts.md#resolutionanalysispy %}) if you're having trouble putting things in the right place.
 {: .callout}
 
 Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram by inserting this block of code appropriately:
