@@ -5,29 +5,33 @@
 
 void TreePrune(TString infile=""){
 
+  // If no input file provide as argument, promot for one
   if(infile == ""){
     cout << "Enter a filename to analyse: ";
     cin >> infile;
   }
-
+  
+  // Check input file exists, exit if not
   if(gSystem->AccessPathName(infile) == kTRUE){
     cerr << "!!!!! ERROR !!!!!" << endl << infile << " not found" << endl << "!!!!! ERROR !!!!!" << endl;
     exit(0);
-  }
-  else{
-    cout << "Opening " << infile << endl;
   }
 
   TString ofile_name, ofile_tmp, BeamE;
   TObjArray *tmp_Name_arr;
 
+  // Check the input file is a .root file as we would expect
   if(infile.Contains(".root") == false){
-    cout << "!!!!!!!!!!! - ERROR - !!!!!!!!!!!!" << endl;
-    cout << "Input files should be a root file!" << endl;
-    cout << "!!!!!!!!!!! - ERROR - !!!!!!!!!!!!" << endl;
+    cerr << "!!!!!!!!!!! - ERROR - !!!!!!!!!!!!" << endl;
+    cerr << "Input files should be a root file!" << endl;
+    cerr << "!!!!!!!!!!! - ERROR - !!!!!!!!!!!!" << endl;
     exit(1);
   }
-  
+  else{
+    cout << "Opening and pruning " << infile << endl;
+  }
+
+  // If the input file name is a file path containing /, extract only the actual file name for further use. Assign the temporary name of the output to be the input, minus its .root extension
   if(infile.Contains("/")){
     tmp_Name_arr = infile.Tokenize("/");
     ofile_tmp = (((TObjString *)(tmp_Name_arr->At(tmp_Name_arr->GetLast())))->String()).ReplaceAll(".root","");
