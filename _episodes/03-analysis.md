@@ -21,13 +21,13 @@ So far, we have only looked at (and plotted) some information from our file inte
 
 ## Reading the Output Trees
 
-The simulation output trees are "flat" in the sense that there is no event class structure embedded within the tree and no additional libraries are needed to handle the output. Therefore, the end user can simply read the values stored in each branch using whatever method/workflow they are most comfortable with. Examples of several common methods for reading the trees are provided below. We will see a ROOT TTreeReader based example using a ROOT macro and a python/uproot based version. During the tutorial, you should try the exercise using whichever language you feel most comfortable with.
+The simulation output trees are "flat" in the sense that there is no event class structure embedded within the tree and no additional libraries are needed to handle the output. Therefore, the end user can simply read the values stored in each branch using whatever method/workflow they are most comfortable with. Examples of several common methods for reading the trees are provided below. We will see a ROOT TTreeReader based example using a ROOT macro and a python/uproot based version. There is also an example using the (relatively) new RDataFrame class of ROOT. During the tutorial, you should try the exercise using whichever language you feel most comfortable with.
 
 ## Sample Analysis with ROOT TTreeReader: Track Efficiency and Resolution
 
 As a sample exercise to become familiar with the simulation output and how to use it in a realistic setting, we will find the tracking eficiency and resolution. We will need to access the reconstructed track information and the truth particle information and we will have to associate the individual tracks and particles to one another. 
 
-Before we begin, we should create a skeleton macro to handle file I/O. For the `TTreeReader` example, we will use a simple ROOT macro. Using your favorite editor, create a file with a name like `trackAnalysis.C` or something similar and copy in the following code: 
+Before we begin, we should create a skeleton macro to handle file I/O. For the `TTreeReader` example, we will use a simple ROOT macro. Using your favorite text editor, create a file with a name like `trackAnalysis.C` or something similar and copy in the following code: 
 
 ```c++
 void trackAnalysis(TString infile="path_to_your_simu_file")
