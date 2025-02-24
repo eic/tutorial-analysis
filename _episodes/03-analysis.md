@@ -227,6 +227,7 @@ While this plot will give us a sense of what the tracking resolution is, we don'
 
 > Comment:
 > Despite using python/uproot, I have written these in a very "ROOT"/C way. Uproot converts our branches to arrays, so you can manipulate them in various fun ways using more pythonic methods if you want.
+> Shujie Li utilises a more pythonic approach in the [Understanding the Simulation Output](https://eic.github.io/tutorial-understanding-sim-output/) tutorial. You can see some examples of this in the [Jupyter Notebook](https://colab.research.google.com/drive/1Wn9guq1aIJ8RUW36HHTkeR7-iPPcoBOw?usp=sharing) Shujie set up for that tutorial. 
 {: .callout}
 
 If you are more familiar with python than you are with C/C++, you might find that using a python based root macro is easier for you. Outlined below are sample blocks of code for creating and running a python based analysis script.

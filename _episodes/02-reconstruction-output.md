@@ -98,9 +98,7 @@ In the last section, the example quantities we were plotting involved the MCpart
 
 You may wonder how the specific branches of the tree have actually been populated. As this is the output after EICrecon, the trees in the file are those specified as EICrecon was run by the algorithms and factories that were enabled at run time.
 
-<!--
-Add link/reference to Shujie's tutorial here too if it covers this material.
--->
+This is covered in more detail in the [Understanding the Simulation Output](https://eic.github.io/tutorial-understanding-sim-output/) tutorial. In particular, [Episode 3](https://eic.github.io/tutorial-understanding-sim-output/02-eicrecon/index.html) of that tutorial details how you can identify the sequence of algorithms utilised to generate a specific output branch. In the case of the example in this tutorial, the track reconstruction is detailed.
 
 > Work through the algorithms and factories tutorial. Afterwards, take a closer look at this file.
 > See if you can figure out which algorithm or factory was responsible for creating some of the included branches in this file.
