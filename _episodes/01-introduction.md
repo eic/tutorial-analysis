@@ -45,9 +45,6 @@ exit
 
 Files can also be coppied locally by replacing `ls` with `cp`.
 
-> For earlier simulation campaigns, the destination is /work/eic2/EPIC rather than /volatile/eic/EPIC
-{: .callout}
-
 ## Streaming Files
 
 It is also possible to open a file directly in ROOT. Note that the following command should be executed after opening root and `TFile::Open()` should be used:
