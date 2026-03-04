@@ -2,7 +2,7 @@
 title: "Exercise Scripts"
 ---
 
-Included below is a selection of scripts for the exercises in part 3 of this tutorial. Shortly after the tutorial, I will also include "complete" examples for future reference.
+Included below is a selection of scripts for the exercises in part 3 of this tutorial.
 
 You should be able to copy the code text directly into a new file. The name of the file is included as the title of each script section and in the accompanying descriptive text.
 
@@ -10,7 +10,7 @@ You should be able to copy the code text directly into a new file. The name of t
 
 ### EfficiencyAnalysis.C
 
-Create a file called `EfficiencyAnalysis.C` and copy in the code below to get started on the efficiency analysis exercise. Note that you will need to correctly specifiy your input file path in the first line.
+Create a file called `EfficiencyAnalysis.C` and copy in the code below to get started on the efficiency analysis exercise. Note that you will need to correctly specify your input file path in the first line.
 
 ```c++
 void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
@@ -37,8 +37,8 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
   
   // Get Associations Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "ReconstructedChargedParticleAssociations.recID");
-  TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParticleAssociations.simID");
+  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.recID");
+  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.simID");
       
   // Define Histograms
   TH1D *partEta = new TH1D("partEta","Eta of Thrown Charged Particles;Eta",100,-5.,5.);
@@ -109,8 +109,8 @@ void EfficiencyAnalysis_Exercise(TString infile="PATH_TO_FILE"){
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
   // Get Associations Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "ReconstructedChargedParticleAssociations.recID");
-  TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParticleAssociations.simID");
+  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.recID");
+  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.simID");
     
   // Define Histograms
   TH1D *partEta = new TH1D("partEta","#eta of Thrown Charged Particles; #eta", 120, -6, 6);
@@ -226,7 +226,7 @@ Insert your input file path and execute as the example code above.
 
 ### ResolutionAnalysis.C
 
-Create a file called `ResolutionAnalysis.C` and copy in the code below to get started on the resolution analysis exercise. Note that you will need to correctly specifiy your input file path in the first line.
+Create a file called `ResolutionAnalysis.C` and copy in the code below to get started on the resolution analysis exercise. Note that you will need to correctly specify your input file path in the first line.
 
 ```c++
 void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
@@ -254,8 +254,8 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
   // Get Associations Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "ReconstructedChargedParticleAssociations.recID");
-  TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParticleAssociations.simID");
+  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.recID");
+  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.simID");
     
   // Define Histograms
   TH1D *trackMomentumRes = new TH1D("trackMomentumRes","Track Momentum Resolution", 400, -2, 2);
@@ -330,8 +330,8 @@ void ResolutionAnalysis_Exercise(TString infile="PATH_TO_FILE"){
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
   // Get Associations Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "ReconstructedChargedParticleAssociations.recID");
-  TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParticleAssociations.simID");
+  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.recID");
+  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.simID");
     
   // Define Histograms
   TH1D *trackMomentumRes = new TH1D("trackMomentumRes","Track Momentum Resolution; (P_{rec} - P_{MC})/P_{MC}", 400, -2, 2);
@@ -447,7 +447,7 @@ Insert your input file path and execute as the example code above.
 
 As brought up in the tutorial, you may wish to compile your ROOT based scripts for faster processing. Included below are some scripts and a short example of a compiled ROOT macro provided by Kolja Kauder.
 
-Each file is uploaded invidually, but your directory should be structured as follows -
+Each file is uploaded individually, but your directory should be structured as follows -
 
 - helloroot
     - README.md
@@ -639,7 +639,7 @@ Please consult the README and script comments for further instructions.
 
 ### EfficiencyAnalysis.py
 
-Create a file called `EfficiencyAnalysis.py` and copy in the code below to get started on the resolution analysis exercise. Note that you will need to correctly specifiy your input file path in the variable `infile`.
+Create a file called `EfficiencyAnalysis.py` and copy in the code below to get started on the resolution analysis exercise. Note that you will need to correctly specify your input file path in the variable `infile`.
 
 ```python
 #! /usr/bin/python
@@ -669,8 +669,8 @@ trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
 trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["ReconstructedChargedParticleAssociations.recID"].array()
-simuAssoc = events_tree["ReconstructedChargedParticleAssociations.simID"].array()
+recoAssoc = events_tree["_ReconstructedChargedParticleAssociations.recID"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleAssociations.simID"].array()
 
 # Define histograms below
 partEta = ROOT.TH1D("partEta","Eta of Thrown Charged Particles;Eta",100, -5 ,5 )
@@ -736,8 +736,8 @@ trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
 trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["ReconstructedChargedParticleAssociations.recID"].array()
-simuAssoc = events_tree["ReconstructedChargedParticleAssociations.simID"].array()
+recoAssoc = events_tree["_ReconstructedChargedParticleAssociations.recID"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleAssociations.simID"].array()
 
 # Define histograms below
 partEta = ROOT.TH1D("partEta","#eta of Thrown Charged Particles; #eta", 120, -6, 6)
@@ -845,7 +845,7 @@ Insert your input file path and execute as the example code above.
 -->
 ### ResolutionAnalysis.py
 
-Create a file called `ResolutionAnalysis.py` and copy in the code below to get started on the resolution analysis exercise. Note that you will need to correctly specifiy your input file path in the variable `infile`.
+Create a file called `ResolutionAnalysis.py` and copy in the code below to get started on the resolution analysis exercise. Note that you will need to correctly specify your input file path in the variable `infile`.
 
 ```python
 #! /usr/bin/python
@@ -875,8 +875,8 @@ trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
 trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["ReconstructedChargedParticleAssociations.recID"].array()
-simuAssoc = events_tree["ReconstructedChargedParticleAssociations.simID"].array()
+recoAssoc = events_tree["_ReconstructedChargedParticleAssociations.recID"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleAssociations.simID"].array()
 
 # Define histograms below
 trackMomentumRes = ROOT.TH1D("trackMomentumRes","Track Momentum Resolution", 400, -2, 2)
@@ -951,8 +951,8 @@ trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
 trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["ReconstructedChargedParticleAssociations.recID"].array()
-simuAssoc = events_tree.["ReconstructedChargedParticleAssociations.simID"].array()
+recoAssoc = events_tree["_ReconstructedChargedParticleAssociations.recID"].array()
+simuAssoc = events_tree.["_ReconstructedChargedParticleAssociations.simID"].array()
 
 # Define histograms below
 trackMomentumRes = ROOT.TH1D("trackMomentumRes","Track Momentum Resolution", 400, -2, 2)
@@ -1132,7 +1132,7 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
 ```
 <!--
 
-A "solution" using RDataFrames is included below, please see the notes following this script for some of my thoughts on RDataFrames -
+A "solution" using RDataFrames is included below,
 
 ```c++
 #include <edm4hep/utils/vector_utils.h>
@@ -1175,9 +1175,9 @@ void EfficiencyAnalysisRDF_Exercise(TString infile="PATH_TO_INPUT_FILE"){
     .Define("pdgFilter",     "absPDG == 11 || absPDG == 13 || absPDG == 211 || absPDG == 321 || absPDG == 2212")
     .Define("particleFilter","statusFilter && pdgFilter"           )
     .Define("filtMCParts",   "MCParticles[particleFilter]"         )
-    .Define("assoFilter",    "Take(particleFilter,ReconstructedChargedParticleAssociations.simID)") // Incase any of the associated particles happen to not be charged
-    .Define("assoMCParts",   "Take(MCParticles,ReconstructedChargedParticleAssociations.simID)[assoFilter]")
-    .Define("assoRecParts",  "Take(ReconstructedChargedParticles,ReconstructedChargedParticleAssociations.recID)[assoFilter]")
+    .Define("assoFilter",    "Take(particleFilter,_ReconstructedChargedParticleAssociations.simID)") // In case any of the associated particles happen to not be charged
+    .Define("assoMCParts",   "Take(MCParticles,_ReconstructedChargedParticleAssociations.simID)[assoFilter]")
+    .Define("assoRecParts",  "Take(ReconstructedChargedParticles,_ReconstructedChargedParticleAssociations.recID)[assoFilter]")
     .Define("filtMCEta",     getEta<MCP>   , {"filtMCParts"} )
     .Define("filtMCPhi",     getPhi<MCP>   , {"filtMCParts"} )
     .Define("filtMCp",       getP<MCP>     , {"filtMCParts"} )
@@ -1264,21 +1264,6 @@ void EfficiencyAnalysisRDF_Exercise(TString infile="PATH_TO_INPUT_FILE"){
   ofile->Close(); // Close output file
 }
 ```
-Insert your input file path and execute as the example code above.
-
-> Note:
-> - Before writing this example and solution, I have never used RDataFrames before. Some thoughts below.
->   - I find them very difficult to work with. The processes that are "actually" going on are very obscured with RDataFrames.
->   - Finding resources and examples online is much more difficult due to how new RDataFrames are.
->     - This further complicates writing and working with them. 
->   - Getting this example working and producing the same result as the python and ROOT examples took me as much time as preparing the rest of the tutorial.
->   - The script itself seems to be very slow when running.
->   - I don't think they're a good starting point for someone new to ROOT/Nuclear Physics data analysis. Too much is going on behind the scenes.
->  - In summary, I personally would *not* recommend using RDataFrames for your analysis (at this point in time).
->  - Note that this just my (SKay) thoughts and opinions though.
-{: .callout}
-
-Note that due to how much "fun" I had making the efficiency analysis exercise with RDataFrames, I won't be creating a solution for the resolution analysis exercises.
 -->
 
 {% include links.md %}

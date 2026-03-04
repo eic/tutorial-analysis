@@ -101,11 +101,11 @@ TTreeReaderArray<float> trackMomY(tree_reader, "ReconstructedChargedParticles.mo
 TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
 // Get Associations Between MCParticles and ReconstructedChargedParticles
-TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "ReconstructedChargedParticleAssociations.recID");
-TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParticleAssociations.simID");
+TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.recID");
+TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.simID");
 ```
 
-The last two lines encode the association between a ReconstructedChargedParticle and a MCParticle where the matching is determined in the [ParticlesWithPID](https://github.com/eic/EICrecon/blob/main/src/algorithms/pid/ParticlesWithPID.cc) algorithm which generates the ReconstructedChargedParticle objects.
+The last two lines encode the association between a ReconstructedChargedParticle and an MCParticle where the matching is determined in the [ParticlesWithPID](https://github.com/eic/EICrecon/blob/main/src/algorithms/pid/ParticlesWithPID.cc) algorithm which generates the ReconstructedChargedParticle objects.
 
 > Compiling ROOT Macros:
 > - If you are analysing a large number of events, you may wish to compile your macro to increase throughput. An example of how you can create and compile a root macro is included in the [Exercise Scripts section](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#compiled-root-scripts)
@@ -228,13 +228,14 @@ While this plot will give us a sense of what the tracking resolution is, we don'
 > Comment:
 > Despite using python/uproot, I have written these in a very "ROOT"/C way. Uproot converts our branches to arrays, so you can manipulate them in various fun ways using more pythonic methods if you want.
 > Shujie Li utilises a more pythonic approach in the [Understanding the Simulation Output](https://eic.github.io/tutorial-understanding-sim-output/) tutorial. You can see some examples of this in the [Jupyter Notebook](https://colab.research.google.com/drive/1Wn9guq1aIJ8RUW36HHTkeR7-iPPcoBOw?usp=sharing) Shujie set up for that tutorial. 
+> I also created a version of this tutorial that utilises similar methods as part of the HSF-India/ePIC workshop, see [this notebook](https://github.com/eic/HSF-India/blob/main/Analysing_Output/AnalysingOuput_Standalone.ipynb), which can be executed in Google Collab as an example. Remember to update the input file to a more recent one.
 {: .callout}
 
 If you are more familiar with python than you are with C/C++, you might find that using a python based root macro is easier for you. Outlined below are sample blocks of code for creating and running a python based analysis script.
 
 With python, some tasks become easier, e.g. string manipulation and writing to (non ROOT) files.
 
-Before we begin, we should create a skeleton macro to handle file I/O. For this example, we will make a simple python script. Using your favorite editor, create a file with a name like `trackAnalysis.py` or something similar and copy in the following code: 
+Before we begin, we should create a skeleton macro to handle file I/O. For this example, we will make a simple python script. Using your favourite editor, create a file with a name like `trackAnalysis.py` or something similar and copy in the following code: 
 
 ```python
 #! /usr/bin/python
@@ -289,7 +290,7 @@ Note that we are using the module uproot to access the data here. See [further d
 >             pdg = abs(partPdg[i][j]) # Get PDG for each stable particle
 >             ...
 > ```
-> Uproot effectively takes the information in the tree, and turns it into an array. We can then acces and manipulate this array in the same way that we can with any array in python.
+> Uproot effectively takes the information in the tree, and turns it into an array. We can then access and manipulate this array in the same way that we can with any array in python.
 >
 > Note that if you are using an older version of uproot (v2.x.x), you will need to access the branches slightly differently via -
 > ```python
@@ -320,8 +321,8 @@ Here is the sample code to implement these steps:
 
 ```python
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["ReconstructedChargedParticleAssociations.recID"].array()
-simuAssoc = events_tree["ReconstructedChargedParticleAssociations.simID"].array()
+recoAssoc = events_tree["_ReconstructedChargedParticleAssociations.recID"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleAssociations.simID"].array()
 
 # Define histograms below
 partEta = ROOT.TH1D("partEta","Eta of Thrown Charged Particles;Eta",100, -5 ,5 )
@@ -406,7 +407,7 @@ Remember to write this histogram to the output file too! While this plot will gi
 > - This method does actually need you to be within eic-shell (or somewhere else with the correct EDM4hep/EDM4eic libraries installed).
 {: .callout}
 
-Newer versions of root, such as the version in eic-shell, have access to a relatively new class, [RDataFrames](https://root.cern/doc/master/classROOT_1_1RDataFrame.html). These are similar to pythonic data frame style strucutres that you may be familiar with. Some people are moving towards utilising RDataFrames in their analysis. If you are more familiar with working with data frames, you may wish to investigate these further.
+Newer versions of root, such as the version in eic-shell, have access to a relatively new class, [RDataFrames](https://root.cern/doc/master/classROOT_1_1RDataFrame.html). These are similar to pythonic data frame style structures that you may be familiar with. Some people are moving towards utilising RDataFrames in their analysis. If you are more familiar with working with data frames, you may wish to investigate these further.
 
 Included below is a quick script from [Simon Gardner](https://github.com/simonge/EIC_Analysis/blob/main/Analysis-Tutorial/EfficiencyAnalysisRDF.C) that utilises RDataFrames to analyse a data file. Copy the following into a new file called `EfficiencyAnalysisRDF.C` -
 
@@ -445,9 +446,9 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
                 .Define("pdgFilter",     "absPDG == 11 || absPDG == 13 || absPDG == 211 || absPDG == 321 || absPDG == 2212")
                 .Define("particleFilter","statusFilter && pdgFilter"           )
                 .Define("filtMCParts",   "MCParticles[particleFilter]"         )
-                .Define("assoFilter",    "Take(particleFilter,ReconstructedChargedParticleAssociations.simID)") // Incase any of the associated particles happen to not be charged
-                .Define("assoMCParts",   "Take(MCParticles,ReconstructedChargedParticleAssociations.simID)[assoFilter]")
-                .Define("assoRecParts",  "Take(ReconstructedChargedParticles,ReconstructedChargedParticleAssociations.recID)[assoFilter]")
+                .Define("assoFilter",    "Take(particleFilter,_ReconstructedChargedParticleAssociations.simID)") // Incase any of the associated particles happen to not be charged
+                .Define("assoMCParts",   "Take(MCParticles,_ReconstructedChargedParticleAssociations.simID)[assoFilter]")
+                .Define("assoRecParts",  "Take(ReconstructedChargedParticles,_ReconstructedChargedParticleAssociations.recID)[assoFilter]")
                 .Define("filtMCEta",     getEta<MCP>   , {"filtMCParts"} )
                 .Define("filtMCPhi",     getPhi<MCP>   , {"filtMCParts"} )
                 .Define("accoMCEta",     getEta<MCP>   , {"assoMCParts"} )
@@ -483,4 +484,6 @@ If you like, you can try completing the exercises using this example to start fr
 
 If you want to avoid ROOT entirely, you can analyse the PODIO files directly in a variety of ways.
 
-See [Wouter's example use cases](https://indico.cern.ch/event/1343984/contributions/5908856/attachments/2842958/4970156/2024-04-23%20-%20Examples%20for%20Data%20Model%20Usage.pdf) from 23/04/24. Wouter shows a few ways in which the PODIO file can be accssed and analysed directly.
+See [Wouter's example use cases](https://indico.cern.ch/event/1343984/contributions/5908856/attachments/2842958/4970156/2024-04-23%20-%20Examples%20for%20Data%20Model%20Usage.pdf) from 23/04/24. Wouter shows a few ways in which the PODIO file can be accessed and analysed directly.
+
+** As of March 2026, a full example and version of this method will be provided in the near future.**
