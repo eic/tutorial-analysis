@@ -90,9 +90,9 @@ TTreeReader tree_reader(mychain);
 
 // Get Particle Information
 TTreeReaderArray<int> partGenStat(tree_reader, "MCParticles.generatorStatus");
-TTreeReaderArray<float> partMomX(tree_reader, "MCParticles.momentum.x");
-TTreeReaderArray<float> partMomY(tree_reader, "MCParticles.momentum.y");
-TTreeReaderArray<float> partMomZ(tree_reader, "MCParticles.momentum.z");
+TTreeReaderArray<double> partMomX(tree_reader, "MCParticles.momentum.x");
+TTreeReaderArray<double> partMomY(tree_reader, "MCParticles.momentum.y");
+TTreeReaderArray<double> partMomZ(tree_reader, "MCParticles.momentum.z");
 TTreeReaderArray<int> partPdg(tree_reader, "MCParticles.PDG");
 
 // Get Reconstructed Track Information
@@ -101,8 +101,8 @@ TTreeReaderArray<float> trackMomY(tree_reader, "ReconstructedChargedParticles.mo
 TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
 // Get Associations Between MCParticles and ReconstructedChargedParticles
-TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.recID");
-TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.simID");
+TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_rec.index");
+TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
 ```
 
 The last two lines encode the association between a ReconstructedChargedParticle and an MCParticle where the matching is determined in the [ParticlesWithPID](https://github.com/eic/EICrecon/blob/main/src/algorithms/pid/ParticlesWithPID.cc) algorithm which generates the ReconstructedChargedParticle objects.
@@ -321,8 +321,8 @@ Here is the sample code to implement these steps:
 
 ```python
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["_ReconstructedChargedParticleAssociations.recID"].array()
-simuAssoc = events_tree["_ReconstructedChargedParticleAssociations.simID"].array()
+recoAssoc = events_tree["_ReconstructedChargedParticleAssociations_rec.index"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleAssociations_sim.index"].array()
 
 # Define histograms below
 partEta = ROOT.TH1D("partEta","Eta of Thrown Charged Particles;Eta",100, -5 ,5 )
@@ -446,9 +446,9 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
                 .Define("pdgFilter",     "absPDG == 11 || absPDG == 13 || absPDG == 211 || absPDG == 321 || absPDG == 2212")
                 .Define("particleFilter","statusFilter && pdgFilter"           )
                 .Define("filtMCParts",   "MCParticles[particleFilter]"         )
-                .Define("assoFilter",    "Take(particleFilter,_ReconstructedChargedParticleAssociations.simID)") // Incase any of the associated particles happen to not be charged
-                .Define("assoMCParts",   "Take(MCParticles,_ReconstructedChargedParticleAssociations.simID)[assoFilter]")
-                .Define("assoRecParts",  "Take(ReconstructedChargedParticles,_ReconstructedChargedParticleAssociations.recID)[assoFilter]")
+                .Define("assoFilter",    "Take(particleFilter,_ReconstructedChargedParticleAssociations_simID.index)") // Incase any of the associated particles happen to not be charged
+                .Define("assoMCParts",   "Take(MCParticles,_ReconstructedChargedParticleAssociations_simID.index)[assoFilter]")
+                .Define("assoRecParts",  "Take(ReconstructedChargedParticles,_ReconstructedChargedParticleAssociations_recID.index)[assoFilter]")
                 .Define("filtMCEta",     getEta<MCP>   , {"filtMCParts"} )
                 .Define("filtMCPhi",     getPhi<MCP>   , {"filtMCParts"} )
                 .Define("accoMCEta",     getEta<MCP>   , {"assoMCParts"} )

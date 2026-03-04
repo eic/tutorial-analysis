@@ -26,9 +26,9 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   
   // Get Particle Information
   TTreeReaderArray<int> partGenStat(tree_reader, "MCParticles.generatorStatus");
-  TTreeReaderArray<float> partMomX(tree_reader, "MCParticles.momentum.x");
-  TTreeReaderArray<float> partMomY(tree_reader, "MCParticles.momentum.y");
-  TTreeReaderArray<float> partMomZ(tree_reader, "MCParticles.momentum.z");
+  TTreeReaderArray<double> partMomX(tree_reader, "MCParticles.momentum.x");
+  TTreeReaderArray<double> partMomY(tree_reader, "MCParticles.momentum.y");
+  TTreeReaderArray<double> partMomZ(tree_reader, "MCParticles.momentum.z");
   TTreeReaderArray<int> partPdg(tree_reader, "MCParticles.PDG");
   
   // Get Reconstructed Track Information
@@ -37,8 +37,8 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
   
   // Get Associations Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.recID");
-  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.simID");
+  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_rec.index");
+  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
       
   // Define Histograms
   TH1D *partEta = new TH1D("partEta","Eta of Thrown Charged Particles;Eta",100,-5.,5.);
@@ -98,9 +98,9 @@ void EfficiencyAnalysis_Exercise(TString infile="PATH_TO_FILE"){
 
   // Get Particle Information
   TTreeReaderArray<int> partGenStat(tree_reader, "MCParticles.generatorStatus");
-  TTreeReaderArray<float> partMomX(tree_reader, "MCParticles.momentum.x");
-  TTreeReaderArray<float> partMomY(tree_reader, "MCParticles.momentum.y");
-  TTreeReaderArray<float> partMomZ(tree_reader, "MCParticles.momentum.z");
+  TTreeReaderArray<double> partMomX(tree_reader, "MCParticles.momentum.x");
+  TTreeReaderArray<double> partMomY(tree_reader, "MCParticles.momentum.y");
+  TTreeReaderArray<double> partMomZ(tree_reader, "MCParticles.momentum.z");
   TTreeReaderArray<int> partPdg(tree_reader, "MCParticles.PDG");
 
   // Get Reconstructed Track Information
@@ -109,8 +109,8 @@ void EfficiencyAnalysis_Exercise(TString infile="PATH_TO_FILE"){
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
   // Get Associations Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.recID");
-  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.simID");
+  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_rec.index");
+  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
     
   // Define Histograms
   TH1D *partEta = new TH1D("partEta","#eta of Thrown Charged Particles; #eta", 120, -6, 6);
@@ -243,9 +243,9 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
 
   // Get Particle Information
   TTreeReaderArray<int> partGenStat(tree_reader, "MCParticles.generatorStatus");
-  TTreeReaderArray<float> partMomX(tree_reader, "MCParticles.momentum.x");
-  TTreeReaderArray<float> partMomY(tree_reader, "MCParticles.momentum.y");
-  TTreeReaderArray<float> partMomZ(tree_reader, "MCParticles.momentum.z");
+  TTreeReaderArray<double> partMomX(tree_reader, "MCParticles.momentum.x");
+  TTreeReaderArray<double> partMomY(tree_reader, "MCParticles.momentum.y");
+  TTreeReaderArray<double> partMomZ(tree_reader, "MCParticles.momentum.z");
   TTreeReaderArray<int> partPdg(tree_reader, "MCParticles.PDG");
 
   // Get Reconstructed Track Information
@@ -254,8 +254,8 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
   // Get Associations Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.recID");
-  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.simID");
+  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_rec.index");
+  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
     
   // Define Histograms
   TH1D *trackMomentumRes = new TH1D("trackMomentumRes","Track Momentum Resolution", 400, -2, 2);
@@ -319,9 +319,9 @@ void ResolutionAnalysis_Exercise(TString infile="PATH_TO_FILE"){
 
   // Get Particle Information
   TTreeReaderArray<int> partGenStat(tree_reader, "MCParticles.generatorStatus");
-  TTreeReaderArray<float> partMomX(tree_reader, "MCParticles.momentum.x");
-  TTreeReaderArray<float> partMomY(tree_reader, "MCParticles.momentum.y");
-  TTreeReaderArray<float> partMomZ(tree_reader, "MCParticles.momentum.z");
+  TTreeReaderArray<double> partMomX(tree_reader, "MCParticles.momentum.x");
+  TTreeReaderArray<double> partMomY(tree_reader, "MCParticles.momentum.y");
+  TTreeReaderArray<double> partMomZ(tree_reader, "MCParticles.momentum.z");
   TTreeReaderArray<int> partPdg(tree_reader, "MCParticles.PDG");
 
   // Get Reconstructed Track Information
@@ -330,8 +330,8 @@ void ResolutionAnalysis_Exercise(TString infile="PATH_TO_FILE"){
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
   // Get Associations Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.recID");
-  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations.simID");
+  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_rec.index");
+  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
     
   // Define Histograms
   TH1D *trackMomentumRes = new TH1D("trackMomentumRes","Track Momentum Resolution; (P_{rec} - P_{MC})/P_{MC}", 400, -2, 2);
@@ -669,8 +669,8 @@ trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
 trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["_ReconstructedChargedParticleAssociations.recID"].array()
-simuAssoc = events_tree["_ReconstructedChargedParticleAssociations.simID"].array()
+recoAssoc = events_tree["_ReconstructedChargedParticleAssociations_rec.index"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleAssociations_sim.index"].array()
 
 # Define histograms below
 partEta = ROOT.TH1D("partEta","Eta of Thrown Charged Particles;Eta",100, -5 ,5 )
@@ -736,8 +736,8 @@ trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
 trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["_ReconstructedChargedParticleAssociations.recID"].array()
-simuAssoc = events_tree["_ReconstructedChargedParticleAssociations.simID"].array()
+recoAssoc = events_tree["_ReconstructedChargedParticleAssociations_rec.index"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleAssociations_sim.index"].array()
 
 # Define histograms below
 partEta = ROOT.TH1D("partEta","#eta of Thrown Charged Particles; #eta", 120, -6, 6)
@@ -875,8 +875,8 @@ trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
 trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["_ReconstructedChargedParticleAssociations.recID"].array()
-simuAssoc = events_tree["_ReconstructedChargedParticleAssociations.simID"].array()
+recoAssoc = events_tree["_ReconstructedChargedParticleAssociations_rec.index"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleAssociations_sim.index"].array()
 
 # Define histograms below
 trackMomentumRes = ROOT.TH1D("trackMomentumRes","Track Momentum Resolution", 400, -2, 2)
@@ -951,8 +951,8 @@ trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
 trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["_ReconstructedChargedParticleAssociations.recID"].array()
-simuAssoc = events_tree.["_ReconstructedChargedParticleAssociations.simID"].array()
+recoAssoc = events_tree["_ReconstructedChargedParticleAssociations_rec.index"].array()
+simuAssoc = events_tree.["_ReconstructedChargedParticleAssociations_sim.index"].array()
 
 # Define histograms below
 trackMomentumRes = ROOT.TH1D("trackMomentumRes","Track Momentum Resolution", 400, -2, 2)
@@ -1103,9 +1103,9 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
                 .Define("pdgFilter",     "absPDG == 11 || absPDG == 13 || absPDG == 211 || absPDG == 321 || absPDG == 2212")
                 .Define("particleFilter","statusFilter && pdgFilter"           )
                 .Define("filtMCParts",   "MCParticles[particleFilter]"         )
-                .Define("assoFilter",    "Take(particleFilter,ReconstructedChargedParticleAssociations.simID)") // Incase any of the associated particles happen to not be charged
-                .Define("assoMCParts",   "Take(MCParticles,ReconstructedChargedParticleAssociations.simID)[assoFilter]")
-                .Define("assoRecParts",  "Take(ReconstructedChargedParticles,ReconstructedChargedParticleAssociations.recID)[assoFilter]")
+                .Define("assoFilter",    "Take(particleFilter,ReconstructedChargedParticleAssociations_sim.index)") // Incase any of the associated particles happen to not be charged
+                .Define("assoMCParts",   "Take(MCParticles,ReconstructedChargedParticleAssociations)sim.index)[assoFilter]")
+                .Define("assoRecParts",  "Take(ReconstructedChargedParticles,ReconstructedChargedParticleAssociations._rec.index)[assoFilter]")
                 .Define("filtMCEta",     getEta<MCP>   , {"filtMCParts"} )
                 .Define("filtMCPhi",     getPhi<MCP>   , {"filtMCParts"} )
                 .Define("accoMCEta",     getEta<MCP>   , {"assoMCParts"} )
@@ -1175,9 +1175,9 @@ void EfficiencyAnalysisRDF_Exercise(TString infile="PATH_TO_INPUT_FILE"){
     .Define("pdgFilter",     "absPDG == 11 || absPDG == 13 || absPDG == 211 || absPDG == 321 || absPDG == 2212")
     .Define("particleFilter","statusFilter && pdgFilter"           )
     .Define("filtMCParts",   "MCParticles[particleFilter]"         )
-    .Define("assoFilter",    "Take(particleFilter,_ReconstructedChargedParticleAssociations.simID)") // In case any of the associated particles happen to not be charged
-    .Define("assoMCParts",   "Take(MCParticles,_ReconstructedChargedParticleAssociations.simID)[assoFilter]")
-    .Define("assoRecParts",  "Take(ReconstructedChargedParticles,_ReconstructedChargedParticleAssociations.recID)[assoFilter]")
+    .Define("assoFilter",    "Take(particleFilter,_ReconstructedChargedParticleAssociations_sim.index)") // In case any of the associated particles happen to not be charged
+    .Define("assoMCParts",   "Take(MCParticles,_ReconstructedChargedParticleAssociations_sim.index)[assoFilter]")
+    .Define("assoRecParts",  "Take(ReconstructedChargedParticles,_ReconstructedChargedParticleAssociations_rec.index)[assoFilter]")
     .Define("filtMCEta",     getEta<MCP>   , {"filtMCParts"} )
     .Define("filtMCPhi",     getPhi<MCP>   , {"filtMCParts"} )
     .Define("filtMCp",       getP<MCP>     , {"filtMCParts"} )
