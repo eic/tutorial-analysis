@@ -157,7 +157,7 @@ I've premade a version of this with the commands I ran earlier, so we can run it
 Ok, great. We can do (almost) all of the processes we need in one command. But as we've seen, the processing can take a while. Realistically, we're probably going to want to parallelise this in some way. With access to the JLab iFarm or the BNL systems (Condor). We can create and submit compute jobs for this purpose. This is getting a bit beyond the scope of this tutorial, but some things to consider -
 
 - Our job needs to either access the container, or process eic-shell within the job (more on this below)
-- The job itself should be as simple as possible, just exectuing a command with some arugments. Our script above is a good candidate (with some work)
+- The job itself should be as simple as possible, just exectuing a command with some arguments. Our script above is a good candidate (with some work)
 - As is, our script is fairly inflexible. We should probably make things like the input and output file names variables that are set based upon arguments we provide.
 - We need to consider the resource usage of our job carefully.
 - Pathing can be tricky, we need to make sure the farm/compute node picks up the correct paths such as $DETECTOR_PATH (this is a common job error).
@@ -182,7 +182,7 @@ Also a quick disclaimer, my experience in running jobs is limited to systems I k
 
 ## Warnings
 
-Finally, a major disclaimer. A lot of the time, you should NOT be starting from scratch and processing through the simulation and reconstruction yourself. There are numerous reasons -
+Finally, a major disclaimer. **A lot of the time, you should NOT be starting from scratch and processing through the simulation and reconstruction yourself.** There are numerous reasons -
 
 - Computing time intensive
 - Versioning errors/mismatch
