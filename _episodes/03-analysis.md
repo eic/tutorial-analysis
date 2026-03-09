@@ -223,12 +223,114 @@ While this plot will give us a sense of what the tracking resolution is, we don'
 > - Could we present the resolution values in a more understandable way?
 {: .callout}
 
-## Sample Analysis with Python/uproot: Track Efficiency and Resolution
+
+## Sample Analysis with Python/uproot - Pythonic Method: Track Efficiency and Resolution
+
+If you are more familiar with python than you are with C/C++, you might find that using a python based root macro is easier for you. Outlined below are sample blocks of code for creating and running a python based analysis script.
+
+With python, some tasks become easier, e.g. string manipulation and writing to (non ROOT) files.
+
+Before we begin, we should create a skeleton macro to handle file I/O. For this example, we will make a simple python script. Using your favourite editor, create a file with a name like `trackAnalysis.py` or something similar and copy in the following code: 
+
+```python
+#! /usr/bin/python
+# Import some relevant packages
+import uproot as up
+import awkward as ak
+import numpy as np
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.ticker as ticker
+import matplotlib.cm as cm
+import matplotlib.pylab as plt
+import scipy, vector, os
+from XRootD import client
+from scipy import stats
+from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
+from matplotlib import colors as colours
+
+# Set some matplot lib features
+plt.rcParams['ytick.direction'] = 'in'
+plt.rcParams['xtick.direction'] = 'in'
+plt.rcParams['xaxis.labellocation'] = 'right'
+plt.rcParams['yaxis.labellocation'] = 'top'
+plt.rcParams["figure.figsize"] = (16,9)
+kP6 = ['#5790fc','#f89c20','e42536','964a8b','#9c9ca1','#7a21dd'] # Set ROOT kP6 colours - see https://root.cern.ch/doc/v636/classTColor.html
+
+# Open our file
+fname = "INPUT_FILE.root"
+if os.path.isfile(fname):
+    file=up.open(fname)
+else:
+    print("Error opening file - ", fname, " check your fname variable!")
+
+# Open the tree
+tree = file['events']
+
+# Convert relevant branches to arrays
+MCPartBr = tree["MCParticles"].arrays()
+
+# Define some filters
+
+# Use filters to manipulate data
+
+# Create and write some plots
+```
+
+Make sure you change the input file name to match whatever you saved your file as earlier.
+
+Note that we are using the module uproot to access the data here. See [further documentation here](https://masonproffitt.github.io/uproot-tutorial/03-trees/index.html). You may also need some of the other included packages too.
+
+> We will use uproot a little bit like we use the TTreeReader in the other example. We can define the branches we want and assign them to arrays with uproot.
+> We can do this via:
+>  ```python
+> # Open input file and define branches we want to look at with uproot
+> fname = "INPUT_FILE.root" # Your file name
+> file=up.open(fname)
+> tree = file['events']
+> # Convert relevant branches to arrays
+> MCPartBr = tree["MCParticles"].arrays()
+> # If we want, convert a specific branch element to an array
+> partPdg = tree["MCParticles.PDG"].array()
+> ```
+> Uproot effectively takes the information in the tree, and turns it into an array. We can then access and manipulate this array in the same way that we can with any array in python.
+>
+> Note that if you are using an older version of uproot (v2.x.x), you will need to access the branches slightly differently via -
+> ```python
+> partGenStat = tree.array("MCParticles.generatorStatus")
+> ```
+{: .callout}
+
+Once you create your script and add the template code in, you can try running it with``python3 trackAnalysis.py`` or ``python trackAnalysis.py``. At the moment, it shouldn't *do* anything, but we can change that!
+
+Try assigning a quantity to an array, such as the MC particles PDG values above and printing some values of that array. Or, perhaps try printing the length of that array. We could also quickly make a plot of the values with -
+
+```python
+plt.hist(ak.flatten(partPdg),alpha=0.75, color=kP6[0])
+plt.savefig("TestOut.png", dpi = (160))
+plt.clf # Clear figure
+```
+The script should now write out a figure, ``TestOut.png`` when you run it, showing the MC PDG values of entries in the file.
+
+> We did not specify a number of bins or a range, so our plot looks a bit odd. What might be a useful range and number of bins to use here?
+{: .callout}
+
+We can also define and apply filters to our arrays as we plot or print from them -
+
+```python
+# We will filter on the particle status. Generator status == 1 corresponds to a stable particle (as opposed to a beam or intermediate particle) that we could detect in our detector. 4 is for beam particles
+BoolStable=((MCPartBr["MCParticles.generatorStatus"]==1)) # This filter is actually an array of booleans. Any where the generator status for a particle == 1 will return true
+plt.hist(ak.flatten(partPdg[BoolStable]),alpha=0.75, color=kP6[0]) # Apply filter to PDG array as we plot it. Only stable particles will now be plotted
+plt.savefig("TestOut2.png", dpi = (160))
+plt.clf
+```
+
+## Sample Analysis with Python/uproot - ROOT/Pyroot Style: Track Efficiency and Resolution
 
 > Comment:
 > Despite using python/uproot, I have written these in a very "ROOT"/C way. Uproot converts our branches to arrays, so you can manipulate them in various fun ways using more pythonic methods if you want.
-> Shujie Li utilises a more pythonic approach in the [Understanding the Simulation Output](https://eic.github.io/tutorial-understanding-sim-output/) tutorial. You can see some examples of this in the [Jupyter Notebook](https://colab.research.google.com/drive/1Wn9guq1aIJ8RUW36HHTkeR7-iPPcoBOw?usp=sharing) Shujie set up for that tutorial. 
-> I also created a version of this tutorial that utilises similar methods as part of the HSF-India/ePIC workshop, see [this notebook](https://github.com/eic/HSF-India/blob/main/Analysing_Output/AnalysingOuput_Standalone.ipynb), which can be executed in Google Collab as an example. Remember to update the input file to a more recent one.
+> See the previous method for an example of this approach.
 {: .callout}
 
 If you are more familiar with python than you are with C/C++, you might find that using a python based root macro is easier for you. Outlined below are sample blocks of code for creating and running a python based analysis script.
