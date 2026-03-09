@@ -314,17 +314,53 @@ plt.clf # Clear figure
 The script should now write out a figure, ``TestOut.png`` when you run it, showing the MC PDG values of entries in the file.
 
 > We did not specify a number of bins or a range, so our plot looks a bit odd. What might be a useful range and number of bins to use here?
+> We can specify our number of bins and our range with -
+> ```python
+> plt.hist(ak.flatten(partPdg),bins=NBins, range=(X,Y),alpha=0.75, color=kP6[0])
+> ```
+> With NBins being our number of bins and X and Y being our min/max range - think carefully about these numbers!
 {: .callout}
+
+Note that we don't really need to define individual arrays either, we can just directly access the array we want once we've converted the branch to a series of arrays -
+
+```python
+MCPartBr = tree["MCParticles"].arrays()
+plt.hist(ak.flatten(MCPartBr["MCParticles.PDG"]),alpha=0.75, color=kP6[0])
+plt.savefig("TestOut.png", dpi = (160))
+plt.clf() # Clear figure
+```
 
 We can also define and apply filters to our arrays as we plot or print from them -
 
 ```python
 # We will filter on the particle status. Generator status == 1 corresponds to a stable particle (as opposed to a beam or intermediate particle) that we could detect in our detector. 4 is for beam particles
-BoolStable=((MCPartBr["MCParticles.generatorStatus"]==1)) # This filter is actually an array of booleans. Any where the generator status for a particle == 1 will return true
-plt.hist(ak.flatten(partPdg[BoolStable]),alpha=0.75, color=kP6[0]) # Apply filter to PDG array as we plot it. Only stable particles will now be plotted
+BoolStable=(MCPartBr["MCParticles.generatorStatus"]==1) # This filter is actually an array of booleans. Any where the generator status for a particle == 1 will return true
+plt.hist(ak.flatten(MCPartBr["MCParticles.PDG"][BoolStable]),alpha=0.75, color=kP6[0]) # Apply filter to PDG array as we plot it. Only stable particles will now be plotted
 plt.savefig("TestOut2.png", dpi = (160))
-plt.clf
+plt.clf()
 ```
+
+And we can also combine conditions in our filters -
+
+```python
+BoolStablePos=((MCPartBr["MCParticles.generatorStatus"]==1) & (MCPartBr["MCParticles.charge"]>0)) # Create a filter to select out stable, positively chrarged particles 
+plt.hist(ak.flatten(MCPartBr["MCParticles.PDG"][BoolStablePos]),alpha=0.75, color=kP6[0]) # Apply filter to PDG array as we plot it. Only stable particles will now be plotted
+plt.savefig("TestOut3.png", dpi = (160))
+plt.clf()
+```
+
+> We did not specify a number of bins or a range, so our plot looks a bit odd. What might be a useful range and number of bins to use here?
+{: .callout}
+
+### Efficiency Analysis
+
+> Hint:
+> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#pythonicefficiencyanalysispy) if you're having trouble putting things in the right place.
+{: .callout}
+
+Our approach here is a bit different to the TTreeReader example, but we will still need to utilise our simulation and reconstruction association IDs.
+
+...
 
 ## Sample Analysis with Python/uproot - ROOT/Pyroot Style: Track Efficiency and Resolution
 

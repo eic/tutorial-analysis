@@ -639,7 +639,7 @@ Please consult the README and script comments for further instructions.
 
 Some template scripts that utilise an python array based approach are included below. For some examples of using uproot to access information in .root files, please consult (this notebook)[https://github.com/eic/HSF-India/blob/main/Working_With_Uproot/Working_With_Uproot_Standalone.ipynb] which can be run in Google Collab.
 
-### EfficiencyAnalysis.py
+### Pythonic_EfficiencyAnalysis.py
 
 Create a file called `EfficiencyAnalysis.py` and copy in the code below to get started on the efficiency analysis exercise. Note that you will need to correctly specify your input file path in the variable `fname`. Note that some example code to process the division of two histograms is included as a commented section at the end of this example.
 
@@ -739,7 +739,7 @@ plt.savefig("EfficiencyAnalysis_Out.png", dpi = (160))
 #plt.bar(Bars, Division, width=BarWidth, alpha=0.5, color='kP6[0]')
 ```
 
-### ResolutionAnalysis.py
+### Pythonic_ResolutionAnalysis.py
 
 Create a file called `ResolutionAnalysis.py` and copy in the code below to get started on the efficiency analysis exercise. Note that you will need to correctly specify your input file path in the variable `fname`.
 
