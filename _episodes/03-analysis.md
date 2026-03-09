@@ -182,6 +182,7 @@ We should now have everything we need to find the track efficiency as a function
 {: .callout}
 
 > Exercise:
+> For all **scattered electrons**, **charged pions** and **protons** in our events:
 > - Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
 > - Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
 > - Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
@@ -214,8 +215,8 @@ for(unsigned int j=0; j<simuAssoc.GetSize(); j++)
 While this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
 
 > Exercise:
+> For all **scattered electrons**, **charged pions** and **protons** in our events:
 > - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity.
-> - Break resolution plots down by particle species.
 {: .challenge}
 
 > Question:
@@ -223,12 +224,306 @@ While this plot will give us a sense of what the tracking resolution is, we don'
 > - Could we present the resolution values in a more understandable way?
 {: .callout}
 
-## Sample Analysis with Python/uproot: Track Efficiency and Resolution
+
+## Sample Analysis with Python/uproot - Pythonic Method: Track Efficiency and Resolution
+
+> For some examples of using uproot to access information in .root files, please consult (this notebook)[https://github.com/eic/HSF-India/blob/main/Working_With_Uproot/Working_With_Uproot_Standalone.ipynb] which can be run in Google Collab.
+{: .callout}
+
+If you are more familiar with python than you are with C/C++, you might find that using a python based root macro is easier for you. Outlined below are sample blocks of code for creating and running a python based analysis script.
+
+With python, some tasks become easier, e.g. string manipulation and writing to (non ROOT) files.
+
+Before we begin, we should create a skeleton macro to handle file I/O. For this example, we will make a simple python script. Using your favourite editor, create a file with a name like `trackAnalysis.py` or something similar and copy in the following code: 
+
+```python
+#! /usr/bin/python
+# Import some relevant packages
+import uproot as up
+import awkward as ak
+import numpy as np
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.ticker as ticker
+import matplotlib.cm as cm
+import matplotlib.pylab as plt
+import scipy, vector, os
+from XRootD import client
+from scipy import stats
+from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
+from matplotlib import colors as colours
+
+# Set some matplot lib features
+plt.rcParams['ytick.direction'] = 'in'
+plt.rcParams['xtick.direction'] = 'in'
+plt.rcParams['xaxis.labellocation'] = 'right'
+plt.rcParams['yaxis.labellocation'] = 'top'
+plt.rcParams["figure.figsize"] = (16,9)
+kP6 = ['#5790fc','#f89c20','#e42536','#964a8b','#9c9ca1','#7a21dd'] # Set ROOT kP6 colours - see https://root.cern.ch/doc/v636/classTColor.html
+
+# Open our file
+fname = "INPUT_FILE.root"
+if os.path.isfile(fname):
+    file=up.open(fname)
+else:
+    print("Error opening file - ", fname, " check your fname variable!")
+
+# Open the tree
+tree = file['events']
+
+# Convert relevant branches to arrays
+MCPartBr = tree["MCParticles"].arrays()
+
+# Define some filters
+
+# Use filters to manipulate data
+
+# Create and write some plots
+```
+
+Make sure you change the input file name to match whatever you saved your file as earlier.
+
+Note that we are using the module uproot to access the data here. See [further documentation here](https://masonproffitt.github.io/uproot-tutorial/03-trees/index.html). You may also need some of the other included packages too.
+
+> We will use uproot a little bit like we use the TTreeReader in the other example. We can define the branches we want and assign them to arrays with uproot.
+> We can do this via:
+>  ```python
+> # Open input file and define branches we want to look at with uproot
+> fname = "INPUT_FILE.root" # Your file name
+> file=up.open(fname)
+> tree = file['events']
+> # Convert relevant branches to arrays
+> MCPartBr = tree["MCParticles"].arrays()
+> # If we want, convert a specific branch element to an array
+> partPdg = tree["MCParticles.PDG"].array()
+> ```
+> Uproot effectively takes the information in the tree, and turns it into an array. We can then access and manipulate this array in the same way that we can with any array in python.
+>
+> Note that if you are using an older version of uproot (v2.x.x), you will need to access the branches slightly differently via -
+> ```python
+> partGenStat = tree.array("MCParticles.generatorStatus")
+> ```
+{: .callout}
+
+Once you create your script and add the template code in, you can try running it with``python3 trackAnalysis.py`` or ``python trackAnalysis.py``. At the moment, it shouldn't *do* anything, but we can change that!
+
+Try assigning a quantity to an array, such as the MC particles PDG values above and printing some values of that array. Or, perhaps try printing the length of that array. We could also quickly make a plot of the values with -
+
+```python
+plt.hist(ak.flatten(partPdg),alpha=0.75, color=kP6[0])
+plt.savefig("TestOut.png", dpi = (160))
+plt.clf # Clear figure
+```
+The script should now write out a figure, ``TestOut.png`` when you run it, showing the MC PDG values of entries in the file.
+
+> We did not specify a number of bins or a range, so our plot looks a bit odd. What might be a useful range and number of bins to use here?
+> We can specify our number of bins and our range with -
+> ```python
+> plt.hist(ak.flatten(partPdg),bins=NBins, range=(X,Y),alpha=0.75, color=kP6[0])
+> ```
+> With NBins being our number of bins and X and Y being our min/max range - think carefully about these numbers!
+{: .callout}
+
+Note that we don't really need to define individual arrays either, we can just directly access the array we want once we've converted the branch to a series of arrays -
+
+```python
+MCPartBr = tree["MCParticles"].arrays()
+plt.hist(ak.flatten(MCPartBr["MCParticles.PDG"]),alpha=0.75, color=kP6[0])
+plt.savefig("TestOut.png", dpi = (160))
+```
+
+> Note:
+> Remember to call:
+> ```python
+> plt.clf() # Clear figure
+> ```
+> After a figure to avoid drawing on the same plot.
+{: .callout}
+
+We can also define and apply filters to our arrays as we plot or print from them -
+
+```python
+# We will filter on the particle status. Generator status == 1 corresponds to a stable particle (as opposed to a beam or intermediate particle) that we could detect in our detector. 4 is for beam particles
+BoolStable=(MCPartBr["MCParticles.generatorStatus"]==1) # This filter is actually an array of booleans. Any where the generator status for a particle == 1 will return true
+plt.hist(ak.flatten(MCPartBr["MCParticles.PDG"][BoolStable]),alpha=0.75, color=kP6[0]) # Apply filter to PDG array as we plot it. Only stable particles will now be plotted
+plt.savefig("TestOut2.png", dpi = (160))
+```
+
+And we can also combine conditions in our filters -
+
+```python
+BoolStablePos=((MCPartBr["MCParticles.generatorStatus"]==1) & (MCPartBr["MCParticles.charge"]>0)) # Create a filter to select out stable, positively chrarged particles 
+plt.hist(ak.flatten(MCPartBr["MCParticles.PDG"][BoolStablePos]),alpha=0.75, color=kP6[0]) # Apply filter to PDG array as we plot it. Only stable particles will now be plotted
+plt.savefig("TestOut3.png", dpi = (160))
+```
+
+> We did not specify a number of bins or a range, so our plot looks a bit odd. What might be a useful range and number of bins to use here?
+{: .callout}
+
+### Efficiency Analysis
+
+> Hint:
+> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#pythonicefficiencyanalysispy) if you're having trouble putting things in the right place.
+{: .callout}
+
+Our approach here is a bit different to the TTreeReader example, but we will still need to utilise our simulation and reconstruction association IDs. We can access them via -
+
+```python
+RecoAssocRec = tree['_ReconstructedChargedParticleAssociations_rec'].arrays()
+RecoAssocSim = tree['_ReconstructedChargedParticleAssociations_sim'].arrays()
+RecID=RecoAssocRec['_ReconstructedChargedParticleAssociations_rec.index'] # Array of reconstructed IDs
+SimID=RecoAssocSim['_ReconstructedChargedParticleAssociations_sim.index'] # Array of simulated IDs
+```
+
+These are arrays of indices which map our simulated data to events which have actually been reconstructed in our simulation. We can use these to index our arrays and pick out *only* events where a simulated particle has a matching reconstructed particle (OR vice versa, where a reconstructed particle has a matching simulated particle). Note that when we index by these particles, we also need to make sure any filters are also indexed appropriately. E.g.
+
+```python
+BoolChargeTrack = ((abs(MCPartBr["MCParticles.charge"])!=0) & (MCPartBr["MCParticles.generatorStatus"]==1)) # A filter to select out charged stable particles in the MC data
+```
+
+If we apply this filter to an array which has been indexed by the Simulation ID, we will run into problems -
+
+```python
+BoolChargeTrack = ((abs(MCPartBr["MCParticles.charge"])!=0) & (MCPartBr["MCParticles.generatorStatus"]==1)) # A filter to select out charged stable particles in the MC data
+MatchPDG = MCPartBr["MCParticles.PDG"][SimID] # An array of the MC PDG values for all MC particles with a matching reconstructed particle.
+# print(MatchPDG[BoolChargeTrack]) # Will return an error, arrays don't match sizing!
+```
+
+We could either -
+
+1. Create a new filter which is explicitly indexed by the SimID's
+2. Index our previous filter by the SimID as we use it
+
+Both should return the same answer -
+
+```python
+print(MatchPDG[BoolChargeTrack[SimID]]) # Explicitly index our filter by SimID first
+BoolChargeTrackMatch = ((abs(MCPartBr["MCParticles.charge"][SimID])!=0) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1)) # A filter to select out charged stable particles in the MC data
+print(MatchPDG[BoolChargeTrackMatch]) # Use a newly defined filter which has been indexed by the SimID
+```
+To select out reconstructed particles that have a matching simulated particle, we can index by ``RecID`` in a similar way. **Note that we need to be careful what we conclude from our analysis if we match particles in this way. We are "cheating" in the sense that we are directly matching the truth to what we reconstruct. We cannot do this in a real experiment.**
+
+We may want to group some of our quantities together as vectors for easy manipulation. For example, we could create an array of vectors corresponding to our charged particles -
+
+```python
+MC_Parts = vector.zip({'px': MCPartBr["MCParticles.momentum.x"], 'py': MCPartBr["MCParticles.momentum.y"], 'pz': MCPartBr["MCParticles.momentum.z"]})
+```
+We can filter and index this like any other array. Creating 3 or 4-vectors in this way is useful as we can then use various functions to extract information from our vectors. For example, we can easily get -
+
+  - *Pseudorapidity*, $\\eta$
+  - *Polar angle*, $\\theta$ they make wrt the origin (in the lab frame, our bunch crossing point) - *Note, this is in radians by default*
+  - *Transverse momentum*, $P_{T}$
+  - ...
+
+```python
+print(MC_Parts.eta)
+print(MC_Parts.theta)
+print(MC_Parts.pt)
+```
+
+Now, we can use what we know to determine and plot some simple efficiency graphs for our reconstructed data. Efficiency is a measure of the probability that we will detect an incident particle. We could calculate our efficiency by straightforwardly counting how many particles we detect vs how many we "threw". For example, if we detect 9 particles and 10 were generated, our efficiency is -
+
+9/10
+
+i.e.
+
+90%
+
+This might be a useful figure. However, if we are evaluating the performance of a detector, it might be useful to consider the efficiency as a function of another quantity, for example $\\eta$ or $P$ What this will tell us is how likely we are to detect particles incident on certain areas of the detector (or with a certain momentum for instance). We should not really expect these distributions to be completely flat.
+
+In terms of our code, we can straightforwardly determine this by dividing some histograms. We can divide histograms via -
+
+```python
+RecPartBr = tree["ReconstructedChargedParticles"].arrays()
+BoolElec=((MCPartBr["MCParticles.PDG"][SimID]==11) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1)) # Define a filter to select out electrons which reconstruct in our detector
+MCHist = np.histogram(ak.flatten(MCPartBr["MCParticles.momentum.x"][BoolElec]), bins=100, range=(0,25))
+RecHist = np.histogram(ak.flatten(RecPartBr["ReconstructedChargedParticles.momentum.x"][RecID][BoolElec]), bins=100, range=(0,25))
+with np.errstate(divide='ignore'):
+    Division = RecHist[0] / MCHist[0]
+Division = np.nan_to_num(Division,nan=0, posinf = 0)
+Bin_Edges=MCHist[1]
+Bars = 0.5 * (Bin_Edges[1:] + Bin_Edges[:-1])
+BarWidth=Bars[1]-Bars[0]
+plt.bar(Bars, Division, width=BarWidth, alpha=0.75, color=kP6[2])
+plt.savefig("TestOut4.png", dpi = (160))
+```
+
+**Important** - What we have create here is __not__ our efficiency! We have simply divided the **reconstructed** electron $P_{X}$ by its true value for MC electrons that have reconstructed in our detector. We used the PDG code for electrons, 11, to pick out electrons from our MC particles branch. There are a few caveats to actually calculating our efficiency. This just demonstrates how we can divide histograms in python.
+
+For our efficiency. We need to compare our thrown particles of a given type to our detected particles of a given type.
+
+- When we do our division, we should do this for the same quantity in each case (i.e. compare the true and values to each other).
+  - How can you select the thrown MC Particles of a specific type?
+  - How can you select the particles we detected of a specific type?
+    - Note, this does not mean we need our reconstructed values.
+
+> Exercise:
+> For all **scattered electrons**, **charged pions** and **protons** in our events:
+> - Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
+> - Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
+> - Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
+{: .challenge}
+
+> Hint:
+> Getting the right arrays here is a bit tricky. We want three different things -
+> - Our MC particles (truth information), regardless of whether we have a matching track or not. This is just:
+>   - "MCPartBr['MCParticles.QUANTITY']"[SELECTION_CUTS] - We do not need to index this by the SimID
+> - Our MC particles (truth information) that do have a matching reconstructed track, we just need to index these by the SimID:
+>   - "MCPartBr['MCParticles.QUANTITY'][SimID]" - We can then apply selection criteria
+> - The Reconstructed particle information for events which correspond to a real MC track, we just need to index these by our RecID:
+>   - "ReconChPartBr['ReconstructedChargedParticles.QUANTITY'][RecID]"
+{: .callout}
+
+> 2D Histograms
+> We can make 2D histograms in python via -
+> ```python
+> plt.hist2d(np.asarray(ak.flatten(Quantity1)), np.asarray(ak.flatten(Quantity2)), bins=[NBinsX,NBinsY], range=[[XLow,XHigh],[YLow,YHigh]], cmin=1)
+> cb = plt.colorbar()
+> cb.set_label('Counts/bin')
+> ```
+> We can set titles etc as usual. Simply swap on the bin values and ranges, as well as the quantities as needed. Make sure your arrays contain equal numbers of entries.
+{: .callout}
+
+### Resolution Analysis
+
+> Hint:
+> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#pythonicresolutionanalysispy) if you're having trouble putting things in the right place.
+{: .callout}
+
+Next, we will look at track momentum resolution. The resolution tells us how well we can reconstruct our "true" value. For example. we might want to know how well we can determine the energy of our particles. As such, we could calculate the energy resolution. Our resolution is simply -
+
+- (Reconstructed - True)/True
+
+This is often expressed as a percentage. So, for example, say we detect a particle and determine its energy to be 0.95 GeV. In reality, the energy was 1 GeV. As such, our energy resolution for this particle is -
+
+- 0.95-1/1 = -5%
+
+Let's see a quick example of this calculation for a a quantity -
+
+```python
+ElecMomXRes = ((RecPartBr["ReconstructedChargedParticles.momentum.x"][RecID][BoolElec]-MCPartBr["MCParticles.momentum.x"][SimID][BoolElec])/MCPartBr["MCParticles.momentum.x"][SimID][BoolElec])*100 # Multiply by 100 to get this as a %
+plt.hist(ak.flatten(ElecMomXRes), bins=50, range=(-25,25),alpha=0.5, color=kP6[2])
+plt.savefig("TestOut5.png", dpi = (160))
+```
+
+Here we've calculated and plotted the X momentum resolution for our charged tracks that correspond to true electrons in our sample. Whilst this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
+
+> Exercise:
+> For all **scattered electrons**, **charged pions** and **protons** in our events:
+> - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity.
+{: .challenge}
+
+> Question:
+> - Will the histogram ranges for each particle species be the same?
+> - Could we present the resolution values in a more understandable way?
+{: .callout}
+
+## Sample Analysis with Python/uproot - ROOT/Pyroot Style: Track Efficiency and Resolution
 
 > Comment:
 > Despite using python/uproot, I have written these in a very "ROOT"/C way. Uproot converts our branches to arrays, so you can manipulate them in various fun ways using more pythonic methods if you want.
-> Shujie Li utilises a more pythonic approach in the [Understanding the Simulation Output](https://eic.github.io/tutorial-understanding-sim-output/) tutorial. You can see some examples of this in the [Jupyter Notebook](https://colab.research.google.com/drive/1Wn9guq1aIJ8RUW36HHTkeR7-iPPcoBOw?usp=sharing) Shujie set up for that tutorial. 
-> I also created a version of this tutorial that utilises similar methods as part of the HSF-India/ePIC workshop, see [this notebook](https://github.com/eic/HSF-India/blob/main/Analysing_Output/AnalysingOuput_Standalone.ipynb), which can be executed in Google Collab as an example. Remember to update the input file to a more recent one.
+> See the previous method for an example of this approach.
 {: .callout}
 
 If you are more familiar with python than you are with C/C++, you might find that using a python based root macro is easier for you. Outlined below are sample blocks of code for creating and running a python based analysis script.
@@ -365,6 +660,7 @@ Insert this block of code appropriately. We should now have everything we need t
 {: .callout}
 
 > Exercise:
+> For all **scattered electrons**, **charged pions** and **protons** in our events:
 > - Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
 > - Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
 > - Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
@@ -392,8 +688,8 @@ trackMomentumRes = ROOT.TH1D("trackMomentumRes","Track Momentum Resolution",2000
 Remember to write this histogram to the output file too! While this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
 
 > Exercise:
+> For all **scattered electrons**, **charged pions** and **protons** in our events:
 > - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity.
-> - Break resolution plots down by particle species.
 {: .challenge}
 
 > Question:

@@ -635,11 +635,206 @@ void HelloRoot()
 ```
 Please consult the README and script comments for further instructions.
 
-## Python Uproot Scripts
+## Python Uproot Scripts - Pythonic Versions
+
+Some template scripts that utilise an python array based approach are included below. For some examples of using uproot to access information in .root files, please consult (this notebook)[https://github.com/eic/HSF-India/blob/main/Working_With_Uproot/Working_With_Uproot_Standalone.ipynb] which can be run in Google Collab.
+
+### Pythonic_EfficiencyAnalysis.py
+
+Create a file called `EfficiencyAnalysis.py` and copy in the code below to get started on the efficiency analysis exercise. Note that you will need to correctly specify your input file path in the variable `fname`. Note that some example code to process the division of two histograms is included as a commented section at the end of this example.
+
+```python
+#! /usr/bin/python
+# Import some relevant packages
+import uproot as up
+import awkward as ak
+import numpy as np
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.ticker as ticker
+import matplotlib.cm as cm
+import matplotlib.pylab as plt
+import scipy, vector, os
+from XRootD import client
+from scipy import stats
+from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
+from matplotlib import colors as colours
+
+# Set some matplot lib features
+plt.rcParams['ytick.direction'] = 'in'
+plt.rcParams['xtick.direction'] = 'in'
+plt.rcParams['xaxis.labellocation'] = 'right'
+plt.rcParams['yaxis.labellocation'] = 'top'
+plt.rcParams["figure.figsize"] = (16,9)
+kP6 = ['#5790fc','#f89c20','#e42536','#964a8b','#9c9ca1','#7a21dd'] # Set ROOT kP6 colours - see https://root.cern.ch/doc/v636/classTColor.html
+
+# Open our file
+fname = "INPUT_FILE.root"
+if os.path.isfile(fname):
+    file=up.open(fname)
+else:
+    print("Error opening file - ", fname, " check your fname variable!")
+
+# Open the tree
+tree = file['events']
+
+# Convert relevant branches to arrays
+MCPartBr = tree["MCParticles"].arrays()
+RecoAssocRec = tree['_ReconstructedChargedParticleAssociations_rec'].arrays()
+RecoAssocSim = tree['_ReconstructedChargedParticleAssociations_sim'].arrays()
+ReconChPartBr = tree["ReconstructedChargedParticles"].arrays()
+
+RecID=RecoAssocRec['_ReconstructedChargedParticleAssociations_rec.index'] # Array of reconstructed IDs
+SimID=RecoAssocSim['_ReconstructedChargedParticleAssociations_sim.index'] # Array of simulated IDs
+
+# Create some filters, anything with [SimID] or [RecID] will index the event by the associations. This means we will only retain events with a matching truth particle/matching reconstructed particle
+BoolMatch=(MCPartBr["MCParticles.PDG"][SimID])==(ReconChPartBr["ReconstructedChargedParticles.PDG"][RecID]) # Use simulated or reconstructed IDs as indices, this checks if the pdg between each array matches
+BoolChargeTrack = ((abs(MCPartBr["MCParticles.charge"])!=0) & (MCPartBr["MCParticles.generatorStatus"]==1))
+BoolChargeTrackMatch = ((abs(MCPartBr["MCParticles.charge"][SimID])!=0) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1))
+BoolElec=((abs(MCPartBr["MCParticles.PDG"])==11) & (MCPartBr["MCParticles.generatorStatus"]==1))
+BoolMuon=((abs(MCPartBr["MCParticles.PDG"])==13) & (MCPartBr["MCParticles.generatorStatus"]==1))
+BoolPion=((abs(MCPartBr["MCParticles.PDG"])==211) & (MCPartBr["MCParticles.generatorStatus"]==1)) # Use abs to include both positive and negative pions
+BoolKaon=((abs(MCPartBr["MCParticles.PDG"])==321) & (MCPartBr["MCParticles.generatorStatus"]==1)) # Use abs to include both positive and negative kaons
+BoolProton=((abs(MCPartBr["MCParticles.PDG"])==2212) & (MCPartBr["MCParticles.generatorStatus"]==1)) # Use abs to include both positive and negative protons
+
+# Define some doubles
+ElecMass = 511*(10**-6) # Electron mass in GeV
+
+# Convert some branches into arrays of vectors
+MC_Parts = vector.zip({'px': MCPartBr["MCParticles.momentum.x"], 'py': MCPartBr["MCParticles.momentum.y"], 'pz': MCPartBr["MCParticles.momentum.z"]})
+Rec_Parts = vector.zip({'px': ReconChPartBr["ReconstructedChargedParticles.momentum.x"], 'py': ReconChPartBr["ReconstructedChargedParticles.momentum.y"], 'pz': ReconChPartBr["ReconstructedChargedParticles.momentum.z"], 'E':ReconChPartBr["ReconstructedChargedParticles.energy"]})
+
+# Determine the energy for a few MC particles of specific types
+MCEnerElec = np.sqrt(MC_Parts[BoolElec].p**2 + ElecMass**2)
+
+# Calculate some additional quantities which are differences between true and reconstructed values for MC particles with a matched reconstructed track
+DeltaEta = MC_Parts[SimID][BoolChargeTrackMatch].eta - Rec_Parts[RecID][BoolChargeTrackMatch].eta
+DeltaPhi = MC_Parts[SimID][BoolChargeTrackMatch].phi - Rec_Parts[RecID][BoolChargeTrackMatch].phi
+DeltaR = np.sqrt(DeltaEta**2 + DeltaPhi**2)
+
+# Plot some quantities as one image
+fig, axs = plt.subplots(2,2, tight_layout=True) # Ironically, this makes things *less* tight
+axs[-1, -1].axis('off') # Don't draw any blank subfigs
+axs[0,0].hist(ak.flatten(MC_Parts[BoolChargeTrack].eta), bins=100, range=(-5,5),alpha=0.5, color=kP6[1]) # Plot the MC eta values for all charged particles at an MC level
+axs[0,0].set_title(r"$\eta_{MC}$ of Charged  Particles")
+axs[0,0].set(xlabel=r'$\eta_{MC}$', ylabel=r'# Entries / 0.1')
+axs[0,1].hist(ak.flatten(MC_Parts[SimID][BoolChargeTrackMatch].eta), bins=100, range=(-5,5),alpha=0.5, color=kP6[1]) # Plot the MC eta values for all charged particles at an MC level that have a matching reconstructed track
+axs[0,1].set_title(r"$\eta_{MC}$ of Charged  Particles")
+axs[0,1].set(xlabel=r'$\eta_{MC}$', ylabel=r'# Entries / 0.1')
+axs[1,0].hist(ak.flatten(DeltaR), bins=5000, range=(0,5),alpha=0.5, color=kP6[1]) # Plot one of our calculated quantities
+axs[1,0].set_title(r"$\Delta R$ of Matched Charged Particles")
+axs[1,0].set(xlabel=r'$\Delta R$$', ylabel=r'# Entries / 0.001')
+plt.savefig("EfficiencyAnalysis_Out.png", dpi = (160))
+
+# Commented out, but to divide histograms we can do the following, just put the array we want to plot as the histo in place of Quantity
+#MCHist = np.histogram(ak.flatten(Quantity), bins=100, range=(0,25))
+#RecHist = np.histogram(ak.flatten(Quantity), bins=100, range=(0,25))
+#with np.errstate(divide='ignore'):
+#    Division = RecHist[0] / MCHist[0]
+#Division = np.nan_to_num(Division,nan=0, posinf = 0)
+#Bin_Edges=MCHist[1]
+#Bars = 0.5 * (Bin_Edges[1:] + Bin_Edges[:-1])
+#BarWidth=Bars[1]-Bars[0]
+#plt.bar(Bars, Division, width=BarWidth, alpha=0.5, color='kP6[0]')
+```
+
+### Pythonic_ResolutionAnalysis.py
+
+Create a file called `ResolutionAnalysis.py` and copy in the code below to get started on the efficiency analysis exercise. Note that you will need to correctly specify your input file path in the variable `fname`.
+
+```python
+#! /usr/bin/python
+# Import some relevant packages
+import uproot as up
+import awkward as ak
+import numpy as np
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.ticker as ticker
+import matplotlib.cm as cm
+import matplotlib.pylab as plt
+import scipy, vector, os
+from XRootD import client
+from scipy import stats
+from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
+from matplotlib import colors as colours
+
+# Set some matplot lib features
+plt.rcParams['ytick.direction'] = 'in'
+plt.rcParams['xtick.direction'] = 'in'
+plt.rcParams['xaxis.labellocation'] = 'right'
+plt.rcParams['yaxis.labellocation'] = 'top'
+plt.rcParams["figure.figsize"] = (16,9)
+kP6 = ['#5790fc','#f89c20','#e42536','#964a8b','#9c9ca1','#7a21dd'] # Set ROOT kP6 colours - see https://root.cern.ch/doc/v636/classTColor.html
+
+# Open our file
+fname = "INPUT_FILE.root"
+if os.path.isfile(fname):
+    file=up.open(fname)
+else:
+    print("Error opening file - ", fname, " check your fname variable!")
+
+# Open the tree
+tree = file['events']
+
+# Convert relevant branches to arrays
+MCPartBr = tree["MCParticles"].arrays()
+RecoAssocRec = tree['_ReconstructedChargedParticleAssociations_rec'].arrays()
+RecoAssocSim = tree['_ReconstructedChargedParticleAssociations_sim'].arrays()
+ReconChPartBr = tree["ReconstructedChargedParticles"].arrays()
+
+RecID=RecoAssocRec['_ReconstructedChargedParticleAssociations_rec.index'] # Array of reconstructed IDs
+SimID=RecoAssocSim['_ReconstructedChargedParticleAssociations_sim.index'] # Array of simulated IDs
+
+# Create some filters, anything with [SimID] or [RecID] will index the event by the associations. This means we will only retain events with a matching truth particle/matching reconstructed particle
+BoolChargeTrack = ((abs(MCPartBr["MCParticles.charge"])!=0) & (MCPartBr["MCParticles.generatorStatus"]==1))
+BoolChargeTrackMatch = ((abs(MCPartBr["MCParticles.charge"][SimID])!=0) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1))
+BoolElec=((abs(MCPartBr["MCParticles.PDG"])==11) & (MCPartBr["MCParticles.generatorStatus"]==1))
+
+# Define some doubles
+ElecMass = 511*(10**-6) # Electron mass in GeV
+
+# Convert some branches into arrays of vectors
+MC_Parts = vector.zip({'px': MCPartBr["MCParticles.momentum.x"], 'py': MCPartBr["MCParticles.momentum.y"], 'pz': MCPartBr["MCParticles.momentum.z"]})
+Rec_Parts = vector.zip({'px': ReconChPartBr["ReconstructedChargedParticles.momentum.x"], 'py': ReconChPartBr["ReconstructedChargedParticles.momentum.y"], 'pz': ReconChPartBr["ReconstructedChargedParticles.momentum.z"], 'E':ReconChPartBr["ReconstructedChargedParticles.energy"]})
+
+# Determine the energy for a few MC particles of specific types
+MCEnerElec = np.sqrt(MC_Parts[BoolElec].p**2 + ElecMass**2)
+
+# Calculate some additional quantities which are differences between true and reconstructed values for MC particles with a matched reconstructed track
+DeltaEta = MC_Parts[SimID][BoolChargeTrackMatch].eta - Rec_Parts[RecID][BoolChargeTrackMatch].eta
+DeltaPhi = MC_Parts[SimID][BoolChargeTrackMatch].phi - Rec_Parts[RecID][BoolChargeTrackMatch].phi
+DeltaP = MC_Parts[SimID][BoolChargeTrackMatch].p - Rec_Parts[RecID][BoolChargeTrackMatch].p
+DeltaR = np.sqrt(DeltaEta**2 + DeltaPhi**2)
+ResP = ((Rec_Parts[RecID][BoolChargeTrackMatch].p - MC_Parts[SimID][BoolChargeTrackMatch].p)/MC_Parts[SimID][BoolChargeTrackMatch].p ) # Momentum resolution as a percentage
+# Plot some quantities as one image
+fig, axs = plt.subplots(2,3, tight_layout=True) # Ironically, this makes things *less* tight
+axs[-1, -1].axis('off') # Don't draw any blank subfigs
+axs[0,0].hist(ak.flatten(DeltaEta), bins=100, range=(-0.25,0.25),alpha=0.5, color=kP6[1]) # Plot the difference between true and reconstructed eta
+axs[0,0].set_title(r"$\Delta \eta$ of Matched Charged Particles")
+axs[0,0].set(xlabel=r'$\Delta \eta$', ylabel=r'# Entries / 0.005')
+axs[0,1].hist(ak.flatten(DeltaPhi), bins=200, range=(-0.2,0.2),alpha=0.5, color=kP6[1]) # Plot the difference between true and reconstructed phi
+axs[0,1].set_title(r"$\Delta \phi$ of Matched Charged Particles")
+axs[0,1].set(xlabel=r'$\Delta \phi$', ylabel='# Entries / 0.002')
+axs[0,2].hist(ak.flatten(DeltaR), bins=300, range=(0,0.3),alpha=0.5, color=kP6[1]) # Plot the difference between true and reconstructed R
+axs[0,2].set_title(r"$\Delta R$ of Matched Charged Particles")
+axs[0,2].set(xlabel=r'$\Delta R$', ylabel=r'# Entries / 0.003')
+axs[1,0].hist(ak.flatten(DeltaP), bins=200, range=(-10,10),alpha=0.5, color=kP6[1]) # Plot the difference between true and reconstructed momentum
+axs[1,0].set_title(r"$\Delta P$ of Matched Charged Particles")
+axs[1,0].set(xlabel=r'$\Delta \eta$', ylabel=r'# Entries / 0.1 GeV/c')
+axs[1,1].hist(ak.flatten(ResP), bins=400, range=(-2,2),alpha=0.5, color=kP6[1]) # Plot the momentum resolution
+axs[1,1].set_title(r"Momentum Resolution of Matched Charged Particles")
+axs[1,1].set(xlabel=r'$(P_{Rec} - P_{MC})/P_{MC}$', ylabel=r'# Entries / 0.01')
+plt.savefig("ResolutionAnalysis_Out.png", dpi = (160))
+```
+
+## Python Uproot Script - C/ROOT Style (Slow, not recommended!)
 
 ### EfficiencyAnalysis.py
 
-Create a file called `EfficiencyAnalysis.py` and copy in the code below to get started on the resolution analysis exercise. Note that you will need to correctly specify your input file path in the variable `infile`.
+Create a file called `EfficiencyAnalysis.py` and copy in the code below to get started on the efficiency analysis exercise. Note that you will need to correctly specify your input file path in the variable `infile`.
 
 ```python
 #! /usr/bin/python
