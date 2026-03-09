@@ -412,7 +412,7 @@ We can filter and index this like any other array. Creating 3 or 4-vectors in th
 
   - *Pseudorapidity* - Eta
   - *Polar angle* - Theta they make wrt the origin (in the lab frame, our bunch crossing point) - *Note, this is in radians by default*
-  - *Transverse momentum - P_{T}
+  - *Transverse momentum - PT
   - ...
 
 ```python
@@ -429,18 +429,18 @@ i.e.
 
 90%
 
-This might be a useful figure. However, if we are evaluating the performance of a detector, it might be useful to consider the efficiency as a function of another quantity, for example *eta* or *p* What this will tell us is how likely we are to detect particles incident on certain areas of the detector (or with a certain momentum for instance). We should not really expect these distributions to be completely flat.
+This might be a useful figure. However, if we are evaluating the performance of a detector, it might be useful to consider the efficiency as a function of another quantity, for example *eta* or *p*. What this will tell us is how likely we are to detect particles incident on certain areas of the detector (or with a certain momentum for instance). We should not really expect these distributions to be completely flat.
 
 In terms of our code, we can straightforwardly determine this by dividing some histograms. We can divide histograms via -
 
 ```python
 RecPartBr = tree["ReconstructedChargedParticles"].arrays()
 BoolElec=((MCPartBr["MCParticles.PDG"][SimID]==11) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1)) # Define a filter to select out electrons which reconstruct in our detector
-MCHist = np.histogram(ak.flatten(MCPartBr["MCParticles.momentum.x"][BoolElec]), bins=100, range=(0,25))
-RecHist = np.histogram(ak.flatten(RecPartBr["ReconstructedChargedParticles.momentum.x"][RecID][BoolElec]), bins=100, range=(0,25))
+MCHist = np.histogram(ak.flatten(MCPartBr["MCParticles.momentum.x"][BoolElec]), bins=100, range=(0,25)) # Create a hisogram of x-momenta for MC particles that are electrons
+RecHist = np.histogram(ak.flatten(RecPartBr["ReconstructedChargedParticles.momentum.x"][RecID][BoolElec]), bins=100, range=(0,25)) # Create a histogram of reconstructed x-momenta values for particles that are actual MC electrons that have reconstructed
 with np.errstate(divide='ignore'):
     Division = RecHist[0] / MCHist[0]
-Division = np.nan_to_num(Division,nan=0, posinf = 0)
+Division = np.nan_to_num(Division,nan=0, posinf = 0) # Convert any nan or pos inf from /0 (empty bins) to 0
 Bin_Edges=MCHist[1]
 Bars = 0.5 * (Bin_Edges[1:] + Bin_Edges[:-1])
 BarWidth=Bars[1]-Bars[0]
@@ -505,7 +505,7 @@ plt.hist(ak.flatten(ElecMomXRes), bins=50, range=(-25,25),alpha=0.5, color=kP6[2
 plt.savefig("TestOut5.png", dpi = (160))
 ```
 
-Here we've calculated and plotted the X momentum, P_{X}, resolution for our charged tracks that correspond to true electrons in our sample. Whilst this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
+Here we've calculated and plotted the X momentum resolution for our charged tracks that correspond to true electrons in our sample. Whilst this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
 
 > Exercise:
 > For all **scattered electrons**, **charged pions** and **protons** in our events:
