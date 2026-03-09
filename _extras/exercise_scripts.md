@@ -667,7 +667,7 @@ plt.rcParams['xtick.direction'] = 'in'
 plt.rcParams['xaxis.labellocation'] = 'right'
 plt.rcParams['yaxis.labellocation'] = 'top'
 plt.rcParams["figure.figsize"] = (16,9)
-kP6 = ['#5790fc','#f89c20','e42536','964a8b','#9c9ca1','#7a21dd'] # Set ROOT kP6 colours - see https://root.cern.ch/doc/v636/classTColor.html
+kP6 = ['#5790fc','#f89c20','#e42536','#964a8b','#9c9ca1','#7a21dd'] # Set ROOT kP6 colours - see https://root.cern.ch/doc/v636/classTColor.html
 
 # Open our file
 fname = "INPUT_FILE.root"
@@ -767,7 +767,7 @@ plt.rcParams['xtick.direction'] = 'in'
 plt.rcParams['xaxis.labellocation'] = 'right'
 plt.rcParams['yaxis.labellocation'] = 'top'
 plt.rcParams["figure.figsize"] = (16,9)
-kP6 = ['#5790fc','#f89c20','e42536','964a8b','#9c9ca1','#7a21dd'] # Set ROOT kP6 colours - see https://root.cern.ch/doc/v636/classTColor.html
+kP6 = ['#5790fc','#f89c20','#e42536','#964a8b','#9c9ca1','#7a21dd'] # Set ROOT kP6 colours - see https://root.cern.ch/doc/v636/classTColor.html
 
 # Open our file
 fname = "INPUT_FILE.root"
