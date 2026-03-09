@@ -227,7 +227,7 @@ While this plot will give us a sense of what the tracking resolution is, we don'
 
 ## Sample Analysis with Python/uproot - Pythonic Method: Track Efficiency and Resolution
 
-> For some examples of using uproot to access information in .root files, please consult (this notebook)[https://github.com/eic/HSF-India/blob/main/Working_With_Uproot/Working_With_Uproot_Standalone.ipynb] which can be run in Google Collab.
+> For some examples of using uproot to access information in .root files, please consult [this notebook](https://github.com/eic/HSF-India/blob/main/Working_With_Uproot/Working_With_Uproot_Standalone.ipynb) which can be run in Google Collab.
 {: .callout}
 
 If you are more familiar with python than you are with C/C++, you might find that using a python based root macro is easier for you. Outlined below are sample blocks of code for creating and running a python based analysis script.
@@ -286,26 +286,25 @@ Make sure you change the input file name to match whatever you saved your file a
 
 Note that we are using the module uproot to access the data here. See [further documentation here](https://masonproffitt.github.io/uproot-tutorial/03-trees/index.html). You may also need some of the other included packages too.
 
-> We will use uproot a little bit like we use the TTreeReader in the other example. We can define the branches we want and assign them to arrays with uproot.
-> We can do this via:
->  ```python
-> # Open input file and define branches we want to look at with uproot
-> fname = "INPUT_FILE.root" # Your file name
-> file=up.open(fname)
-> tree = file['events']
-> # Convert relevant branches to arrays
-> MCPartBr = tree["MCParticles"].arrays()
-> # If we want, convert a specific branch element to an array
-> partPdg = tree["MCParticles.PDG"].array()
-> ```
-> Uproot effectively takes the information in the tree, and turns it into an array. We can then access and manipulate this array in the same way that we can with any array in python.
->
-> Note that if you are using an older version of uproot (v2.x.x), you will need to access the branches slightly differently via -
+We will use uproot a little bit like we use the TTreeReader in the other example. We can define the branches we want and assign them to arrays with uproot.
+We can do this via:
+```python
+# Open input file and define branches we want to look at with uproot
+fname = "INPUT_FILE.root" # Your file name
+file=up.open(fname)
+tree = file['events']
+# Convert relevant branches to arrays
+MCPartBr = tree["MCParticles"].arrays()
+# If we want, convert a specific branch element to an array
+partPdg = tree["MCParticles.PDG"].array()
+```
+Uproot effectively takes the information in the tree, and turns it into an array. We can then access and manipulate this array in the same way that we can with any array in python.
+
+> Warning: Note that if you are using an older version of uproot (v2.x.x), you will need to access the branches slightly differently via -
 > ```python
 > partGenStat = tree.array("MCParticles.generatorStatus")
 > ```
 {: .callout}
-
 Once you create your script and add the template code in, you can try running it with``python3 trackAnalysis.py`` or ``python trackAnalysis.py``. At the moment, it shouldn't *do* anything, but we can change that!
 
 Try assigning a quantity to an array, such as the MC particles PDG values above and printing some values of that array. Or, perhaps try printing the length of that array. We could also quickly make a plot of the values with -
@@ -364,7 +363,7 @@ plt.savefig("TestOut3.png", dpi = (160))
 ### Efficiency Analysis
 
 > Hint:
-> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#pythonicefficiencyanalysispy) if you're having trouble putting things in the right place.
+> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#pythonic_efficiencyanalysispy) if you're having trouble putting things in the right place.
 {: .callout}
 
 Our approach here is a bit different to the TTreeReader example, but we will still need to utilise our simulation and reconstruction association IDs. We can access them via -
@@ -411,9 +410,9 @@ MC_Parts = vector.zip({'px': MCPartBr["MCParticles.momentum.x"], 'py': MCPartBr[
 ```
 We can filter and index this like any other array. Creating 3 or 4-vectors in this way is useful as we can then use various functions to extract information from our vectors. For example, we can easily get -
 
-  - *Pseudorapidity*, $\\eta$
-  - *Polar angle*, $\\theta$ they make wrt the origin (in the lab frame, our bunch crossing point) - *Note, this is in radians by default*
-  - *Transverse momentum*, $P_{T}$
+  - *Pseudorapidity* - Eta
+  - *Polar angle* - Theta they make wrt the origin (in the lab frame, our bunch crossing point) - *Note, this is in radians by default*
+  - *Transverse momentum - P_{T}
   - ...
 
 ```python
@@ -430,7 +429,7 @@ i.e.
 
 90%
 
-This might be a useful figure. However, if we are evaluating the performance of a detector, it might be useful to consider the efficiency as a function of another quantity, for example $\\eta$ or $P$ What this will tell us is how likely we are to detect particles incident on certain areas of the detector (or with a certain momentum for instance). We should not really expect these distributions to be completely flat.
+This might be a useful figure. However, if we are evaluating the performance of a detector, it might be useful to consider the efficiency as a function of another quantity, for example *eta* or *p* What this will tell us is how likely we are to detect particles incident on certain areas of the detector (or with a certain momentum for instance). We should not really expect these distributions to be completely flat.
 
 In terms of our code, we can straightforwardly determine this by dividing some histograms. We can divide histograms via -
 
@@ -449,7 +448,7 @@ plt.bar(Bars, Division, width=BarWidth, alpha=0.75, color=kP6[2])
 plt.savefig("TestOut4.png", dpi = (160))
 ```
 
-**Important** - What we have create here is __not__ our efficiency! We have simply divided the **reconstructed** electron $P_{X}$ by its true value for MC electrons that have reconstructed in our detector. We used the PDG code for electrons, 11, to pick out electrons from our MC particles branch. There are a few caveats to actually calculating our efficiency. This just demonstrates how we can divide histograms in python.
+**Important** - What we have create here is __not__ our efficiency! We have simply divided the **reconstructed** electron P_{X} by its true value for MC electrons that have reconstructed in our detector. We used the PDG code for electrons, 11, to pick out electrons from our MC particles branch. There are a few caveats to actually calculating our efficiency. This just demonstrates how we can divide histograms in python.
 
 For our efficiency. We need to compare our thrown particles of a given type to our detected particles of a given type.
 
@@ -475,8 +474,7 @@ For our efficiency. We need to compare our thrown particles of a given type to o
 >   - "ReconChPartBr['ReconstructedChargedParticles.QUANTITY'][RecID]"
 {: .callout}
 
-> 2D Histograms
-> We can make 2D histograms in python via -
+> 2D Histograms: We can make 2D histograms in python via -
 > ```python
 > plt.hist2d(np.asarray(ak.flatten(Quantity1)), np.asarray(ak.flatten(Quantity2)), bins=[NBinsX,NBinsY], range=[[XLow,XHigh],[YLow,YHigh]], cmin=1)
 > cb = plt.colorbar()
@@ -488,7 +486,7 @@ For our efficiency. We need to compare our thrown particles of a given type to o
 ### Resolution Analysis
 
 > Hint:
-> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#pythonicresolutionanalysispy) if you're having trouble putting things in the right place.
+> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#pythonic_resolutionanalysispy) if you're having trouble putting things in the right place.
 {: .callout}
 
 Next, we will look at track momentum resolution. The resolution tells us how well we can reconstruct our "true" value. For example. we might want to know how well we can determine the energy of our particles. As such, we could calculate the energy resolution. Our resolution is simply -
@@ -507,7 +505,7 @@ plt.hist(ak.flatten(ElecMomXRes), bins=50, range=(-25,25),alpha=0.5, color=kP6[2
 plt.savefig("TestOut5.png", dpi = (160))
 ```
 
-Here we've calculated and plotted the X momentum resolution for our charged tracks that correspond to true electrons in our sample. Whilst this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
+Here we've calculated and plotted the X momentum, P_{X}, resolution for our charged tracks that correspond to true electrons in our sample. Whilst this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
 
 > Exercise:
 > For all **scattered electrons**, **charged pions** and **protons** in our events:
