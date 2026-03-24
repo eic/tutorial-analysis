@@ -1,21 +1,19 @@
 ---
 title: "Introduction"
-teaching: 15
+teaching: 5
 exercises: 5
 questions:
 - "How do I locate and access the simulation output?"
 objectives:
-- "Understand how the simulation output is organized"
-- "Know how to access the simulation output using Jefferson Lab xrootd"
+- "Understand how the simulation output is organised."
+- "Download a file for the next step of the tutorial."
 keypoints:
-- "Use `xrdfs` from within the eic-shell to browse available files from simulations campaigns."
 - "Use `xrdcp` from within eic-shell to copy files to your local environment."
-- "Within eic-shell, you can also stream files directly in your root macros."
 ---
 
 More detailed information on the simulation productions, including the information presented below, can be found on the [Simulation Production Campaign Website](https://eic.github.io/epic-prod/). 
 
-**Note that as of March 2026, Rucio will soon become the default and preferred method to browse and find files and datasets. A tutorial on using Rucio for this purpose will be available soon**
+**Note that as of March 2026, Rucio will soon become the default and preferred method to browse and find files and datasets. A tutorial on using Rucio for this purpose will be presented soon, please see [here](https://eic.github.io/tutorial-file-access/) for the latest version of this tutorial.**
 
 ## Simulation Files Organization
 
@@ -34,53 +32,38 @@ Most users will interact with the files in the RECO directory and that is what w
 > **Where possible, use the latest campaign available.**
 {: .callout}
 
-## Access Simulation from Jefferson Lab xrootd
-
-The prefered method for browsing the simulation output is to use xrootd from within the eic-shell. To browse the directory structure and exit, one can run the commands:
-```console
-./eic-shell
-xrdfs root://dtn-eic.jlab.org
-ls /volatile/eic/EPIC/RECO/26.02.0
-exit
-```
-It is also possible to copy a file and open it locally using the `xrdcp` command:
-```console
-./eic-shell
-xrdcp root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/26.02.0/path-to-file .
-exit
-```
-
-Files can also be copied locally by replacing `ls` with `cp`.
-
-## Streaming Files
-
-It is also possible to open a file directly in ROOT if you have xrootd installed too. Note that the following command should be executed after opening root and `TFile::Open()` should be used:
-```console
-
-auto f = TFile::Open("root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/path-to-file")
-```
-
-## Reminder - Download a file for the next step!
+## Download a file for the next step!
 
 We will need a file to analyse going forward, if you have not done so, download a file now!
 
 Grab a file from -
 
 ```console
-/volatile/eic/EPIC/RECO/26.02.0/epic_craterlake/DIS/NC/18x275/minQ2=10/
+epic:/RECO/26.02.0/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10/
 ```
+
+> Reminder, you can check the *content* of files within this dataset via:
+> ```bash
+> rucio did content list --short epic:/RECO/26.02.0/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10
+> ```
+> and check the location of files in the dataset via:
+> ```bash
+> rucio replica list file --protocols root --pfns --rses isopenaccess epic:/RECO/26.02.0/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10
+> ```
+{: .callout}
+
 For example -
 
 ```console
-xrdcp root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/26.02.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_5.0001.eicrecon.edm4eic.root ./
+xrdcp root://dtn-eic.jlab.org:1094//volatile/eic/EPIC//RECO/26.02.0/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10/BeAGLE1.03.02-1.2_DIS_eHe3_10x110_q2_2to10_ab.0001.eicrecon.edm4eic.root
 ```
 Note that the ./ at the end is the target location to copy to. Change this as desired.
 
 > Note that we can also specify a different filename to copy to as we could with a normal cp command. You might want to do this as the filename is a little cumbersome.
-> I called mine NC_DIS_18x275_Feb26Campaign.root, just replace ./ with your file name of choice.
+> I called mine `3He_10x110_Feb26Campaign.root`, just replace ./ with your file name of choice.
 {: .callout}
 
-You can also stream the file if you prefer, just copy the path of the file above. You will need to modify the scripts later in the tutorial accordingly to account for this.
+You can also stream the file if you prefer, just copy the path of the file above. You will need to modify the scripts later in the tutorial accordingly to account for this. Check the [File Access]([Simulation Production Campaign Website](https://eic.github.io/epic-prod/) tutorial for information and examples on how to do this.
 
 > Typically, if you are processing more than a handful of files, it is probably best to stream files from the server rather than downloading a local copy of all files.
 {: .callout}
