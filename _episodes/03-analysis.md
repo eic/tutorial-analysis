@@ -22,7 +22,13 @@ So far, we have only looked at (and plotted) some information from our file inte
 
 ## Reading the Output Trees
 
-The simulation output trees are "flat" in the sense that there is no event class structure embedded within the tree and no additional libraries are needed to handle the output. Therefore, the end user can simply read the values stored in each branch using whatever method/workflow they are most comfortable with. Examples of several common methods for reading the trees are provided below. We will see a ROOT TTreeReader based example using a ROOT macro and a python/uproot based version. There is also an example using the (relatively) new RDataFrame class of ROOT. During the tutorial, you should try the exercise using whichever language you feel most comfortable with.
+The simulation output trees are "flat" in the sense that there is no event class structure embedded within the tree and no additional libraries are needed to handle the output. Therefore, the end user can simply read the values stored in each branch using whatever method/workflow they are most comfortable with. Examples of several common methods for reading the trees are provided below. We will see a ROOT TTreeReader based example using a ROOT macro and a python/uproot based version. There is also an example using the (relatively) new RDataFrame class of ROOT. During the tutorial, you should try the exercise using whichever language you feel most comfortable with. Five different approaches are currently provieded:
+
+- [TTreeReaders](https://eic.github.io/tutorial-analysis/03-analysis/index.html#sample-analysis-with-root-ttreereader-track-efficiency-and-resolution) - ROOT/C based
+- [Python/Uproot - Pythonic](https://eic.github.io/tutorial-analysis/03-analysis/index.html#sample-analysis-with-pythonuproot---pythonic-method-track-efficiency-and-resolution) - A pythonic based appoach using arrays directly
+- [Python/Uproot - ROOT/Pyroot](https://eic.github.io/tutorial-analysis/03-analysis/index.html#sample-analysis-with-pythonuproot---rootpyroot-style-track-efficiency-and-resolution) - An approach using Pyroot, halfway house between C and python
+- [ROOT RDataFrames](https://eic.github.io/tutorial-analysis/03-analysis/index.html#root-rdataframes) - An approach using RDataFrames
+- [PODIO](https://eic.github.io/tutorial-analysis/03-analysis/index.html#podio---direct-analysis) - An approach using the Plane Old Data IO (PODIO) approach. Use the flat datastructure directly
 
 ## Sample Analysis with ROOT TTreeReader: Track Efficiency and Resolution
 
