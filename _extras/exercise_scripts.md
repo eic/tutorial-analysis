@@ -724,7 +724,7 @@ axs[0,1].set_title(r"$\eta_{MC}$ of matched Charged Particles")
 axs[0,1].set(xlabel=r'$\eta_{MC}$', ylabel=r'# Entries / 0.1')
 axs[1,0].hist(ak.flatten(DeltaR), bins=5000, range=(0,5),alpha=0.5, color=kP6[1]) # Plot one of our calculated quantities
 axs[1,0].set_title(r"$\Delta R$ of Matched Charged Particles")
-axs[1,0].set(xlabel=r'$\Delta R$$', ylabel=r'# Entries / 0.001')
+axs[1,0].set(xlabel=r'$\Delta R$', ylabel=r'# Entries / 0.001')
 plt.savefig("EfficiencyAnalysis_Out.png", dpi = (160))
 
 # Commented out, but to divide histograms we can do the following, just put the array we want to plot as the histo in place of Quantity
