@@ -63,7 +63,7 @@ Note that the ./ at the end is the target location to copy to. Change this as de
 > I called mine `3He_10x110_Feb26Campaign.root`, just replace ./ with your file name of choice.
 {: .callout}
 
-You can also stream the file if you prefer, just copy the path of the file above. You will need to modify the scripts later in the tutorial accordingly to account for this. Check the [File Access]([Simulation Production Campaign Website](https://eic.github.io/epic-prod/) tutorial for information and examples on how to do this.
+You can also stream the file if you prefer, just copy the path of the file above. You will need to modify the scripts later in the tutorial accordingly to account for this. Check the [File Access Tutorial](https://eic.github.io/epic-prod/) for information and examples on how to do this.
 
 > Typically, if you are processing more than a handful of files, it is probably best to stream files from the server rather than downloading a local copy of all files.
 {: .callout}
