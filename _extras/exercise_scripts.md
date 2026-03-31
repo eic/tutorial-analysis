@@ -717,10 +717,10 @@ DeltaR = np.sqrt(DeltaEta**2 + DeltaPhi**2)
 fig, axs = plt.subplots(2,2, tight_layout=True) # Ironically, this makes things *less* tight
 axs[-1, -1].axis('off') # Don't draw any blank subfigs
 axs[0,0].hist(ak.flatten(MC_Parts[BoolChargeTrack].eta), bins=100, range=(-5,5),alpha=0.5, color=kP6[1]) # Plot the MC eta values for all charged particles at an MC level
-axs[0,0].set_title(r"$\eta_{MC}$ of Charged  Particles")
+axs[0,0].set_title(r"$\eta_{MC}$ of Charged Particles")
 axs[0,0].set(xlabel=r'$\eta_{MC}$', ylabel=r'# Entries / 0.1')
 axs[0,1].hist(ak.flatten(MC_Parts[SimID][BoolChargeTrackMatch].eta), bins=100, range=(-5,5),alpha=0.5, color=kP6[1]) # Plot the MC eta values for all charged particles at an MC level that have a matching reconstructed track
-axs[0,1].set_title(r"$\eta_{MC}$ of Charged  Particles")
+axs[0,1].set_title(r"$\eta_{MC}$ of matched Charged Particles")
 axs[0,1].set(xlabel=r'$\eta_{MC}$', ylabel=r'# Entries / 0.1')
 axs[1,0].hist(ak.flatten(DeltaR), bins=5000, range=(0,5),alpha=0.5, color=kP6[1]) # Plot one of our calculated quantities
 axs[1,0].set_title(r"$\Delta R$ of Matched Charged Particles")
