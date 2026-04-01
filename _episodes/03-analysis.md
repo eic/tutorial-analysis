@@ -786,4 +786,4 @@ If you want to avoid ROOT entirely, you can analyse the PODIO files directly in 
 
 See [Wouter's example use cases](https://indico.cern.ch/event/1343984/contributions/5908856/attachments/2842958/4970156/2024-04-23%20-%20Examples%20for%20Data%20Model%20Usage.pdf) from 23/04/24. Wouter shows a few ways in which the PODIO file can be accessed and analysed directly.
 
-** As of March 2026, a full example and version of this method will be provided in the near future.**
+**As of March 2026, a full example and version of this method will be provided in the near future.**
