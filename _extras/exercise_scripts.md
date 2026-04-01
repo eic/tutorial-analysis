@@ -739,6 +739,166 @@ plt.savefig("EfficiencyAnalysis_Out.png", dpi = (160))
 #plt.bar(Bars, Division, width=BarWidth, alpha=0.5, color='kP6[0]')
 ```
 
+<!--
+
+"Complete" exercise example included below
+
+```python
+#! /usr/bin/python
+# Import some relevant packages
+import uproot as up
+import awkward as ak
+import numpy as np
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.ticker as ticker
+import matplotlib.cm as cm
+import matplotlib.pylab as plt
+import scipy, vector, os
+from XRootD import client
+from scipy import stats
+from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
+from matplotlib import colors as colours
+
+# Set some matplot lib features
+plt.rcParams['ytick.direction'] = 'in'
+plt.rcParams['xtick.direction'] = 'in'
+plt.rcParams['xaxis.labellocation'] = 'right'
+plt.rcParams['yaxis.labellocation'] = 'top'
+plt.rcParams["figure.figsize"] = (16,9)
+kP6 = ['#5790fc','#f89c20','#e42536','#964a8b','#9c9ca1','#7a21dd'] # Set ROOT kP6 colours - see https://root.cern.ch/doc/v636/classTColor.html
+
+# Open our file
+fname = "YOUR_INPUT_FILE"
+if os.path.isfile(fname):
+    file=up.open(fname)
+else:
+    print("Error opening file - ", fname, " check your fname variable!")
+
+# Open the tree
+tree = file['events']
+
+# Convert relevant branches to arrays
+MCPartBr = tree["MCParticles"].arrays()
+RecoAssocRec = tree['_ReconstructedChargedParticleAssociations_rec'].arrays()
+RecoAssocSim = tree['_ReconstructedChargedParticleAssociations_sim'].arrays()
+ReconChPartBr = tree["ReconstructedChargedParticles"].arrays()
+
+RecID=RecoAssocRec['_ReconstructedChargedParticleAssociations_rec.index'] # Array of reconstructed IDs
+SimID=RecoAssocSim['_ReconstructedChargedParticleAssociations_sim.index'] # Array of simulated IDs
+
+# Create some filters, anything with [SimID] or [RecID] will index the event by the associations. This means we will only retain events with a matching truth particle/matching reconstructed particle
+BoolMatch=(MCPartBr["MCParticles.PDG"][SimID])==(ReconChPartBr["ReconstructedChargedParticles.PDG"][RecID]) # Use simulated or reconstructed IDs as indices, this checks if the pdg between each array matches
+BoolChargeTrack = ((abs(MCPartBr["MCParticles.charge"])!=0) & (MCPartBr["MCParticles.generatorStatus"]==1))
+BoolChargeTrackMatch = ((abs(MCPartBr["MCParticles.charge"][SimID])!=0) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1))
+BoolElec=((abs(MCPartBr["MCParticles.PDG"])==11) & (MCPartBr["MCParticles.generatorStatus"]==1))
+BoolMuon=((abs(MCPartBr["MCParticles.PDG"])==13) & (MCPartBr["MCParticles.generatorStatus"]==1))
+BoolPion=((abs(MCPartBr["MCParticles.PDG"])==211) & (MCPartBr["MCParticles.generatorStatus"]==1)) # Use abs to include both positive and negative pions
+BoolKaon=((abs(MCPartBr["MCParticles.PDG"])==321) & (MCPartBr["MCParticles.generatorStatus"]==1)) # Use abs to include both positive and negative kaons
+BoolProton=((abs(MCPartBr["MCParticles.PDG"])==2212) & (MCPartBr["MCParticles.generatorStatus"]==1)) # Use abs to include both positive and negative protons
+BoolElecMatch=((MCPartBr["MCParticles.PDG"][SimID]==11) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1))
+BoolPionMatch=((abs(MCPartBr["MCParticles.PDG"][SimID])==211) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1)) # Use abs to include both positive and negative pions
+
+MCStatus = MCPartBr['MCParticles.generatorStatus'] == 1
+MCNegCharge = MCPartBr['MCParticles.charge'] == -1
+MCScElecPDG = MCPartBr['MCParticles.PDG'] == 11
+MCPionPDG = abs(MCPartBr['MCParticles.PDG']) == 211
+
+# We index by the simulation ID to ONLY select events with a matching track
+
+# Define some doubles
+ElecMass = 511*(10**-6) # Electron mass in GeV
+
+# Convert some branches into arrays of vectors
+MC_Parts = vector.zip({'px': MCPartBr["MCParticles.momentum.x"], 'py': MCPartBr["MCParticles.momentum.y"], 'pz': MCPartBr["MCParticles.momentum.z"]})
+Rec_Parts = vector.zip({'px': ReconChPartBr["ReconstructedChargedParticles.momentum.x"], 'py': ReconChPartBr["ReconstructedChargedParticles.momentum.y"], 'pz': ReconChPartBr["ReconstructedChargedParticles.momentum.z"], 'E':ReconChPartBr["ReconstructedChargedParticles.energy"]})
+Rec_Vects = vector.zip({'px': MCPartBr["MCParticles.momentum.x"][SimID], 'py': MCPartBr["MCParticles.momentum.y"][SimID], 'pz': MCPartBr["MCParticles.momentum.z"][SimID]}) 
+MC_ScElec = MC_Parts[MCStatus & MCNegCharge & MCScElecPDG]
+MC_Pions = MC_Parts[MCStatus & MCPionPDG]
+Rec_ScElec = Rec_Vects[BoolElecMatch]
+Rec_Pions = Rec_Vects[BoolPionMatch]
+
+# Determine the energy for a few MC particles of specific types
+MCEnerElec = np.sqrt(MC_Parts[BoolElec].p**2 + ElecMass**2)
+
+# Calculate some additional quantities which are differences between true and reconstructed values for MC particles with a matched reconstructed track
+DeltaEta = MC_Parts[SimID][BoolChargeTrackMatch].eta - Rec_Parts[RecID][BoolChargeTrackMatch].eta
+DeltaPhi = MC_Parts[SimID][BoolChargeTrackMatch].phi - Rec_Parts[RecID][BoolChargeTrackMatch].phi
+DeltaR = np.sqrt(DeltaEta**2 + DeltaPhi**2)
+
+# Plot some quantities as one image
+fig, axs = plt.subplots(2,2, tight_layout=True) # Ironically, this makes things *less* tight
+axs[-1, -1].axis('off') # Don't draw any blank subfigs
+axs[0,0].hist(ak.flatten(MC_Parts[BoolChargeTrack].eta), bins=100, range=(-5,5),alpha=0.5, color=kP6[1]) # Plot the MC eta values for all charged particles at an MC level
+axs[0,0].set_title(r"$\eta_{MC}$ of Charged Particles")
+axs[0,0].set(xlabel=r'$\eta_{MC}$', ylabel=r'# Entries / 0.1')
+axs[0,1].hist(ak.flatten(MC_Parts[SimID][BoolChargeTrackMatch].eta), bins=100, range=(-5,5),alpha=0.5, color=kP6[1]) # Plot the MC eta values for all charged particles at an MC level that have a matching reconstructed track
+axs[0,1].set_title(r"$\eta_{MC}$ of matched Charged Particles")
+axs[0,1].set(xlabel=r'$\eta_{MC}$', ylabel=r'# Entries / 0.1')
+axs[1,0].hist(ak.flatten(DeltaR), bins=5000, range=(0,5),alpha=0.5, color=kP6[1]) # Plot one of our calculated quantities
+axs[1,0].set_title(r"$\Delta R$ of Matched Charged Particles")
+axs[1,0].set(xlabel=r'$\Delta R$', ylabel=r'# Entries / 0.001')
+plt.savefig("EfficiencyAnalysis_Out.png", dpi = (160))
+
+bins_eta=100
+range_eta=(-5,5)
+bins_p=100
+range_p_elec=(0,25)
+range_p_pi=(0,50)
+
+# Make histograms of our scattered electrons and pions - Full truth distributions in P and eta
+MC_ScElec_eta = np.histogram(ak.flatten(MC_ScElec.eta), bins = bins_eta, range= range_eta)
+MC_Pions_eta = np.histogram(ak.flatten(MC_Pions.eta), bins = bins_eta, range= range_eta)
+MC_ScElec_P = np.histogram(ak.flatten(MC_ScElec.p), bins = bins_p, range= range_p_elec)
+MC_Pions_P = np.histogram(ak.flatten(MC_Pions.p), bins = bins_p, range= range_p_pi)
+# Make histograms of our scattered electrons and pions - Truth distributions for particles that reconstructed in P and eta
+Rec_ScElec_eta = np.histogram(ak.flatten(Rec_ScElec.eta), bins = bins_eta, range= range_eta)
+Rec_Pions_eta = np.histogram(ak.flatten(Rec_Pions.eta), bins = bins_eta, range= range_eta)
+Rec_ScElec_P = np.histogram(ak.flatten(Rec_ScElec.p), bins = bins_p, range= range_p_elec)
+Rec_Pions_P = np.histogram(ak.flatten(Rec_Pions.p), bins = bins_p, range= range_p_pi)
+# Divide to get efficiency
+with np.errstate(divide='ignore'):
+    Eff_ScElec_eta = Rec_ScElec_eta[0]/MC_ScElec_eta[0]
+    Eff_Pion_eta = Rec_Pions_eta[0]/MC_Pions_eta[0]
+    Eff_ScElec_P = Rec_ScElec_P[0]/MC_ScElec_P[0]
+    Eff_Pion_P = Rec_Pions_P[0]/MC_Pions_P[0]
+
+Eff_ScElec_eta=np.nan_to_num(Eff_ScElec_eta,nan=0,posinf=0)
+Eff_Pion_eta=np.nan_to_num(Eff_Pion_eta,nan=0,posinf=0)
+Eff_ScElec_P=np.nan_to_num(Eff_ScElec_P,nan=0,posinf=0)
+Eff_Pion_P=np.nan_to_num(Eff_Pion_P,nan=0,posinf=0)
+
+fig, axs = plt.subplots(2,2, tight_layout=True) # Ironically, this makes things *less* tight
+#axs[-1, -1].axis('off') # Don't draw any blank subfigs
+Bin_Edges=Rec_ScElec_eta[1]
+Bars=0.5 * (Bin_Edges[1:] + Bin_Edges[:-1])
+BarWidth=Bars[1]-Bars[0]
+axs[0,0].bar(Bars, Eff_ScElec_eta, width=BarWidth, alpha=0.75, color=kP6[1]) # Plot the MC eta values for all charged particles at an MC level
+axs[0,0].set_title(r"Reconstructed $e'$ Efficiency as fn of $\eta$")
+axs[0,0].set(xlabel=r'"$\eta$', ylabel=r"$e'$ Effiency")
+Bin_Edges=Rec_ScElec_P[1]
+Bars=0.5 * (Bin_Edges[1:] + Bin_Edges[:-1])
+BarWidth=Bars[1]-Bars[0]
+axs[0,1].bar(Bars, Eff_ScElec_P, width=BarWidth, alpha=0.75, color=kP6[1]) # Plot the MC eta values for all charged particles at an MC level that have a matching reconstructed track
+axs[0,1].set_title(r"Reconstructed $e'$ Efficiency as fn of $P$")
+axs[0,1].set(xlabel=r"$P_{e'}$", ylabel=r"$P_{e'}$")
+Bin_Edges=Rec_Pions_eta[1]
+Bars=0.5 * (Bin_Edges[1:] + Bin_Edges[:-1])
+BarWidth=Bars[1]-Bars[0]
+axs[1,0].bar(Bars, Eff_Pion_eta, width=BarWidth, alpha=0.75, color=kP6[1]) # Plot one of our calculated quantities
+axs[1,0].set_title(r"Reconstructed $\pi$ Efficiency as fn of $\eta$")
+axs[1,0].set(xlabel=r"$\eta$", ylabel=r"$\pi$ Effiency")
+Bin_Edges=Rec_Pions_P[1]
+Bars=0.5 * (Bin_Edges[1:] + Bin_Edges[:-1])
+BarWidth=Bars[1]-Bars[0]
+axs[1,1].bar(Bars, Eff_Pion_P, width=BarWidth, alpha=0.75, color=kP6[1]) # Plot one of our calculated quantities
+axs[1,1].set_title(r"Reconstructed $\pi$ Efficiency as fn of $P$")
+axs[1,1].set(xlabel=r"$P_{\pi}$", ylabel=r"$\pi$ Effiency")
+plt.savefig("EfficiencyAnalysis_Exercise_Out.png", dpi = (160))
+```
+-->
+
 ### Pythonic_ResolutionAnalysis.py
 
 Create a file called `ResolutionAnalysis.py` and copy in the code below to get started on the efficiency analysis exercise. Note that you will need to correctly specify your input file path in the variable `fname`.
@@ -829,6 +989,153 @@ axs[1,1].set_title(r"Momentum Resolution of Matched Charged Particles")
 axs[1,1].set(xlabel=r'$(P_{Rec} - P_{MC})/P_{MC}$', ylabel=r'# Entries / 0.01')
 plt.savefig("ResolutionAnalysis_Out.png", dpi = (160))
 ```
+
+
+<!--
+"Complete" exercise example included below
+
+```python
+
+#! /usr/bin/python
+# Import some relevant packages
+import uproot as up
+import awkward as ak
+import numpy as np
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.ticker as ticker
+import matplotlib.cm as cm
+import matplotlib.pylab as plt
+import scipy, vector, os
+from XRootD import client
+from scipy import stats
+from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
+from matplotlib import colors as colours
+
+# Set some matplot lib features
+plt.rcParams['ytick.direction'] = 'in'
+plt.rcParams['xtick.direction'] = 'in'
+plt.rcParams['xaxis.labellocation'] = 'right'
+plt.rcParams['yaxis.labellocation'] = 'top'
+plt.rcParams["figure.figsize"] = (16,9)
+kP6 = ['#5790fc','#f89c20','#e42536','#964a8b','#9c9ca1','#7a21dd'] # Set ROOT kP6 colours - see https://root.cern.ch/doc/v636/classTColor.html
+
+# Open our file
+fname = "YOUR_INPUT_FILE"
+if os.path.isfile(fname):
+    file=up.open(fname)
+else:
+    print("Error opening file - ", fname, " check your fname variable!")
+
+# Open the tree
+tree = file['events']
+
+# Convert relevant branches to arrays
+MCPartBr = tree["MCParticles"].arrays()
+RecoAssocRec = tree['_ReconstructedChargedParticleAssociations_rec'].arrays()
+RecoAssocSim = tree['_ReconstructedChargedParticleAssociations_sim'].arrays()
+ReconChPartBr = tree["ReconstructedChargedParticles"].arrays()
+
+RecID=RecoAssocRec['_ReconstructedChargedParticleAssociations_rec.index'] # Array of reconstructed IDs
+SimID=RecoAssocSim['_ReconstructedChargedParticleAssociations_sim.index'] # Array of simulated IDs
+
+# Create some filters, anything with [SimID] or [RecID] will index the event by the associations. This means we will only retain events with a matching truth particle/matching reconstructed particle
+MCStatus = MCPartBr['MCParticles.generatorStatus'] == 1
+MCNegCharge = MCPartBr['MCParticles.charge'] == -1
+MCScElecPDG = MCPartBr['MCParticles.PDG'] == 11
+MCPionPDG = abs(MCPartBr['MCParticles.PDG']) == 211
+BoolChargeTrack = ((abs(MCPartBr["MCParticles.charge"])!=0) & (MCPartBr["MCParticles.generatorStatus"]==1))
+BoolChargeTrackMatch = ((abs(MCPartBr["MCParticles.charge"][SimID])!=0) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1))
+BoolElec=((abs(MCPartBr["MCParticles.PDG"])==11) & (MCPartBr["MCParticles.generatorStatus"]==1))
+BoolElecMatch=((MCPartBr["MCParticles.PDG"][SimID]==11) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1))
+BoolPionMatch=((abs(MCPartBr["MCParticles.PDG"][SimID])==211) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1)) # Use abs to include both positive and negative pions
+
+# Define some doubles
+ElecMass = 511*(10**-6) # Electron mass in GeV
+
+# Convert some branches into arrays of vectors
+MC_Parts = vector.zip({'px': MCPartBr["MCParticles.momentum.x"], 'py': MCPartBr["MCParticles.momentum.y"], 'pz': MCPartBr["MCParticles.momentum.z"]})
+Rec_Parts = vector.zip({'px': ReconChPartBr["ReconstructedChargedParticles.momentum.x"], 'py': ReconChPartBr["ReconstructedChargedParticles.momentum.y"], 'pz': ReconChPartBr["ReconstructedChargedParticles.momentum.z"], 'E':ReconChPartBr["ReconstructedChargedParticles.energy"]})
+
+# We redfine MC vects here to ONLY be the MC particles that have a reconstructed track
+MC_Vects = vector.zip({'px': MCPartBr["MCParticles.momentum.x"][SimID], 'py': MCPartBr["MCParticles.momentum.y"][SimID], 'pz': MCPartBr["MCParticles.momentum.z"][SimID]}) 
+MC_ScElec = MC_Vects[BoolElecMatch]
+MC_Pions = MC_Vects[BoolPionMatch]
+# In this case, we need to access our reconstructed charged particles branch and index it by the reconstructed ID.
+RecVects = vector.zip({'px': ReconChPartBr["ReconstructedChargedParticles.momentum.x"][RecID], 'py': ReconChPartBr["ReconstructedChargedParticles.momentum.y"][RecID], 'pz': ReconChPartBr["ReconstructedChargedParticles.momentum.z"][RecID]})
+
+Rec_ScElec = RecVects[BoolElecMatch]
+Rec_Pions = RecVects[BoolPionMatch]
+ElecMomRes = ((Rec_ScElec.p - MC_ScElec.p)/MC_ScElec.p)*100
+ElecEtaRes = ((Rec_ScElec.eta - MC_ScElec.eta)/MC_ScElec.eta)*100
+PiMomRes = ((Rec_Pions.p - MC_Pions.p)/MC_Pions.p)*100
+PiEtaRes = ((Rec_Pions.eta - MC_Pions.eta)/MC_Pions.eta)*100
+
+# Determine the energy for a few MC particles of specific types
+MCEnerElec = np.sqrt(MC_Parts[BoolElec].p**2 + ElecMass**2)
+
+# Calculate some additional quantities which are differences between true and reconstructed values for MC particles with a matched reconstructed track
+DeltaEta = MC_Parts[SimID][BoolChargeTrackMatch].eta - Rec_Parts[RecID][BoolChargeTrackMatch].eta
+DeltaPhi = MC_Parts[SimID][BoolChargeTrackMatch].phi - Rec_Parts[RecID][BoolChargeTrackMatch].phi
+DeltaP = MC_Parts[SimID][BoolChargeTrackMatch].p - Rec_Parts[RecID][BoolChargeTrackMatch].p
+DeltaR = np.sqrt(DeltaEta**2 + DeltaPhi**2)
+ResP = ((Rec_Parts[RecID][BoolChargeTrackMatch].p - MC_Parts[SimID][BoolChargeTrackMatch].p)/MC_Parts[SimID][BoolChargeTrackMatch].p ) # Momentum resolution as a percentage
+# Plot some quantities as one image
+fig, axs = plt.subplots(2,3, tight_layout=True) # Ironically, this makes things *less* tight
+axs[-1, -1].axis('off') # Don't draw any blank subfigs
+axs[0,0].hist(ak.flatten(DeltaEta), bins=100, range=(-0.25,0.25),alpha=0.5, color=kP6[1]) # Plot the difference between true and reconstructed eta
+axs[0,0].set_title(r"$\Delta \eta$ of Matched Charged Particles")
+axs[0,0].set(xlabel=r'$\Delta \eta$', ylabel=r'# Entries / 0.005')
+axs[0,1].hist(ak.flatten(DeltaPhi), bins=200, range=(-0.2,0.2),alpha=0.5, color=kP6[1]) # Plot the difference between true and reconstructed phi
+axs[0,1].set_title(r"$\Delta \phi$ of Matched Charged Particles")
+axs[0,1].set(xlabel=r'$\Delta \phi$', ylabel='# Entries / 0.002')
+axs[0,2].hist(ak.flatten(DeltaR), bins=300, range=(0,0.3),alpha=0.5, color=kP6[1]) # Plot the difference between true and reconstructed R
+axs[0,2].set_title(r"$\Delta R$ of Matched Charged Particles")
+axs[0,2].set(xlabel=r'$\Delta R$', ylabel=r'# Entries / 0.003')
+axs[1,0].hist(ak.flatten(DeltaP), bins=200, range=(-10,10),alpha=0.5, color=kP6[1]) # Plot the difference between true and reconstructed momentum
+axs[1,0].set_title(r"$\Delta P$ of Matched Charged Particles")
+axs[1,0].set(xlabel=r'$\Delta \eta$', ylabel=r'# Entries / 0.1 GeV/c')
+axs[1,1].hist(ak.flatten(ResP), bins=400, range=(-2,2),alpha=0.5, color=kP6[1]) # Plot the momentum resolution
+axs[1,1].set_title(r"Momentum Resolution of Matched Charged Particles")
+axs[1,1].set(xlabel=r'$(P_{Rec} - P_{MC})/P_{MC}$', ylabel=r'# Entries / 0.01')
+plt.savefig("ResolutionAnalysis_Out.png", dpi = (160))
+
+fig, axs = plt.subplots(2,3, tight_layout=True) # Ironically, this makes things *less* tight
+axs[0,0].hist(ak.flatten(ElecMomRes), bins=50, range=(-25,25),alpha=0.5, color=kP6[1], label=r"$e'$")
+axs[0,0].hist(ak.flatten(PiMomRes), bins=50, range=(-25,25),alpha=0.25, color=kP6[0], label=r"$\pi$")
+axs[0,0].set_title(r"Reconstructed $P$ Resolution")
+axs[0,0].set(xlabel=r"$P$ Resolution [%]", ylabel=r'# Entries')
+axs[0,0].legend(loc='upper right')
+axs[0,1].hist(ak.flatten(ElecEtaRes), bins=100, range=(-2,2),alpha=0.5, color=kP6[1], label=r"$e'$")
+axs[0,1].hist(ak.flatten(PiEtaRes), bins=100, range=(-2,2),alpha=0.25, color=kP6[0], label=r"$\pi$")
+axs[0,1].set_title(r"Reconstructed $\eta$ Resolution")
+axs[0,1].set(xlabel=r"$\eta$ Resolution [%]", ylabel=r'# Entries')
+axs[0,1].legend(loc='upper right')
+# 2D plots
+Hist2D1 = axs[0,2].hist2d(np.asarray(ak.flatten(ElecMomRes)), np.asarray(ak.flatten(MC_ScElec.p)), bins=[50,50], range=[[-25,25],[0,20]], cmin=1)
+axs[0,2].set_title(r"Reconstructed $P_{e'}$ Resolution as a function of $P_{e'MC}$")
+axs[0,2].set(xlabel=r"$P_{e'}$ Resolution [%]", ylabel=r"$P_{e'MC}$")
+cb1=plt.colorbar(Hist2D1[3],ax=axs[0,2]) # [3] is the z axis info
+cb1.set_label('Counts/bin')
+Hist2D2=axs[1,0].hist2d(np.asarray(ak.flatten(PiMomRes)), np.asarray(ak.flatten(MC_Pions.p)), bins=[50,50], range=[[-25,25],[0,20]], cmin=1)
+axs[1,0].set_title(r"Reconstructed $P_{\pi}$ Resolution as a function of $P_{\pi MC}$")
+axs[1,0].set(xlabel=r"$P_{\pi}$ Resolution [%]", ylabel=r"$P_{\pi'MC}$")
+cb2=plt.colorbar(Hist2D2[3],ax=axs[1,0]) # [3] is the z axis info
+cb2.set_label('Counts/bin')
+Hist2D3=axs[1,1].hist2d(np.asarray(ak.flatten(ElecEtaRes)), np.asarray(ak.flatten(MC_ScElec.eta)), bins=[100,100], range=[[-2,2],[-5,5]], cmin=1)
+axs[1,1].set_title(r"Reconstructed $\eta_{e'}$ Resolution as a function of $\eta_{e'MC}$")
+axs[1,1].set(xlabel=r"$\eta_{e'}$ Resolution [%]", ylabel=r"$\eta_{e'MC}$")
+cb3=plt.colorbar(Hist2D3[3],ax=axs[1,1]) # [3] is the z axis info
+cb3.set_label('Counts/bin')
+Hist2D4=axs[1,2].hist2d(np.asarray(ak.flatten(PiEtaRes)), np.asarray(ak.flatten(MC_Pions.eta)), bins=[100,100], range=[[-2,2],[-5,5]], cmin=1)
+axs[1,2].set_title(r"Reconstructed $\eta_{e'}$ Resolution as a function of $\eta_{e'MC}$")
+axs[1,2].set(xlabel=r"$\eta_{\pi}$ Resolution [%]", ylabel=r"$\eta_{\pi MC}$")
+cb4=plt.colorbar(Hist2D4[3],ax=axs[1,2]) # [3] is the z axis info
+cb4.set_label('Counts/bin')
+plt.savefig("ResolutionAnalysis_Exercise_Out.png", dpi = (160))
+```
+-->
 
 ## Python Uproot Script - C/ROOT Style (Slow, not recommended!)
 
