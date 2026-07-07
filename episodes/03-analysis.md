@@ -2,33 +2,42 @@
 title: "Analyzing the Reconstruction Output"
 teaching: 20
 exercises: 40
-questions:
-- "How does one utilize the reconstruction output trees to do an analysis?"
-objectives:
-- "Become familiar with methods for reading the trees"
-- "Understand how to access truth/particle information"
-- "Find track efficiency and resolution"
-keypoints:
-- "Flat tree structure provides flexibility in analysis."
-- "The ReconstructedChargedParticles branch holds information on reconstructed tracks."
 ---
+
+::::::::::::::::::::::::::::::::::::::::::::: questions
+
+- How does one utilize the reconstruction output trees to do an analysis?
+
+:::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::: objectives
+
+- Become familiar with methods for reading the trees.
+- Understand how to access truth/particle information.
+- Find track efficiency and resolution.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 So far, we have only looked at (and plotted) some information from our file interactively. This is very useful and can help us identify the variables we want to deal with. However, we can't really use these techniques to conduct a full analysis of the data. To do so, we typically use a script or macro. In this part of the tutorial, we will create a script that we can use to do a relatively straightforward analysis of our file.
 
-> Note:
-> - The [branch dictionary]({{ page.root }}{% link _extras/branch_dictionary.md %}) outlines all of the branches we will need to utilise in this section.
-> - If you want, you can prune the branches you don't need from the input file using the [TreePrune.C script]({{ page.root }}{% link _extras/tree_pruning_script.md %}).
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Note:
+
+- The [branch dictionary](../learners/branch-dictionary.md) outlines all of the branches we will need to utilise in this section.
+- If you want, you can prune the branches you don't need from the input file using the [TreePrune.C script](../learners/tree-pruning-script.md).
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 ## Reading the Output Trees
 
 The simulation output trees are "flat" in the sense that there is no event class structure embedded within the tree and no additional libraries are needed to handle the output. Therefore, the end user can simply read the values stored in each branch using whatever method/workflow they are most comfortable with. Examples of several common methods for reading the trees are provided below. We will see a ROOT TTreeReader based example using a ROOT macro and a python/uproot based version. There is also an example using the (relatively) new RDataFrame class of ROOT. During the tutorial, you should try the exercise using whichever language you feel most comfortable with. Five different approaches are currently provieded:
 
-- [TTreeReaders](https://eic.github.io/tutorial-analysis/03-analysis/index.html#sample-analysis-with-root-ttreereader-track-efficiency-and-resolution) - ROOT/C based
-- [Python/Uproot - Pythonic](https://eic.github.io/tutorial-analysis/03-analysis/index.html#sample-analysis-with-pythonuproot---pythonic-method-track-efficiency-and-resolution) - A pythonic based appoach using arrays directly
-- [Python/Uproot - ROOT/Pyroot](https://eic.github.io/tutorial-analysis/03-analysis/index.html#sample-analysis-with-pythonuproot---rootpyroot-style-track-efficiency-and-resolution) - An approach using Pyroot, halfway house between C and python
-- [ROOT RDataFrames](https://eic.github.io/tutorial-analysis/03-analysis/index.html#root-rdataframes) - An approach using RDataFrames
-- [PODIO](https://eic.github.io/tutorial-analysis/03-analysis/index.html#podio---direct-analysis) - An approach using the Plane Old Data IO (PODIO) approach. Use the flat datastructure directly
+- [TTreeReaders](#sample-analysis-with-root-ttreereader-track-efficiency-and-resolution) - ROOT/C based
+- [Python/Uproot - Pythonic](#sample-analysis-with-python-uproot-pythonic-method-track-efficiency-and-resolution) - A pythonic based appoach using arrays directly
+- [Python/Uproot - ROOT/Pyroot](#sample-analysis-with-python-uproot-root-pyroot-style-track-efficiency-and-resolution) - An approach using Pyroot, halfway house between C and python
+- [ROOT RDataFrames](#root-rdataframes) - An approach using RDataFrames
+- [PODIO](#podio-direct-analysis) - An approach using the Plane Old Data IO (PODIO) approach. Use the flat datastructure directly
 
 ## Sample Analysis with ROOT TTreeReader: Track Efficiency and Resolution
 
@@ -51,38 +60,42 @@ void trackAnalysis(TString infile="path_to_your_simu_file")
 
 We will need momentum, generator status, and particle species information for the truth particles and momentum information for the reconstructed tracks. The reconstructed track information can be accessed from two different branches: CentralCKFTrackParameters and ReconstructedChargedParticles. We can access these branches using a TTreeReaderArray.
 
-> ROOT TTreeReaderArrays:
->
->TTreeReader and the associated TTreeReaderArray is a simple interface for reading data from a TTree. The class description and examples can be seen [here](https://root.cern/doc/v630/classTTreeReader.html). To instantiate the reader and access values from a given branch (e.g. the MCParticles branch), one would use the following calls:
->
-> ```c++
-> // Set up input file chain
-> TChain *mychain = new TChain("events");
-> mychain->Add(infile);
->
-> // Initialize reader
-> TTreeReader tree_reader(mychain);
->
-> // Access whatever data-members you need
-> TTreeReaderArray<int> partGenStat(tree_reader, "MCParticles.generatorStatus");
-> TTreeReaderArray<float> partMomX(tree_reader, "MCParticles.momentum.x");
-> ...
-> ```
->
-> The branches and their members can be viewed by opening a file with TBrowser (`new TBrowser()`) from within ROOT. Once you have defined the `TTreeReaderArray` objects for the data-members you want to look at, you can loop over the events and the members within that event:
->
-> ```c++
-> while(tree_reader.Next()) { // Loop over events
->  for(unsigned int i=0; i<partGenStat.GetSize(); i++) // Loop through particles in the event
->    {
->      int particleStatus = partGenStat[i]; // Access data-members as you would an array
->      float particleXMomentum = partMomX[i]; // partMomX should have same number of entries as partGenStat because they are in the same branch
->      ...
->    }
-> }
-> ```
-> All members of the same branch should have the same number of entries, so it is sufficient to use any member of the branch to set the limit of your loop.
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+ROOT TTreeReaderArrays:
+
+TTreeReader and the associated TTreeReaderArray is a simple interface for reading data from a TTree. The class description and examples can be seen in [the ROOT TTreeReader class documentation](https://root.cern/doc/v630/classTTreeReader.html). To instantiate the reader and access values from a given branch (e.g. the MCParticles branch), one would use the following calls:
+
+```c++
+// Set up input file chain
+TChain *mychain = new TChain("events");
+mychain->Add(infile);
+
+// Initialize reader
+TTreeReader tree_reader(mychain);
+
+// Access whatever data-members you need
+TTreeReaderArray<int> partGenStat(tree_reader, "MCParticles.generatorStatus");
+TTreeReaderArray<float> partMomX(tree_reader, "MCParticles.momentum.x");
+...
+```
+
+The branches and their members can be viewed by opening a file with TBrowser (`new TBrowser()`) from within ROOT. Once you have defined the `TTreeReaderArray` objects for the data-members you want to look at, you can loop over the events and the members within that event:
+
+```c++
+while(tree_reader.Next()) { // Loop over events
+ for(unsigned int i=0; i<partGenStat.GetSize(); i++) // Loop through particles in the event
+   {
+     int particleStatus = partGenStat[i]; // Access data-members as you would an array
+     float particleXMomentum = partMomX[i]; // partMomX should have same number of entries as partGenStat because they are in the same branch
+     ...
+   }
+}
+```
+
+All members of the same branch should have the same number of entries, so it is sufficient to use any member of the branch to set the limit of your loop.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 We will proceed using the ReconstructedChargedParticles branch as this will give us a chance to practice using associations, copy the following lines into your analysis macro.
 
@@ -111,17 +124,24 @@ TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssoc
 TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
 ```
 
-The last two lines encode the association between a ReconstructedChargedParticle and an MCParticle where the matching is determined in the [ParticlesWithPID](https://github.com/eic/EICrecon/blob/main/src/algorithms/pid/ParticlesWithPID.cc) algorithm which generates the ReconstructedChargedParticle objects.
+The last two lines encode the association between a ReconstructedChargedParticle and an MCParticle where the matching is determined by the EICrecon [reconstruction algorithms](https://github.com/eic/EICrecon/tree/main/src/algorithms/reco) which generate the ReconstructedChargedParticle objects.
 
-> Compiling ROOT Macros:
-> - If you are analysing a large number of events, you may wish to compile your macro to increase throughput. An example of how you can create and compile a root macro is included in the [Exercise Scripts section](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#compiled-root-scripts)
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Compiling ROOT Macros:
+
+- If you are analysing a large number of events, you may wish to compile your macro to increase throughput. An example of how you can create and compile a root macro is included in the [Exercise Scripts section](../learners/exercise-scripts.md#compiled-root-scripts).
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 ### Efficiency Analysis
 
-> Hint:
-> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#efficiencyanalysisc) if you're having trouble putting things in the right place.
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Hint:
+Refer to [the script template](../learners/exercise-scripts.md#efficiencyanalysisc) if you're having trouble putting things in the right place.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 Now that we have access to the data we need we will begin constructing our efficiency plots, starting with efficiency as a function of the true particle pseudorapidity. The basic strategy is outlined below:
 
@@ -181,24 +201,48 @@ while(tree_reader.Next()) { // Loop over events
 
 We should now have everything we need to find the track efficiency as a function of pseudorapidity. To run the macro and produce an output file containing the histograms we defined, simply type `root -l -q trackAnalysis.C`. After the macro runs, you can open the root file to inspect the histograms. The efficiency can be found by taking the ratio of matchedPartEta over partEta.
 
-> Question:
-> - Do the histogram ranges make sense?
-> - We plot the distance between thrown and reconstructed charged partices, does this distribution look reasonable?
-> - When filling the matchedPartEta histogram (the numerator in our efficiency), why do we use again the true thrown eta instead of the associated reconstructed eta?
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
 
-> Exercise:
-> For all **scattered electrons**, **charged pions** and **protons** in our events:
-> - Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
-> - Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
-> - Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
-{: .challenge}
+Question:
+
+- Do the histogram ranges make sense?
+- We plot the distance between thrown and reconstructed charged partices, does this distribution look reasonable?
+- When filling the matchedPartEta histogram (the numerator in our efficiency), why do we use again the true thrown eta instead of the associated reconstructed eta?
+
+:::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::: challenge
+
+## Exercise
+
+For all **scattered electrons**, **charged pions** and **protons** in our events:
+
+- Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
+- Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
+- Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
+
+:::::::::::::::  solution
+
+Build the efficiency exactly as for eta, but fill numerator/denominator histograms in the relevant
+kinematic variable and divide at the end. Select each species by its PDG code (11, 211, 2212) and
+require `generatorStatus == 1`. A momentum acceptance cut is usually needed to avoid dividing by
+near-empty bins at very low momentum. For the 2-D correlations, fill 2-D histograms of the thrown
+quantity (denominator) and the matched-thrown quantity (numerator) and divide. See the
+[efficiency script template](../learners/exercise-scripts.md#efficiencyanalysisc) for a worked
+version.
+
+:::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 ### Resolution Analysis
 
-> Hint:
-> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#resolutionanalysisc) if you're having trouble putting things in the right place.
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Hint:
+Refer to [the script template](../learners/exercise-scripts.md#resolutionanalysisc) if you're having trouble putting things in the right place.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram:
 
@@ -220,21 +264,43 @@ for(unsigned int j=0; j<simuAssoc.GetSize(); j++)
 
 While this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
 
-> Exercise:
-> For all **scattered electrons**, **charged pions** and **protons** in our events:
-> - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity.
-{: .challenge}
+::::::::::::::::::::::::::::::::::::::::::::: challenge
 
-> Question:
-> - Will the histogram ranges for each particle species be the same?
-> - Could we present the resolution values in a more understandable way?
-{: .callout}
+## Exercise
+
+For all **scattered electrons**, **charged pions** and **protons** in our events:
+
+- Make 2-D plots of resolution vs true momentum and vs true pseudorapidity.
+
+:::::::::::::::  solution
+
+Inside the association loop, compute `momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag()` and
+fill a 2-D histogram with the true momentum (or true pseudorapidity) on one axis and `momRes` on the
+other, once per matched particle of the chosen species. Profiling these 2-D histograms (or taking
+the width of `momRes` in slices) gives the resolution as a function of the kinematic variable. See
+the [resolution script template](../learners/exercise-scripts.md#resolutionanalysisc).
+
+:::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Question:
+
+- Will the histogram ranges for each particle species be the same?
+- Could we present the resolution values in a more understandable way?
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 
-## Sample Analysis with Python/uproot - Pythonic Method: Track Efficiency and Resolution
+## Sample Analysis with Python uproot Pythonic Method: Track Efficiency and Resolution
 
-> For some examples of using uproot to access information in .root files, please consult [this notebook](https://github.com/eic/HSF-India/blob/main/Working_With_Uproot/Working_With_Uproot_Standalone.ipynb) which can be run in Google Collab.
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+For some examples of using uproot to access information in .root files, please consult [this notebook](https://github.com/eic/HSF-India/blob/main/Working_With_Uproot/Working_With_Uproot_Standalone.ipynb) which can be run in Google Collab.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 If you are more familiar with python than you are with C/C++, you might find that using a python based root macro is easier for you. Outlined below are sample blocks of code for creating and running a python based analysis script.
 
@@ -306,11 +372,16 @@ partPdg = tree["MCParticles.PDG"].array()
 ```
 Uproot effectively takes the information in the tree, and turns it into an array. We can then access and manipulate this array in the same way that we can with any array in python.
 
-> Warning: Note that if you are using an older version of uproot (v2.x.x), you will need to access the branches slightly differently via -
-> ```python
-> partGenStat = tree.array("MCParticles.generatorStatus")
-> ```
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Warning: Note that if you are using an older version of uproot (v2.x.x), you will need to access the branches slightly differently via -
+
+```python
+partGenStat = tree.array("MCParticles.generatorStatus")
+```
+
+:::::::::::::::::::::::::::::::::::::::::::::
+
 Once you create your script and add the template code in, you can try running it with``python3 trackAnalysis.py`` or ``python trackAnalysis.py``. At the moment, it shouldn't *do* anything, but we can change that!
 
 Try assigning a quantity to an array, such as the MC particles PDG values above and printing some values of that array. Or, perhaps try printing the length of that array. We could also quickly make a plot of the values with -
@@ -322,13 +393,18 @@ plt.clf # Clear figure
 ```
 The script should now write out a figure, ``TestOut.png`` when you run it, showing the MC PDG values of entries in the file.
 
-> We did not specify a number of bins or a range, so our plot looks a bit odd. What might be a useful range and number of bins to use here?
-> We can specify our number of bins and our range with -
-> ```python
-> plt.hist(ak.flatten(partPdg),bins=NBins, range=(X,Y),alpha=0.75, color=kP6[0])
-> ```
-> With NBins being our number of bins and X and Y being our min/max range - think carefully about these numbers!
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+We did not specify a number of bins or a range, so our plot looks a bit odd. What might be a useful range and number of bins to use here?
+We can specify our number of bins and our range with -
+
+```python
+plt.hist(ak.flatten(partPdg),bins=NBins, range=(X,Y),alpha=0.75, color=kP6[0])
+```
+
+With NBins being our number of bins and X and Y being our min/max range - think carefully about these numbers!
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 Note that we don't really need to define individual arrays either, we can just directly access the array we want once we've converted the branch to a series of arrays -
 
@@ -338,13 +414,18 @@ plt.hist(ak.flatten(MCPartBr["MCParticles.PDG"]),alpha=0.75, color=kP6[0])
 plt.savefig("TestOut.png", dpi = (160))
 ```
 
-> Note:
-> Remember to call:
-> ```python
-> plt.clf() # Clear figure
-> ```
-> After a figure to avoid drawing on the same plot.
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Note:
+Remember to call:
+
+```python
+plt.clf() # Clear figure
+```
+
+After a figure to avoid drawing on the same plot.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 We can also define and apply filters to our arrays as we plot or print from them -
 
@@ -363,14 +444,20 @@ plt.hist(ak.flatten(MCPartBr["MCParticles.PDG"][BoolStablePos]),alpha=0.75, colo
 plt.savefig("TestOut3.png", dpi = (160))
 ```
 
-> We did not specify a number of bins or a range, so our plot looks a bit odd. What might be a useful range and number of bins to use here?
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+We did not specify a number of bins or a range, so our plot looks a bit odd. What might be a useful range and number of bins to use here?
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 ### Efficiency Analysis
 
-> Hint:
-> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#pythonic_efficiencyanalysispy) if you're having trouble putting things in the right place.
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Hint:
+Refer to [the script template](../learners/exercise-scripts.md#pythonic_efficiencyanalysispy) if you're having trouble putting things in the right place.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 Our approach here is a bit different to the TTreeReader example, but we will still need to utilise our simulation and reconstruction association IDs. We can access them via -
 
@@ -463,37 +550,66 @@ For our efficiency. We need to compare our thrown particles of a given type to o
   - How can you select the particles we detected of a specific type?
     - Note, this does not mean we need our reconstructed values.
 
-> Exercise:
-> For all **scattered electrons**, **charged pions** and **protons** in our events:
-> - Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
-> - Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
-> - Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
-{: .challenge}
+::::::::::::::::::::::::::::::::::::::::::::: challenge
 
-> Hint:
-> Getting the right arrays here is a bit tricky. We want three different things -
-> - Our MC particles (truth information), regardless of whether we have a matching track or not. This is just:
->   - "MCPartBr['MCParticles.QUANTITY']"[SELECTION_CUTS] - We do not need to index this by the SimID
-> - Our MC particles (truth information) that do have a matching reconstructed track, we just need to index these by the SimID:
->   - "MCPartBr['MCParticles.QUANTITY'][SimID]" - We can then apply selection criteria
-> - The Reconstructed particle information for events which correspond to a real MC track, we just need to index these by our RecID:
->   - "ReconChPartBr['ReconstructedChargedParticles.QUANTITY'][RecID]"
-{: .callout}
+## Exercise
 
-> 2D Histograms: We can make 2D histograms in python via -
-> ```python
-> plt.hist2d(np.asarray(ak.flatten(Quantity1)), np.asarray(ak.flatten(Quantity2)), bins=[NBinsX,NBinsY], range=[[XLow,XHigh],[YLow,YHigh]], cmin=1)
-> cb = plt.colorbar()
-> cb.set_label('Counts/bin')
-> ```
-> We can set titles etc as usual. Simply swap on the bin values and ranges, as well as the quantities as needed. Make sure your arrays contain equal numbers of entries.
-{: .callout}
+For all **scattered electrons**, **charged pions** and **protons** in our events:
+
+- Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
+- Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
+- Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
+
+:::::::::::::::  solution
+
+The denominator is the truth distribution for the chosen species (select on
+`MCParticles.PDG` and `generatorStatus == 1`, **not** indexed by `SimID`). The numerator is the
+truth distribution for particles that were reconstructed (the same selection, indexed by `SimID`).
+Dividing these two `np.histogram` outputs bin-by-bin (guarding against divide-by-zero as shown
+above) gives the efficiency in that variable. For the 2-D correlations use `np.histogram2d` for
+numerator and denominator and divide. See the
+[pythonic efficiency template](../learners/exercise-scripts.md#pythonic_efficiencyanalysispy).
+
+:::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Hint:
+Getting the right arrays here is a bit tricky. We want three different things -
+
+- Our MC particles (truth information), regardless of whether we have a matching track or not. This is just:
+  - "MCPartBr['MCParticles.QUANTITY']"[SELECTION_CUTS] - We do not need to index this by the SimID
+- Our MC particles (truth information) that do have a matching reconstructed track, we just need to index these by the SimID:
+  - "MCPartBr['MCParticles.QUANTITY'][SimID]" - We can then apply selection criteria
+- The Reconstructed particle information for events which correspond to a real MC track, we just need to index these by our RecID:
+  - "ReconChPartBr['ReconstructedChargedParticles.QUANTITY'][RecID]"
+
+:::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+2D Histograms: We can make 2D histograms in python via -
+
+```python
+plt.hist2d(np.asarray(ak.flatten(Quantity1)), np.asarray(ak.flatten(Quantity2)), bins=[NBinsX,NBinsY], range=[[XLow,XHigh],[YLow,YHigh]], cmin=1)
+cb = plt.colorbar()
+cb.set_label('Counts/bin')
+```
+
+We can set titles etc as usual. Simply swap on the bin values and ranges, as well as the quantities as needed. Make sure your arrays contain equal numbers of entries.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 ### Resolution Analysis
 
-> Hint:
-> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#pythonic_resolutionanalysispy) if you're having trouble putting things in the right place.
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Hint:
+Refer to [the script template](../learners/exercise-scripts.md#pythonic_resolutionanalysispy) if you're having trouble putting things in the right place.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 Next, we will look at track momentum resolution. The resolution tells us how well we can reconstruct our "true" value. For example. we might want to know how well we can determine the energy of our particles. As such, we could calculate the energy resolution. Our resolution is simply -
 
@@ -513,22 +629,45 @@ plt.savefig("TestOut5.png", dpi = (160))
 
 Here we've calculated and plotted the X momentum resolution for our charged tracks that correspond to true electrons in our sample. Whilst this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
 
-> Exercise:
-> For all **scattered electrons**, **charged pions** and **protons** in our events:
-> - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity.
-{: .challenge}
+::::::::::::::::::::::::::::::::::::::::::::: challenge
 
-> Question:
-> - Will the histogram ranges for each particle species be the same?
-> - Could we present the resolution values in a more understandable way?
-{: .callout}
+## Exercise
 
-## Sample Analysis with Python/uproot - ROOT/Pyroot Style: Track Efficiency and Resolution
+For all **scattered electrons**, **charged pions** and **protons** in our events:
 
-> Comment:
-> Despite using python/uproot, I have written these in a very "ROOT"/C way. Uproot converts our branches to arrays, so you can manipulate them in various fun ways using more pythonic methods if you want.
-> See the previous method for an example of this approach.
-{: .callout}
+- Make 2-D plots of resolution vs true momentum and vs true pseudorapidity.
+
+:::::::::::::::  solution
+
+Compute the resolution array `(reco - true)/true` for the matched particles of each species (both
+quantities indexed by `RecID`/`SimID` and filtered by species), then fill a `plt.hist2d` with the
+true momentum (or true pseudorapidity) on the x-axis and the resolution on the y-axis. Slicing the
+2-D histogram in x and taking the width of the resolution distribution gives the resolution as a
+function of that variable. See the
+[pythonic resolution template](../learners/exercise-scripts.md#pythonic_resolutionanalysispy).
+
+:::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Question:
+
+- Will the histogram ranges for each particle species be the same?
+- Could we present the resolution values in a more understandable way?
+
+:::::::::::::::::::::::::::::::::::::::::::::
+
+## Sample Analysis with Python uproot ROOT Pyroot Style: Track Efficiency and Resolution
+
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Comment:
+Despite using python/uproot, I have written these in a very "ROOT"/C way. Uproot converts our branches to arrays, so you can manipulate them in various fun ways using more pythonic methods if you want.
+See the previous method for an example of this approach.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 If you are more familiar with python than you are with C/C++, you might find that using a python based root macro is easier for you. Outlined below are sample blocks of code for creating and running a python based analysis script.
 
@@ -562,40 +701,48 @@ ofile.Close()
 ```
 Note that we are using the module uproot to access the data here. See [further documentation here](https://masonproffitt.github.io/uproot-tutorial/03-trees/index.html). You may also need some of the other included packages too.
 
-> We will use uproot a little bit like we use the TTreeReader in the other example. We can define the branches we want and assign them to arrays with uproot.
-> We can do this via:
->  ```python
-> # Open input file and define branches we want to look at with uproot
-> events_tree = up.open(infile)["events"]
-> # Get particle information# Get particle information
-> partGenStat = events_tree["MCParticles.generatorStatus"].array()
-> partMomX = events_tree["MCP articles.momentum.x"].array() 
-> partMomY = events_tree["MCParticles.momentum.y"].array()
-> partMomZ = events_tree["MCParticles.momentum.z"].array()
-> partPdg = events_tree["MCParticles.PDG"].array()
->
-> # Get reconstructed track information
-> trackMomX = events_tree["ReconstructedChargedParticles.momentum.x"].array()
-> trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
-> trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
->  ...
-> ```
->  We can then access them as an array in a loop -
-> ```python
-> # Add main analysis loop(s) below
-> for i in range(0, len(partGenStat)): # Loop over all events
->     for j in range(0, len(partGenStat[i])): # Loop over all thrown particles
->         if partGenStat[i][j] == 1: # Select stable particles
->             pdg = abs(partPdg[i][j]) # Get PDG for each stable particle
->             ...
-> ```
-> Uproot effectively takes the information in the tree, and turns it into an array. We can then access and manipulate this array in the same way that we can with any array in python.
->
-> Note that if you are using an older version of uproot (v2.x.x), you will need to access the branches slightly differently via -
-> ```python
-> partGenStat = events_tree.array("MCParticles.generatorStatus")
-> ```
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+We will use uproot a little bit like we use the TTreeReader in the other example. We can define the branches we want and assign them to arrays with uproot.
+We can do this via:
+
+```python
+# Open input file and define branches we want to look at with uproot
+events_tree = up.open(infile)["events"]
+# Get particle information# Get particle information
+partGenStat = events_tree["MCParticles.generatorStatus"].array()
+partMomX = events_tree["MCP articles.momentum.x"].array() 
+partMomY = events_tree["MCParticles.momentum.y"].array()
+partMomZ = events_tree["MCParticles.momentum.z"].array()
+partPdg = events_tree["MCParticles.PDG"].array()
+
+# Get reconstructed track information
+trackMomX = events_tree["ReconstructedChargedParticles.momentum.x"].array()
+trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
+trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
+ ...
+```
+
+We can then access them as an array in a loop -
+
+```python
+# Add main analysis loop(s) below
+for i in range(0, len(partGenStat)): # Loop over all events
+    for j in range(0, len(partGenStat[i])): # Loop over all thrown particles
+        if partGenStat[i][j] == 1: # Select stable particles
+            pdg = abs(partPdg[i][j]) # Get PDG for each stable particle
+            ...
+```
+
+Uproot effectively takes the information in the tree, and turns it into an array. We can then access and manipulate this array in the same way that we can with any array in python.
+
+Note that if you are using an older version of uproot (v2.x.x), you will need to access the branches slightly differently via -
+
+```python
+partGenStat = events_tree.array("MCParticles.generatorStatus")
+```
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 You can run this file with ``python3 trackAnalysis.py``. It should open your file and create an empty output root file as specified. We will add histograms to this script and fill them in the next step.
 
@@ -603,9 +750,12 @@ Note that depending upon your setup, ``python trackAnalysis.py`` may work too.
 
 ### Efficiency Analysis
 
-> Hint:
-> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#efficiencyanalysispy) if you're having trouble putting things in the right place.
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Hint:
+Refer to [the script template](../learners/exercise-scripts.md#efficiencyanalysispy) if you're having trouble putting things in the right place.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 As with the ROOT TTreeReader example, we will find the tracking eficiency and resolution. We will need to access the reconstructed track information and the truth particle information and we will have to associate the individual tracks and particles to one another.
 
@@ -657,24 +807,47 @@ ofile.Close()
 ```
 Insert this block of code appropriately. We should now have everything we need to find the track efficiency as a function of pseudorapidity. Run the script with `python3 trackAnalysis.py``. This should produce a root file with a few histograms in place. The efficiency can be found by taking the ratio of matchedPartEta over partEta.
 
-> Question:
-> - Do the hisotgram ranges make sense?
-> - We plot the distance between thrown and reconstructed charged partices, does this distribution look reasonable?
-> - When filling the matchedPartEta histogram (the numerator in our efficiency), why do we use again the true thrown eta instead of the associated reconstructed eta?
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
 
-> Exercise:
-> For all **scattered electrons**, **charged pions** and **protons** in our events:
-> - Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
-> - Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
-> - Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
-{: .challenge}
+Question:
+
+- Do the hisotgram ranges make sense?
+- We plot the distance between thrown and reconstructed charged partices, does this distribution look reasonable?
+- When filling the matchedPartEta histogram (the numerator in our efficiency), why do we use again the true thrown eta instead of the associated reconstructed eta?
+
+:::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::: challenge
+
+## Exercise
+
+For all **scattered electrons**, **charged pions** and **protons** in our events:
+
+- Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
+- Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
+- Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
+
+:::::::::::::::  solution
+
+As in the TTreeReader example, fill a denominator histogram with the thrown quantity for each
+species and a numerator histogram with the same quantity only for particles that have a matching
+track (found via the association loop), then divide with `TH1::Divide` (or `TH2::Divide` for the
+2-D correlations). Select species by PDG code and require `generatorStatus == 1`, and apply a
+momentum cut to avoid unstable low-statistics bins. See the
+[Pyroot efficiency template](../learners/exercise-scripts.md#efficiencyanalysispy).
+
+:::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 ### Resolution Analysis
 
-> Hint:
-> Refer to [the script template](https://eic.github.io/tutorial-analysis/exercise_scripts/index.html#resolutionanalysispy) if you're having trouble putting things in the right place.
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Hint:
+Refer to [the script template](../learners/exercise-scripts.md#resolutionanalysispy) if you're having trouble putting things in the right place.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram by inserting this block of code appropriately:
 
@@ -691,21 +864,44 @@ trackMomentumRes = ROOT.TH1D("trackMomentumRes","Track Momentum Resolution",2000
 
 Remember to write this histogram to the output file too! While this plot will give us a sense of what the tracking resolution is, we don't expect the resolution to be constant for all momenta or eta. We can get a more complete picture by plotting the resolution as a function of different kinematic quantities. 
 
-> Exercise:
-> For all **scattered electrons**, **charged pions** and **protons** in our events:
-> - Make 2-D plots of resolution vs true momentum and vs true pseudorapidity.
-{: .challenge}
+::::::::::::::::::::::::::::::::::::::::::::: challenge
 
-> Question:
-> - Will the histogram ranges for each particle species be the same?
-> - Could we present the resolution values in a more understandable way?
-{: .callout}
+## Exercise
+
+For all **scattered electrons**, **charged pions** and **protons** in our events:
+
+- Make 2-D plots of resolution vs true momentum and vs true pseudorapidity.
+
+:::::::::::::::  solution
+
+Within the association loop, compute `momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag()` for the
+matched particle and fill a `TH2D` with the true momentum (or true pseudorapidity) on one axis and
+`momRes` on the other, once per species. A `TProfile` or slice-by-slice fit of the 2-D histogram
+then gives the resolution as a function of the kinematic variable. See the
+[Pyroot resolution template](../learners/exercise-scripts.md#resolutionanalysispy).
+
+:::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Question:
+
+- Will the histogram ranges for each particle species be the same?
+- Could we present the resolution values in a more understandable way?
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 ## ROOT RDataFrames
 
-> Note:
-> - This method does actually need you to be within eic-shell (or somewhere else with the correct EDM4hep/EDM4eic libraries installed).
-{: .callout}
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Note:
+
+- This method does actually need you to be within eic-shell (or somewhere else with the correct EDM4hep/EDM4eic libraries installed).
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 Newer versions of root, such as the version in eic-shell, have access to a relatively new class, [RDataFrames](https://root.cern/doc/master/classROOT_1_1RDataFrame.html). These are similar to pythonic data frame style structures that you may be familiar with. Some people are moving towards utilising RDataFrames in their analysis. If you are more familiar with working with data frames, you may wish to investigate these further.
 
@@ -773,17 +969,29 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
   ofile->Close(); // Close output file
 }
 ```
-> Note:
-> - You will need to run this script with the command `root -l -q EfficiencyAnalysisRDF.C++`, within eic-shell (or somewhere else with the correct EDM4hep/EDM4eic libraries installed).
-> - Remember to put in the correct file path.
-{: .callout}
+
+::::::::::::::::::::::::::::::::::::::::::::: callout
+
+Note:
+
+- You will need to run this script with the command `root -l -q EfficiencyAnalysisRDF.C++`, within eic-shell (or somewhere else with the correct EDM4hep/EDM4eic libraries installed).
+- Remember to put in the correct file path.
+
+:::::::::::::::::::::::::::::::::::::::::::::
 
 If you like, you can try completing the exercises using this example to start from.
 
-## PODIO - Direct Analysis
+## PODIO Direct Analysis
 
 If you want to avoid ROOT entirely, you can analyse the PODIO files directly in a variety of ways.
 
 See [Wouter's example use cases](https://indico.cern.ch/event/1343984/contributions/5908856/attachments/2842958/4970156/2024-04-23%20-%20Examples%20for%20Data%20Model%20Usage.pdf) from 23/04/24. Wouter shows a few ways in which the PODIO file can be accessed and analysed directly.
 
 **As of March 2026, a full example and version of this method will be provided in the near future.**
+
+::::::::::::::::::::::::::::::::::::::::::::: keypoints
+
+- Flat tree structure provides flexibility in analysis.
+- The ReconstructedChargedParticles branch holds information on reconstructed tracks.
+
+:::::::::::::::::::::::::::::::::::::::::::::

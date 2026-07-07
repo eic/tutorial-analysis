@@ -6,15 +6,15 @@ Included below is a short script which can be utilised to prune an input tree. T
 
 ## TreePrune.C
 
-Copy paste this to a new file called "TreePrune.C". Execute it via -
+Copy paste the code below to a new file called "TreePrune.C" (or download [TreePrune.C](files/TreePrune.C)). Execute it via -
 
-```console
+```bash
 root -l TreePrune.C
 ```
 
 You will be prompted for an input file name. Alternatively run the script with the input already specified -
 
-```console
+```bash
 root -l 'TreePrune.C("InputFilePath")'
 ```
 

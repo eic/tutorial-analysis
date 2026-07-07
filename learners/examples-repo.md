@@ -22,5 +22,3 @@ Included below are a list of links to some analysis scripts/codes that are curre
 ## Semi-Inclusive Physics Scripts
 
 1.
-
-{% include links.md %}

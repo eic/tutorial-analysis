@@ -79,7 +79,6 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   ofile->Close(); // Close output file
 }
 ```
-<!--
 A "solution" version of the script for the exercise is included below -
 
 ```c++
@@ -222,7 +221,6 @@ void EfficiencyAnalysis_Exercise(TString infile="PATH_TO_FILE"){
 }
 ```
 Insert your input file path and execute as the example code above.
--->
 
 ### ResolutionAnalysis.C
 
@@ -301,7 +299,6 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   ofile->Close(); // Close output file
 }
 ```
-<!--
 A "solution" version of the script for the exercise is included below -
 
 ```c++
@@ -441,7 +438,6 @@ void ResolutionAnalysis_Exercise(TString infile="PATH_TO_FILE"){
 ```
 
 Insert your input file path and execute as the example code above.
--->
 
 ### Compiled ROOT Scripts 
 
@@ -494,10 +490,10 @@ Note that you should delete the \ characters in this block.
 
 The contents of CMakeLists.txt are -
 
-```c++
+```cmake
 # CMakeLists.txt for helloroot.
 # More complicated than needed but demonstrates making and linking your own libraries
-# cf. https://cliutils.gitlab.io/modern-cmake/chapters/packages/ROOT.html
+# cf. https://cliutils.gitlab.io/modern-cmake/
 # https://root.cern/manual/integrate_root_into_my_cmake_project/
 
 cmake_minimum_required(VERSION 3.10)
@@ -637,7 +633,7 @@ Please consult the README and script comments for further instructions.
 
 ## Python Uproot Scripts - Pythonic Versions
 
-Some template scripts that utilise an python array based approach are included below. For some examples of using uproot to access information in .root files, please consult (this notebook)[https://github.com/eic/HSF-India/blob/main/Working_With_Uproot/Working_With_Uproot_Standalone.ipynb] which can be run in Google Collab.
+Some template scripts that utilise an python array based approach are included below. For some examples of using uproot to access information in .root files, please consult [this notebook](https://github.com/eic/HSF-India/blob/main/Working_With_Uproot/Working_With_Uproot_Standalone.ipynb) which can be run in Google Colab.
 
 ### Pythonic_EfficiencyAnalysis.py
 
@@ -739,7 +735,6 @@ plt.savefig("EfficiencyAnalysis_Out.png", dpi = (160))
 #plt.bar(Bars, Division, width=BarWidth, alpha=0.5, color='kP6[0]')
 ```
 
-<!--
 
 "Complete" exercise example included below
 
@@ -897,7 +892,6 @@ axs[1,1].set_title(r"Reconstructed $\pi$ Efficiency as fn of $P$")
 axs[1,1].set(xlabel=r"$P_{\pi}$", ylabel=r"$\pi$ Effiency")
 plt.savefig("EfficiencyAnalysis_Exercise_Out.png", dpi = (160))
 ```
--->
 
 ### Pythonic_ResolutionAnalysis.py
 
@@ -991,7 +985,6 @@ plt.savefig("ResolutionAnalysis_Out.png", dpi = (160))
 ```
 
 
-<!--
 "Complete" exercise example included below
 
 ```python
@@ -1135,7 +1128,6 @@ cb4=plt.colorbar(Hist2D4[3],ax=axs[1,2]) # [3] is the z axis info
 cb4.set_label('Counts/bin')
 plt.savefig("ResolutionAnalysis_Exercise_Out.png", dpi = (160))
 ```
--->
 
 ## Python Uproot Script - C/ROOT Style (Slow, not recommended!)
 
@@ -1206,7 +1198,6 @@ matchedPartTrackDeltaR.Write()
 # Close files
 ofile.Close()
 ```
-<!--
 
 A "solution" version of the script for the exercise is included below -
 
@@ -1344,7 +1335,6 @@ TrackEff_PhiEta.Write()
 ofile.Close()
 ```
 Insert your input file path and execute as the example code above.
--->
 ### ResolutionAnalysis.py
 
 Create a file called `ResolutionAnalysis.py` and copy in the code below to get started on the resolution analysis exercise. Note that you will need to correctly specify your input file path in the variable `infile`.
@@ -1421,7 +1411,6 @@ matchedPartTrackDeltaMom.Write()
 # Close files
 ofile.Close()
 ```
-<!--
 
 A "solution" version of the script for the exercise is included below -
 
@@ -1559,7 +1548,6 @@ matchedPartTrackDeltaMom.Write()
 ofile.Close()
 ```
 Insert your input file path and execute as the example code above.
--->
 ## RDataFrames Example
 
 Note that only the initial stage of the efficiency example is presented here in RDF format. This example was kindly created by [Simon](https://github.com/simonge/EIC_Analysis/blob/main/Analysis-Tutorial/EfficiencyAnalysisRDF.C).
@@ -1632,7 +1620,6 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
   ofile->Close(); // Close output file
 }
 ```
-<!--
 
 A "solution" using RDataFrames is included below,
 
@@ -1766,6 +1753,4 @@ void EfficiencyAnalysisRDF_Exercise(TString infile="PATH_TO_INPUT_FILE"){
   ofile->Close(); // Close output file
 }
 ```
--->
 
-{% include links.md %}

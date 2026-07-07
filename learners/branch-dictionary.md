@@ -8,25 +8,25 @@ Data files from EICrecon can sometimes look a little overwhelming with the large
 
 The naming convention of many of the branches is based around the detector they correspond to. For example, take the branch -
 
-```console
+```bash
 EcalEndcapNClusters
 ```
 
 Breaking this down piece by piece, the branch tells us at the start which detector it corresponds to -
 
-```console
+```bash
 EcalEndcap
 ```
 
 ECal -> Electromagnetic calorimeter, Endcap -> The endcap (as opposed to the barrel). The second part tells us a little bit more about which information pertaining to that detector is in this branch -
 
-```console
+```bash
 ...NClusters
 ```
 
 Clusters tells us this is probably something to do with the clusters of hits in this calorimeter. The N is telling is that this is for negatively charged clusters in this detector. If we open this branch, we see the sort of information we might expect to be associated with calorimeter clusters, for example -
 
-```console
+```bash
 EcalEndcapNClusters.energy
 EcalEndcapNClusters.nhits
 EcalEndcapNClusters.position.x
@@ -38,7 +38,7 @@ So stored in these branches is event by event information on the energy of clust
 
 The MCParticles branch contains truth level information on the input events into the simulation and reconstruction. Many simulation studies will involve a comparison to this "true" information. This branch contains event level information for many quantities  -
 
-```console
+```bash
 MCParticles.PDG
 MCParticles.charge
 MCParticles.vertex.x
@@ -46,7 +46,7 @@ MCParticles.momentum.x
 ...
 ```
 
-The PDG value tells us what the input particle actually was, we can cross-reference the output of this with the [PDG code](https://pdg.lbl.gov/2007/reviews/montecarlorpp.pdf) to see what our inputs actually were. We can also easily extract the charge, vertex (x component) and momentum (x component) of the particles in our event using the leaves above. 
+The PDG value tells us what the input particle actually was, we can cross-reference the output of this with the [PDG code](https://pdg.lbl.gov/2007/reviews/montecarlorpp.pdf) to see what our inputs actually were. We can also easily extract the charge, vertex (x component) and momentum (x component) of the particles in our event using the leaves above.
 
 ## ReconstructedParticles
 
@@ -58,16 +58,8 @@ Similar to reconstructed particles. In this case though, we only get information
 
 ## ReconstructedParticlesAssociations
 
-This branch contains information on associations betwen MC truth information and reconstructed particles. In this case, this is for all reconstructed particles. We can find the association index matching the index of the chagred particle and compare what we have reconstructed to its actual "true" information. See the examples in [episode 3]({{page.root}}{% link _episodes/03-analysis.md %}) for some example usage of this.
+This branch contains information on associations betwen MC truth information and reconstructed particles. In this case, this is for all reconstructed particles. We can find the association index matching the index of the chagred particle and compare what we have reconstructed to its actual "true" information. See the examples in [episode 3](../episodes/03-analysis.md) for some example usage of this.
 
 ## ReconstructedChargedParticlesAssociations
 
 Similar to ReconstructedParticlesAssociations, but for reconstructed charged particles.
-
-
-
-
-
-
-
-
