@@ -142,6 +142,9 @@
     <loc>https://eic.github.io/tutorial-analysis/_layouts/workshop.html</loc>
   </url>
   <url>
+    <loc>https://eic.github.io/tutorial-analysis/aio.html</loc>
+  </url>
+  <url>
     <loc>https://eic.github.io/tutorial-analysis/branch-dictionary.html</loc>
   </url>
   <url>
@@ -155,6 +158,9 @@
   </url>
   <url>
     <loc>https://eic.github.io/tutorial-analysis/exercise-scripts.html</loc>
+  </url>
+  <url>
+    <loc>https://eic.github.io/tutorial-analysis/images.html</loc>
   </url>
   <url>
     <loc>https://eic.github.io/tutorial-analysis/index.html</loc>
@@ -184,6 +190,9 @@
     <loc>https://eic.github.io/tutorial-analysis/instructor/LICENSE.html</loc>
   </url>
   <url>
+    <loc>https://eic.github.io/tutorial-analysis/instructor/aio.html</loc>
+  </url>
+  <url>
     <loc>https://eic.github.io/tutorial-analysis/instructor/branch-dictionary.html</loc>
   </url>
   <url>
@@ -199,7 +208,16 @@
     <loc>https://eic.github.io/tutorial-analysis/instructor/exercise-scripts.html</loc>
   </url>
   <url>
+    <loc>https://eic.github.io/tutorial-analysis/instructor/images.html</loc>
+  </url>
+  <url>
     <loc>https://eic.github.io/tutorial-analysis/instructor/index.html</loc>
+  </url>
+  <url>
+    <loc>https://eic.github.io/tutorial-analysis/instructor/instructor-notes.html</loc>
+  </url>
+  <url>
+    <loc>https://eic.github.io/tutorial-analysis/instructor/key-points.html</loc>
   </url>
   <url>
     <loc>https://eic.github.io/tutorial-analysis/instructor/profiles.html</loc>
@@ -209,6 +227,12 @@
   </url>
   <url>
     <loc>https://eic.github.io/tutorial-analysis/instructor/tree-pruning-script.html</loc>
+  </url>
+  <url>
+    <loc>https://eic.github.io/tutorial-analysis/instructor-notes.html</loc>
+  </url>
+  <url>
+    <loc>https://eic.github.io/tutorial-analysis/key-points.html</loc>
   </url>
   <url>
     <loc>https://eic.github.io/tutorial-analysis/profiles.html</loc>
