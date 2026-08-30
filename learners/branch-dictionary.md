@@ -58,7 +58,7 @@ Similar to reconstructed particles. In this case though, we only get information
 
 ## ReconstructedParticlesLinks
 
-This branch contains information on links between MC truth information and reconstructed particles. In this case, this is for all reconstructed particles. We can find the link index matching the index of the charged particle and compare what we have reconstructed to its actual "true" information. See the examples in [episode 3](../episodes/03-analysis.md) for some example usage of this.
+This branch contains information on links between MC truth information and reconstructed particles. In this case, this is for all reconstructed particles. We can find the link index matching the index of the reconstructed particle and compare what we have reconstructed to its actual "true" information. See the examples in [episode 3](../episodes/03-analysis.md) for some example usage of this.
 
 ## ReconstructedChargedParticlesLinks
 
