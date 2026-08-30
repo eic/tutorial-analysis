@@ -36,9 +36,9 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   TTreeReaderArray<float> trackMomY(tree_reader, "ReconstructedChargedParticles.momentum.y");
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
   
-  // Get Associations Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_rec.index");
-  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
+  // Get Links Between MCParticles and ReconstructedChargedParticles
+  TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
+  TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
       
   // Define Histograms
   TH1D *partEta = new TH1D("partEta","Eta of Thrown Charged Particles;Eta",100,-5.,5.);
@@ -57,8 +57,8 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
 	    
 		partEta->Fill(trueEta);
 
-		for(unsigned int j=0; j<simuAssoc.GetSize(); j++){ // Loop over associations to find matching ReconstructedChargedParticle
-		    if(simuAssoc[j] == i){ // Find association index matching the index of the thrown particle we are looking at
+		for(unsigned int j=0; j<simuAssoc.GetSize(); j++){ // Loop over links to find matching ReconstructedChargedParticle
+		    if(simuAssoc[j] == i){ // Find link index matching the index of the thrown particle we are looking at
 			TVector3 recMom(trackMomX[recoAssoc[j]],trackMomY[recoAssoc[j]],trackMomZ[recoAssoc[j]]); // recoAssoc[j] is the index of the matched ReconstructedChargedParticle
 
 			// Check the distance between the thrown and reconstructed particle
@@ -70,8 +70,8 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
 
 			matchedPartEta->Fill(trueEta); // Plot the thrown eta if a matched ReconstructedChargedParticle was found
                     }
-                } // End loop over associations 
-            } // End PDG check          
+                } // End loop over links
+            } // End PDG check
         } // End stable particles condition  
     } // End loop over thrown particles
   } // End loop over events 
@@ -107,9 +107,9 @@ void EfficiencyAnalysis_Exercise(TString infile="PATH_TO_FILE"){
   TTreeReaderArray<float> trackMomY(tree_reader, "ReconstructedChargedParticles.momentum.y");
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
-  // Get Associations Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_rec.index");
-  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
+  // Get Links Between MCParticles and ReconstructedChargedParticles
+  TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
+  TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
     
   // Define Histograms
   TH1D *partEta = new TH1D("partEta","#eta of Thrown Charged Particles; #eta", 120, -6, 6);
@@ -164,10 +164,10 @@ void EfficiencyAnalysis_Exercise(TString infile="PATH_TO_FILE"){
 		partPEta->Fill(trueMom.Mag(), trueEta);
 		partPhiEta->Fill(truePhi, trueEta);
 
-		// Loop over associations to find matching ReconstructedChargedParticle
+		// Loop over links to find matching ReconstructedChargedParticle
 		for(unsigned int j=0; j<simuAssoc.GetSize(); j++)
 		  {
-		    if(simuAssoc[j] == i) // Find association index matching the index of the thrown particle we are looking at
+		    if(simuAssoc[j] == i) // Find link index matching the index of the thrown particle we are looking at
 		      {
 			TVector3 recMom(trackMomX[recoAssoc[j]],trackMomY[recoAssoc[j]],trackMomZ[recoAssoc[j]]); // recoAssoc[j] is the index of the matched ReconstructedChargedParticle
 
@@ -190,7 +190,7 @@ void EfficiencyAnalysis_Exercise(TString infile="PATH_TO_FILE"){
 			matchedPartPhiEta->Fill(truePhi, trueEta);
 	
 		      }
-		  }// End loop over associations
+		  }// End loop over links
 	      } // End PDG check
 	  } // End stable particles condition
       } // End loop over thrown particles
@@ -251,9 +251,9 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   TTreeReaderArray<float> trackMomY(tree_reader, "ReconstructedChargedParticles.momentum.y");
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
-  // Get Associations Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_rec.index");
-  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
+  // Get Links Between MCParticles and ReconstructedChargedParticles
+  TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
+  TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
     
   // Define Histograms
   TH1D *trackMomentumRes = new TH1D("trackMomentumRes","Track Momentum Resolution", 400, -2, 2);
@@ -272,8 +272,8 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
 		float trueEta = trueMom.PseudoRapidity();
 		float truePhi = trueMom.Phi();
 	    
-		for(unsigned int j=0; j<simuAssoc.GetSize(); j++){ // Loop over associations to find matching ReconstructedChargedParticle
-		    if(simuAssoc[j] == i){ // Find association index matching the index of the thrown particle we are looking at
+		for(unsigned int j=0; j<simuAssoc.GetSize(); j++){ // Loop over links to find matching ReconstructedChargedParticle
+		    if(simuAssoc[j] == i){ // Find link index matching the index of the thrown particle we are looking at
 			TVector3 recMom(trackMomX[recoAssoc[j]],trackMomY[recoAssoc[j]],trackMomZ[recoAssoc[j]]); // recoAssoc[j] is the index of the matched ReconstructedChargedParticle
 
 			// Check the distance between the thrown and reconstructed particle
@@ -290,8 +290,8 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
 			matchedPartTrackDeltaR->Fill(deltaR);
 			matchedPartTrackDeltaMom->Fill(deltaMom);
                     }
-                } // End loop over associations 
-            } // End PDG check          
+                } // End loop over links
+            } // End PDG check
         } // End stable particles condition  
     } // End loop over thrown particles
   } // End loop over events 
@@ -326,9 +326,9 @@ void ResolutionAnalysis_Exercise(TString infile="PATH_TO_FILE"){
   TTreeReaderArray<float> trackMomY(tree_reader, "ReconstructedChargedParticles.momentum.y");
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
-  // Get Associations Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_rec.index");
-  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
+  // Get Links Between MCParticles and ReconstructedChargedParticles
+  TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
+  TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
     
   // Define Histograms
   TH1D *trackMomentumRes = new TH1D("trackMomentumRes","Track Momentum Resolution; (P_{rec} - P_{MC})/P_{MC}", 400, -2, 2);
@@ -375,10 +375,10 @@ void ResolutionAnalysis_Exercise(TString infile="PATH_TO_FILE"){
 		float trueEta = trueMom.PseudoRapidity();
 		float truePhi = trueMom.Phi();
 
-		// Loop over associations to find matching ReconstructedChargedParticle
+		// Loop over links to find matching ReconstructedChargedParticle
 		for(unsigned int j=0; j<simuAssoc.GetSize(); j++)
 		  {
-		    if(simuAssoc[j] == i) // Find association index matching the index of the thrown particle we are looking at
+		    if(simuAssoc[j] == i) // Find link index matching the index of the thrown particle we are looking at
 		      {
 			TVector3 recMom(trackMomX[recoAssoc[j]],trackMomY[recoAssoc[j]],trackMomZ[recoAssoc[j]]); // recoAssoc[j] is the index of the matched ReconstructedChargedParticle
 
@@ -426,7 +426,7 @@ void ResolutionAnalysis_Exercise(TString infile="PATH_TO_FILE"){
 			matchedPartTrackDeltaMom->Fill(deltaMom);
 			
 		      }
-		  }// End loop over associations
+		  }// End loop over links
 	      } // End PDG check
 	  } // End stable particles condition
       } // End loop over thrown particles
@@ -677,14 +677,14 @@ tree = file['events']
 
 # Convert relevant branches to arrays
 MCPartBr = tree["MCParticles"].arrays()
-RecoAssocRec = tree['_ReconstructedChargedParticleAssociations_rec'].arrays()
-RecoAssocSim = tree['_ReconstructedChargedParticleAssociations_sim'].arrays()
+RecoAssocRec = tree['_ReconstructedChargedParticleLinks_from'].arrays()
+RecoAssocSim = tree['_ReconstructedChargedParticleLinks_to'].arrays()
 ReconChPartBr = tree["ReconstructedChargedParticles"].arrays()
 
-RecID=RecoAssocRec['_ReconstructedChargedParticleAssociations_rec.index'] # Array of reconstructed IDs
-SimID=RecoAssocSim['_ReconstructedChargedParticleAssociations_sim.index'] # Array of simulated IDs
+RecID=RecoAssocRec['_ReconstructedChargedParticleLinks_from.index'] # Array of reconstructed IDs
+SimID=RecoAssocSim['_ReconstructedChargedParticleLinks_to.index'] # Array of simulated IDs
 
-# Create some filters, anything with [SimID] or [RecID] will index the event by the associations. This means we will only retain events with a matching truth particle/matching reconstructed particle
+# Create some filters, anything with [SimID] or [RecID] will index the event by the links. This means we will only retain events with a matching truth particle/matching reconstructed particle
 BoolMatch=(MCPartBr["MCParticles.PDG"][SimID])==(ReconChPartBr["ReconstructedChargedParticles.PDG"][RecID]) # Use simulated or reconstructed IDs as indices, this checks if the pdg between each array matches
 BoolChargeTrack = ((abs(MCPartBr["MCParticles.charge"])!=0) & (MCPartBr["MCParticles.generatorStatus"]==1))
 BoolChargeTrackMatch = ((abs(MCPartBr["MCParticles.charge"][SimID])!=0) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1))
@@ -776,14 +776,14 @@ tree = file['events']
 
 # Convert relevant branches to arrays
 MCPartBr = tree["MCParticles"].arrays()
-RecoAssocRec = tree['_ReconstructedChargedParticleAssociations_rec'].arrays()
-RecoAssocSim = tree['_ReconstructedChargedParticleAssociations_sim'].arrays()
+RecoAssocRec = tree['_ReconstructedChargedParticleLinks_from'].arrays()
+RecoAssocSim = tree['_ReconstructedChargedParticleLinks_to'].arrays()
 ReconChPartBr = tree["ReconstructedChargedParticles"].arrays()
 
-RecID=RecoAssocRec['_ReconstructedChargedParticleAssociations_rec.index'] # Array of reconstructed IDs
-SimID=RecoAssocSim['_ReconstructedChargedParticleAssociations_sim.index'] # Array of simulated IDs
+RecID=RecoAssocRec['_ReconstructedChargedParticleLinks_from.index'] # Array of reconstructed IDs
+SimID=RecoAssocSim['_ReconstructedChargedParticleLinks_to.index'] # Array of simulated IDs
 
-# Create some filters, anything with [SimID] or [RecID] will index the event by the associations. This means we will only retain events with a matching truth particle/matching reconstructed particle
+# Create some filters, anything with [SimID] or [RecID] will index the event by the links. This means we will only retain events with a matching truth particle/matching reconstructed particle
 BoolMatch=(MCPartBr["MCParticles.PDG"][SimID])==(ReconChPartBr["ReconstructedChargedParticles.PDG"][RecID]) # Use simulated or reconstructed IDs as indices, this checks if the pdg between each array matches
 BoolChargeTrack = ((abs(MCPartBr["MCParticles.charge"])!=0) & (MCPartBr["MCParticles.generatorStatus"]==1))
 BoolChargeTrackMatch = ((abs(MCPartBr["MCParticles.charge"][SimID])!=0) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1))
@@ -935,14 +935,14 @@ tree = file['events']
 
 # Convert relevant branches to arrays
 MCPartBr = tree["MCParticles"].arrays()
-RecoAssocRec = tree['_ReconstructedChargedParticleAssociations_rec'].arrays()
-RecoAssocSim = tree['_ReconstructedChargedParticleAssociations_sim'].arrays()
+RecoAssocRec = tree['_ReconstructedChargedParticleLinks_from'].arrays()
+RecoAssocSim = tree['_ReconstructedChargedParticleLinks_to'].arrays()
 ReconChPartBr = tree["ReconstructedChargedParticles"].arrays()
 
-RecID=RecoAssocRec['_ReconstructedChargedParticleAssociations_rec.index'] # Array of reconstructed IDs
-SimID=RecoAssocSim['_ReconstructedChargedParticleAssociations_sim.index'] # Array of simulated IDs
+RecID=RecoAssocRec['_ReconstructedChargedParticleLinks_from.index'] # Array of reconstructed IDs
+SimID=RecoAssocSim['_ReconstructedChargedParticleLinks_to.index'] # Array of simulated IDs
 
-# Create some filters, anything with [SimID] or [RecID] will index the event by the associations. This means we will only retain events with a matching truth particle/matching reconstructed particle
+# Create some filters, anything with [SimID] or [RecID] will index the event by the links. This means we will only retain events with a matching truth particle/matching reconstructed particle
 BoolChargeTrack = ((abs(MCPartBr["MCParticles.charge"])!=0) & (MCPartBr["MCParticles.generatorStatus"]==1))
 BoolChargeTrackMatch = ((abs(MCPartBr["MCParticles.charge"][SimID])!=0) & (MCPartBr["MCParticles.generatorStatus"][SimID]==1))
 BoolElec=((abs(MCPartBr["MCParticles.PDG"])==11) & (MCPartBr["MCParticles.generatorStatus"]==1))
@@ -1026,14 +1026,14 @@ tree = file['events']
 
 # Convert relevant branches to arrays
 MCPartBr = tree["MCParticles"].arrays()
-RecoAssocRec = tree['_ReconstructedChargedParticleAssociations_rec'].arrays()
-RecoAssocSim = tree['_ReconstructedChargedParticleAssociations_sim'].arrays()
+RecoAssocRec = tree['_ReconstructedChargedParticleLinks_from'].arrays()
+RecoAssocSim = tree['_ReconstructedChargedParticleLinks_to'].arrays()
 ReconChPartBr = tree["ReconstructedChargedParticles"].arrays()
 
-RecID=RecoAssocRec['_ReconstructedChargedParticleAssociations_rec.index'] # Array of reconstructed IDs
-SimID=RecoAssocSim['_ReconstructedChargedParticleAssociations_sim.index'] # Array of simulated IDs
+RecID=RecoAssocRec['_ReconstructedChargedParticleLinks_from.index'] # Array of reconstructed IDs
+SimID=RecoAssocSim['_ReconstructedChargedParticleLinks_to.index'] # Array of simulated IDs
 
-# Create some filters, anything with [SimID] or [RecID] will index the event by the associations. This means we will only retain events with a matching truth particle/matching reconstructed particle
+# Create some filters, anything with [SimID] or [RecID] will index the event by the links. This means we will only retain events with a matching truth particle/matching reconstructed particle
 MCStatus = MCPartBr['MCParticles.generatorStatus'] == 1
 MCNegCharge = MCPartBr['MCParticles.charge'] == -1
 MCScElecPDG = MCPartBr['MCParticles.PDG'] == 11
@@ -1162,9 +1162,9 @@ trackMomX = events_tree["ReconstructedChargedParticles.momentum.x"].array()
 trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
 trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
-# Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["_ReconstructedChargedParticleAssociations_rec.index"].array()
-simuAssoc = events_tree["_ReconstructedChargedParticleAssociations_sim.index"].array()
+# Get links between MCParticles and ReconstructedChargedParticles
+recoAssoc = events_tree["_ReconstructedChargedParticleLinks_from.index"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleLinks_to.index"].array()
 
 # Define histograms below
 partEta = ROOT.TH1D("partEta","Eta of Thrown Charged Particles;Eta",100, -5 ,5 )
@@ -1181,7 +1181,7 @@ for i in range(0, len(partGenStat)): # Loop over all events
                 trueEta = trueMom.PseudoRapidity()
                 truePhi = trueMom.Phi()
                 partEta.Fill(trueEta)
-                for k in range(0,len(simuAssoc[i])): # Loop over associations to find matching ReconstructedChargedParticle
+                for k in range(0,len(simuAssoc[i])): # Loop over links to find matching ReconstructedChargedParticle
                     if (simuAssoc[i][k] == j):
                         recMom = ROOT.TVector3(trackMomX[i][recoAssoc[i][k]], trackMomY[i][recoAssoc[i][k]], trackMomZ[i][recoAssoc[i][k]])
                         deltaEta = trueEta - recMom.PseudoRapidity()
@@ -1228,9 +1228,9 @@ trackMomX = events_tree["ReconstructedChargedParticles.momentum.x"].array()
 trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
 trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
-# Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["_ReconstructedChargedParticleAssociations_rec.index"].array()
-simuAssoc = events_tree["_ReconstructedChargedParticleAssociations_sim.index"].array()
+# Get links between MCParticles and ReconstructedChargedParticles
+recoAssoc = events_tree["_ReconstructedChargedParticleLinks_from.index"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleLinks_to.index"].array()
 
 # Define histograms below
 partEta = ROOT.TH1D("partEta","#eta of Thrown Charged Particles; #eta", 120, -6, 6)
@@ -1278,7 +1278,7 @@ for i in range(0, len(partGenStat)): # Loop over all events
                 partMom.Fill(trueMom.Mag())
                 partPEta.Fill(trueMom.Mag(), trueEta)
                 partPhiEta.Fill(truePhi, trueEta)
-                for k in range(0,len(simuAssoc[i])): # Loop over associations to find matching ReconstructedChargedParticle
+                for k in range(0,len(simuAssoc[i])): # Loop over links to find matching ReconstructedChargedParticle
                     if (simuAssoc[i][k] == j):
                         recMom = ROOT.TVector3(trackMomX[i][recoAssoc[i][k]], trackMomY[i][recoAssoc[i][k]], trackMomZ[i][recoAssoc[i][k]])
                         deltaEta = trueEta - recMom.PseudoRapidity()
@@ -1366,9 +1366,9 @@ trackMomX = events_tree["ReconstructedChargedParticles.momentum.x"].array()
 trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
 trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
-# Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["_ReconstructedChargedParticleAssociations_rec.index"].array()
-simuAssoc = events_tree["_ReconstructedChargedParticleAssociations_sim.index"].array()
+# Get links between MCParticles and ReconstructedChargedParticles
+recoAssoc = events_tree["_ReconstructedChargedParticleLinks_from.index"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleLinks_to.index"].array()
 
 # Define histograms below
 trackMomentumRes = ROOT.TH1D("trackMomentumRes","Track Momentum Resolution", 400, -2, 2)
@@ -1387,7 +1387,7 @@ for i in range(0, len(partGenStat)): # Loop over all events
                 trueMom = ROOT.TVector3(partMomX[i][j], partMomY[i][j], partMomZ[i][j])
                 trueEta = trueMom.PseudoRapidity()
                 truePhi = trueMom.Phi()
-                for k in range(0,len(simuAssoc[i])): # Loop over associations to find matching ReconstructedChargedParticle
+                for k in range(0,len(simuAssoc[i])): # Loop over links to find matching ReconstructedChargedParticle
                     if (simuAssoc[i][k] == j):
                         recMom = ROOT.TVector3(trackMomX[i][recoAssoc[i][k]], trackMomY[i][recoAssoc[i][k]], trackMomZ[i][recoAssoc[i][k]])
                         deltaEta = trueEta - recMom.PseudoRapidity()
@@ -1441,9 +1441,9 @@ trackMomX = events_tree["ReconstructedChargedParticles.momentum.x"].array()
 trackMomY = events_tree["ReconstructedChargedParticles.momentum.y"].array()
 trackMomZ = events_tree["ReconstructedChargedParticles.momentum.z"].array()
 
-# Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["_ReconstructedChargedParticleAssociations_rec.index"].array()
-simuAssoc = events_tree.["_ReconstructedChargedParticleAssociations_sim.index"].array()
+# Get links between MCParticles and ReconstructedChargedParticles
+recoAssoc = events_tree["_ReconstructedChargedParticleLinks_from.index"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleLinks_to.index"].array()
 
 # Define histograms below
 trackMomentumRes = ROOT.TH1D("trackMomentumRes","Track Momentum Resolution", 400, -2, 2)
@@ -1484,7 +1484,7 @@ for i in range(0, len(partGenStat)): # Loop over all events
                 trueMom = ROOT.TVector3(partMomX[i][j], partMomY[i][j], partMomZ[i][j])
                 trueEta = trueMom.PseudoRapidity()
                 truePhi = trueMom.Phi()
-                for k in range(0,len(simuAssoc[i])): # Loop over associations to find matching ReconstructedChargedParticle
+                for k in range(0,len(simuAssoc[i])): # Loop over links to find matching ReconstructedChargedParticle
                     if (simuAssoc[i][k] == j):
                         recMom = ROOT.TVector3(trackMomX[i][recoAssoc[i][k]], trackMomY[i][recoAssoc[i][k]], trackMomZ[i][recoAssoc[i][k]])
                         deltaEta = trueEta - recMom.PseudoRapidity()
@@ -1593,9 +1593,9 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
                 .Define("pdgFilter",     "absPDG == 11 || absPDG == 13 || absPDG == 211 || absPDG == 321 || absPDG == 2212")
                 .Define("particleFilter","statusFilter && pdgFilter"           )
                 .Define("filtMCParts",   "MCParticles[particleFilter]"         )
-                .Define("assoFilter",    "Take(particleFilter,ReconstructedChargedParticleAssociations_sim.index)") // Incase any of the associated particles happen to not be charged
-                .Define("assoMCParts",   "Take(MCParticles,ReconstructedChargedParticleAssociations)sim.index)[assoFilter]")
-                .Define("assoRecParts",  "Take(ReconstructedChargedParticles,ReconstructedChargedParticleAssociations._rec.index)[assoFilter]")
+                .Define("assoFilter",    "Take(particleFilter,_ReconstructedChargedParticleLinks_to.index)") // In case any of the linked particles happen to not be charged
+                .Define("assoMCParts",   "Take(MCParticles,_ReconstructedChargedParticleLinks_to.index)[assoFilter]")
+                .Define("assoRecParts",  "Take(ReconstructedChargedParticles,_ReconstructedChargedParticleLinks_from.index)[assoFilter]")
                 .Define("filtMCEta",     getEta<MCP>   , {"filtMCParts"} )
                 .Define("filtMCPhi",     getPhi<MCP>   , {"filtMCParts"} )
                 .Define("accoMCEta",     getEta<MCP>   , {"assoMCParts"} )
@@ -1664,9 +1664,9 @@ void EfficiencyAnalysisRDF_Exercise(TString infile="PATH_TO_INPUT_FILE"){
     .Define("pdgFilter",     "absPDG == 11 || absPDG == 13 || absPDG == 211 || absPDG == 321 || absPDG == 2212")
     .Define("particleFilter","statusFilter && pdgFilter"           )
     .Define("filtMCParts",   "MCParticles[particleFilter]"         )
-    .Define("assoFilter",    "Take(particleFilter,_ReconstructedChargedParticleAssociations_sim.index)") // In case any of the associated particles happen to not be charged
-    .Define("assoMCParts",   "Take(MCParticles,_ReconstructedChargedParticleAssociations_sim.index)[assoFilter]")
-    .Define("assoRecParts",  "Take(ReconstructedChargedParticles,_ReconstructedChargedParticleAssociations_rec.index)[assoFilter]")
+    .Define("assoFilter",    "Take(particleFilter,_ReconstructedChargedParticleLinks_to.index)") // In case any of the linked particles happen to not be charged
+    .Define("assoMCParts",   "Take(MCParticles,_ReconstructedChargedParticleLinks_to.index)[assoFilter]")
+    .Define("assoRecParts",  "Take(ReconstructedChargedParticles,_ReconstructedChargedParticleLinks_from.index)[assoFilter]")
     .Define("filtMCEta",     getEta<MCP>   , {"filtMCParts"} )
     .Define("filtMCPhi",     getPhi<MCP>   , {"filtMCParts"} )
     .Define("filtMCp",       getP<MCP>     , {"filtMCParts"} )
