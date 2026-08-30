@@ -76,8 +76,8 @@ void TreePrune(TString infile=""){
   full_tree->SetBranchStatus("MCParticles*",1);
   full_tree->SetBranchStatus("ReconstructedParticles**",1);
   full_tree->SetBranchStatus("ReconstructedChargedParticles*",1);
-  full_tree->SetBranchStatus("*ReconstructedParticleAssociations*",1);
-  full_tree->SetBranchStatus("*ReconstructedChargedParticleAssociations*",1);
+  full_tree->SetBranchStatus("*ReconstructedParticleLinks*",1);
+  full_tree->SetBranchStatus("*ReconstructedChargedParticleLinks*",1);
   full_tree->SetBranchStatus("EcalEndcapNClusters*",1);
   full_tree->SetBranchStatus("EcalEndcapPClusters*",1);
   
