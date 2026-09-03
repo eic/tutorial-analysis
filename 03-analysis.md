@@ -97,7 +97,7 @@ All members of the same branch should have the same number of entries, so it is 
 
 :::::::::::::::::::::::::::::::::::::::::::::
 
-We will proceed using the ReconstructedChargedParticles branch as this will give us a chance to practice using associations, copy the following lines into your analysis macro.
+We will proceed using the ReconstructedChargedParticles branch as this will give us a chance to practice using links, copy the following lines into your analysis macro.
 
 ```c++
 // Set up input file chain
@@ -119,12 +119,12 @@ TTreeReaderArray<float> trackMomX(tree_reader, "ReconstructedChargedParticles.mo
 TTreeReaderArray<float> trackMomY(tree_reader, "ReconstructedChargedParticles.momentum.y");
 TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
-// Get Associations Between MCParticles and ReconstructedChargedParticles
-TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_rec.index");
-TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
+// Get Links Between MCParticles and ReconstructedChargedParticles
+TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
+TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
 ```
 
-The last two lines encode the association between a ReconstructedChargedParticle and an MCParticle where the matching is determined by the EICrecon [reconstruction algorithms](https://github.com/eic/EICrecon/tree/main/src/algorithms/reco) which generate the ReconstructedChargedParticle objects.
+The last two lines encode the link between a ReconstructedChargedParticle and an MCParticle where the matching is determined by the EICrecon [reconstruction algorithms](https://github.com/eic/EICrecon/tree/main/src/algorithms/reco) which generate the ReconstructedChargedParticle objects.
 
 ::::::::::::::::::::::::::::::::::::::::::::: callout
 
@@ -147,7 +147,7 @@ Now that we have access to the data we need we will begin constructing our effic
 
 1. Loop over all events in the file
 2. Within each event, loop over all stable charged particles
-3. Identify the ReconstructedChargedParticle (if any) associated with the truth particle we are looking at
+3. Identify the ReconstructedChargedParticle (if any) linked to the truth particle we are looking at
 4. Create and fill the necessary histograms
 
 Here is the code to implement these steps:
@@ -176,10 +176,10 @@ while(tree_reader.Next()) { // Loop over events
 	    
 		          partEta->Fill(trueEta);
 
-              // Loop over associations to find matching ReconstructedChargedParticle
+              // Loop over links to find matching ReconstructedChargedParticle
 		          for(unsigned int j=0; j<simuAssoc.GetSize(); j++)
 		            {
-		              if(simuAssoc[j] == i) // Find association index matching the index of the thrown particle we are looking at
+		              if(simuAssoc[j] == i) // Find link index matching the index of the thrown particle we are looking at
 		                {
 			                TVector3 recMom(trackMomX[recoAssoc[j]],trackMomY[recoAssoc[j]],trackMomZ[recoAssoc[j]]); // recoAssoc[j] is the index of the matched ReconstructedChargedParticle
 
@@ -207,7 +207,7 @@ Question:
 
 - Do the histogram ranges make sense?
 - We plot the distance between thrown and reconstructed charged partices, does this distribution look reasonable?
-- When filling the matchedPartEta histogram (the numerator in our efficiency), why do we use again the true thrown eta instead of the associated reconstructed eta?
+- When filling the matchedPartEta histogram (the numerator in our efficiency), why do we use again the true thrown eta instead of the linked reconstructed eta?
 
 :::::::::::::::::::::::::::::::::::::::::::::
 
@@ -219,7 +219,7 @@ For all **scattered electrons**, **charged pions** and **protons** in our events
 
 - Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
 - Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
-- Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
+- Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are linked to a thrown particle
 
 :::::::::::::::  solution
 
@@ -244,15 +244,15 @@ Refer to [the script template](../learners/exercise-scripts.md#resolutionanalysi
 
 :::::::::::::::::::::::::::::::::::::::::::::
 
-Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram:
+Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are linked with one another, so we will work within the loop over links. Define the resolution expression and fill a simple histogram:
 
 ```c++
 TH1D *trackMomentumRes = new TH1D("trackMomentumRes","Track Momentum Resolution",2000,-10.,10.);
 ...
-// Loop over associations to find matching ReconstructedChargedParticle
+// Loop over links to find matching ReconstructedChargedParticle
 for(unsigned int j=0; j<simuAssoc.GetSize(); j++)
   {
-    if(simuAssoc[j] == i) // Find association index matching the index of the thrown particle we are looking at
+    if(simuAssoc[j] == i) // Find link index matching the index of the thrown particle we are looking at
       {
         ...
         double momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag();
@@ -274,7 +274,7 @@ For all **scattered electrons**, **charged pions** and **protons** in our events
 
 :::::::::::::::  solution
 
-Inside the association loop, compute `momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag()` and
+Inside the link loop, compute `momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag()` and
 fill a 2-D histogram with the true momentum (or true pseudorapidity) on one axis and `momRes` on the
 other, once per matched particle of the chosen species. Profiling these 2-D histograms (or taking
 the width of `momRes` in slices) gives the resolution as a function of the kinematic variable. See
@@ -459,13 +459,13 @@ Refer to [the script template](../learners/exercise-scripts.md#pythonic_efficien
 
 :::::::::::::::::::::::::::::::::::::::::::::
 
-Our approach here is a bit different to the TTreeReader example, but we will still need to utilise our simulation and reconstruction association IDs. We can access them via -
+Our approach here is a bit different to the TTreeReader example, but we will still need to utilise our simulation and reconstruction link IDs. We can access them via -
 
 ```python
-RecoAssocRec = tree['_ReconstructedChargedParticleAssociations_rec'].arrays()
-RecoAssocSim = tree['_ReconstructedChargedParticleAssociations_sim'].arrays()
-RecID=RecoAssocRec['_ReconstructedChargedParticleAssociations_rec.index'] # Array of reconstructed IDs
-SimID=RecoAssocSim['_ReconstructedChargedParticleAssociations_sim.index'] # Array of simulated IDs
+RecoAssocRec = tree['_ReconstructedChargedParticleLinks_from'].arrays()
+RecoAssocSim = tree['_ReconstructedChargedParticleLinks_to'].arrays()
+RecID=RecoAssocRec['_ReconstructedChargedParticleLinks_from.index'] # Array of reconstructed IDs
+SimID=RecoAssocSim['_ReconstructedChargedParticleLinks_to.index'] # Array of simulated IDs
 ```
 
 These are arrays of indices which map our simulated data to events which have actually been reconstructed in our simulation. We can use these to index our arrays and pick out *only* events where a simulated particle has a matching reconstructed particle (OR vice versa, where a reconstructed particle has a matching simulated particle). Note that when we index by these particles, we also need to make sure any filters are also indexed appropriately. E.g.
@@ -558,7 +558,7 @@ For all **scattered electrons**, **charged pions** and **protons** in our events
 
 - Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
 - Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
-- Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
+- Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are linked to a thrown particle
 
 :::::::::::::::  solution
 
@@ -763,15 +763,15 @@ The basic strategy is the same:
 
 1. Loop over all events in the file
 2. Within each event, loop over all stable charged particles
-3. Identify the ReconstructedChargedParticle (if any) associated with the truth particle we are looking at
+3. Identify the ReconstructedChargedParticle (if any) linked to the truth particle we are looking at
 4. Create and fill the necessary histograms
 
 Here is the sample code to implement these steps:
 
 ```python
 # Get assocations between MCParticles and ReconstructedChargedParticles
-recoAssoc = events_tree["_ReconstructedChargedParticleAssociations_rec.index"].array()
-simuAssoc = events_tree["_ReconstructedChargedParticleAssociations_sim.index"].array()
+recoAssoc = events_tree["_ReconstructedChargedParticleLinks_from.index"].array()
+simuAssoc = events_tree["_ReconstructedChargedParticleLinks_to.index"].array()
 
 # Define histograms below
 partEta = ROOT.TH1D("partEta","Eta of Thrown Charged Particles;Eta",100, -5 ,5 )
@@ -788,7 +788,7 @@ for i in range(0, len(partGenStat)): # Loop over all events
                 trueEta = trueMom.PseudoRapidity()
                 truePhi = trueMom.Phi()
                 partEta.Fill(trueEta)
-                for k in range(0,len(simuAssoc[i])): # Loop over associations to find matching ReconstructedChargedParticle
+                for k in range(0,len(simuAssoc[i])): # Loop over links to find matching ReconstructedChargedParticle
                     if (simuAssoc[i][k] == j):
                         recMom = ROOT.TVector3(trackMomX[i][recoAssoc[i][k]], trackMomY[i][recoAssoc[i][k]], trackMomZ[i][recoAssoc[i][k]])
                         deltaEta = trueEta - recMom.PseudoRapidity()
@@ -813,7 +813,7 @@ Question:
 
 - Do the hisotgram ranges make sense?
 - We plot the distance between thrown and reconstructed charged partices, does this distribution look reasonable?
-- When filling the matchedPartEta histogram (the numerator in our efficiency), why do we use again the true thrown eta instead of the associated reconstructed eta?
+- When filling the matchedPartEta histogram (the numerator in our efficiency), why do we use again the true thrown eta instead of the linked reconstructed eta?
 
 :::::::::::::::::::::::::::::::::::::::::::::
 
@@ -825,13 +825,13 @@ For all **scattered electrons**, **charged pions** and **protons** in our events
 
 - Find the efficiency as a function of particle momentum. Are there cuts on any other quantities you should place to get a sensible result?
 - Find the efficiency for some 2-D correlations: momentum vs eta; phi vs eta
-- Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are associated with a thrown particle
+- Plot some kinematic distributions (momentum, eta, etc) for all ReconstructedChargedParticles, not just those that are linked to a thrown particle
 
 :::::::::::::::  solution
 
 As in the TTreeReader example, fill a denominator histogram with the thrown quantity for each
 species and a numerator histogram with the same quantity only for particles that have a matching
-track (found via the association loop), then divide with `TH1::Divide` (or `TH2::Divide` for the
+track (found via the link loop), then divide with `TH1::Divide` (or `TH2::Divide` for the
 2-D correlations). Select species by PDG code and require `generatorStatus == 1`, and apply a
 momentum cut to avoid unstable low-statistics bins. See the
 [Pyroot efficiency template](../learners/exercise-scripts.md#efficiencyanalysispy).
@@ -849,12 +849,12 @@ Refer to [the script template](../learners/exercise-scripts.md#resolutionanalysi
 
 :::::::::::::::::::::::::::::::::::::::::::::
 
-Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are associated with one another, so we will work within the loop over associations. Define the resolution expression and fill a simple histogram by inserting this block of code appropriately:
+Next, we will look at track momentum resolution, that is, how well the momentum of the reconstructed track matches that of the thrown particle. We should have all of the "infrastructure" we need in place to do the analysis, we just need to define the appropriate quantities and make the histograms. It only makes sense to define the resolution for tracks and particles which are linked with one another, so we will work within the loop over links. Define the resolution expression and fill a simple histogram by inserting this block of code appropriately:
 
 ```python
 trackMomentumRes = ROOT.TH1D("trackMomentumRes","Track Momentum Resolution",2000,-10.,10.);
 ...
-                for k in range(0,len(simuAssoc[i])): # Loop over associations to find matching ReconstructedChargedParticle
+                for k in range(0,len(simuAssoc[i])): # Loop over links to find matching ReconstructedChargedParticle
                     if (simuAssoc[i][k] == j):
                         recMom = ROOT.TVector3(trackMomX[i][recoAssoc[i][k]], trackMomY[i][recoAssoc[i][k]], trackMomZ[i][recoAssoc[i][k]])
                         momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag()
@@ -874,7 +874,7 @@ For all **scattered electrons**, **charged pions** and **protons** in our events
 
 :::::::::::::::  solution
 
-Within the association loop, compute `momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag()` for the
+Within the link loop, compute `momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag()` for the
 matched particle and fill a `TH2D` with the true momentum (or true pseudorapidity) on one axis and
 `momRes` on the other, once per species. A `TProfile` or slice-by-slice fit of the 2-D histogram
 then gives the resolution as a function of the kinematic variable. See the
@@ -942,9 +942,9 @@ void EfficiencyAnalysisRDF(TString infile="PATH_TO_FILE"){
                 .Define("pdgFilter",     "absPDG == 11 || absPDG == 13 || absPDG == 211 || absPDG == 321 || absPDG == 2212")
                 .Define("particleFilter","statusFilter && pdgFilter"           )
                 .Define("filtMCParts",   "MCParticles[particleFilter]"         )
-                .Define("assoFilter",    "Take(particleFilter,_ReconstructedChargedParticleAssociations_simID.index)") // Incase any of the associated particles happen to not be charged
-                .Define("assoMCParts",   "Take(MCParticles,_ReconstructedChargedParticleAssociations_simID.index)[assoFilter]")
-                .Define("assoRecParts",  "Take(ReconstructedChargedParticles,_ReconstructedChargedParticleAssociations_recID.index)[assoFilter]")
+                .Define("assoFilter",    "Take(particleFilter,_ReconstructedChargedParticleLinks_to.index)") // In case any of the linked particles happen to not be charged
+                .Define("assoMCParts",   "Take(MCParticles,_ReconstructedChargedParticleLinks_to.index)[assoFilter]")
+                .Define("assoRecParts",  "Take(ReconstructedChargedParticles,_ReconstructedChargedParticleLinks_from.index)[assoFilter]")
                 .Define("filtMCEta",     getEta<MCP>   , {"filtMCParts"} )
                 .Define("filtMCPhi",     getPhi<MCP>   , {"filtMCParts"} )
                 .Define("accoMCEta",     getEta<MCP>   , {"assoMCParts"} )
