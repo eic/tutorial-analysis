@@ -675,7 +675,7 @@ electron?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>Opening the file and calling <code>new TBrowser()</code> shows the
 full list of branches. Double-clicking
@@ -844,7 +844,7 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-03-analysis"><p>Content from <a href="03-analysis.html">Analyzing the Reconstruction Output</a></p>
 <hr>
-<p>Last updated on 2026-07-10 |
+<p>Last updated on 2026-09-03 |
 
         <a href="https://github.com/eic/tutorial-analysis/edit/main/episodes/03-analysis.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 60 minutes</p>
@@ -1023,8 +1023,8 @@ limit of your loop.</p>
 </div>
 </div>
 <p>We will proceed using the ReconstructedChargedParticles branch as
-this will give us a chance to practice using associations, copy the
-following lines into your analysis macro.</p>
+this will give us a chance to practice using links, copy the following
+lines into your analysis macro.</p>
 <div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">CPP<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -1047,11 +1047,11 @@ following lines into your analysis macro.</p>
 <span id="cb4-17"><a href="#cb4-17" tabindex="-1" aria-label="code-block-4-17"></a>TTreeReaderArray<span class="op">&lt;</span><span class="dt">float</span><span class="op">&gt;</span> trackMomY<span class="op">(</span>tree_reader<span class="op">,</span> <span class="st">"ReconstructedChargedParticles.momentum.y"</span><span class="op">);</span></span>
 <span id="cb4-18"><a href="#cb4-18" tabindex="-1" aria-label="code-block-4-18"></a>TTreeReaderArray<span class="op">&lt;</span><span class="dt">float</span><span class="op">&gt;</span> trackMomZ<span class="op">(</span>tree_reader<span class="op">,</span> <span class="st">"ReconstructedChargedParticles.momentum.z"</span><span class="op">);</span></span>
 <span id="cb4-19"><a href="#cb4-19" tabindex="-1" aria-label="code-block-4-19"></a></span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1" aria-label="code-block-4-20"></a><span class="co">// Get Associations Between MCParticles and ReconstructedChargedParticles</span></span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1" aria-label="code-block-4-21"></a>TTreeReaderArray<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> recoAssoc<span class="op">(</span>tree_reader<span class="op">,</span> <span class="st">"_ReconstructedChargedParticleAssociations_rec.index"</span><span class="op">);</span></span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1" aria-label="code-block-4-22"></a>TTreeReaderArray<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> simuAssoc<span class="op">(</span>tree_reader<span class="op">,</span> <span class="st">"_ReconstructedChargedParticleAssociations_sim.index"</span><span class="op">);</span></span></code></pre>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1" aria-label="code-block-4-20"></a><span class="co">// Get Links Between MCParticles and ReconstructedChargedParticles</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1" aria-label="code-block-4-21"></a>TTreeReaderArray<span class="op">&lt;</span><span class="dt">unsigned</span> <span class="dt">int</span><span class="op">&gt;</span> recoAssoc<span class="op">(</span>tree_reader<span class="op">,</span> <span class="st">"_ReconstructedChargedParticleLinks_from.index"</span><span class="op">);</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1" aria-label="code-block-4-22"></a>TTreeReaderArray<span class="op">&lt;</span><span class="dt">unsigned</span> <span class="dt">int</span><span class="op">&gt;</span> simuAssoc<span class="op">(</span>tree_reader<span class="op">,</span> <span class="st">"_ReconstructedChargedParticleLinks_to.index"</span><span class="op">);</span></span></code></pre>
 </div>
-<p>The last two lines encode the association between a
+<p>The last two lines encode the link between a
 ReconstructedChargedParticle and an MCParticle where the matching is
 determined by the EICrecon <a href="https://github.com/eic/EICrecon/tree/main/src/algorithms/reco" class="external-link">reconstruction
 algorithms</a> which generate the ReconstructedChargedParticle
@@ -1095,8 +1095,8 @@ outlined below:</p>
 <ol style="list-style-type: decimal">
 <li>Loop over all events in the file</li>
 <li>Within each event, loop over all stable charged particles</li>
-<li>Identify the ReconstructedChargedParticle (if any) associated with
-the truth particle we are looking at</li>
+<li>Identify the ReconstructedChargedParticle (if any) linked to the
+truth particle we are looking at</li>
 <li>Create and fill the necessary histograms</li>
 </ol>
 <p>Here is the code to implement these steps:</p>
@@ -1126,10 +1126,10 @@ the truth particle we are looking at</li>
 <span id="cb5-21"><a href="#cb5-21" tabindex="-1" aria-label="code-block-5-21"></a>	    </span>
 <span id="cb5-22"><a href="#cb5-22" tabindex="-1" aria-label="code-block-5-22"></a>		          partEta<span class="op">-&gt;</span>Fill<span class="op">(</span>trueEta<span class="op">);</span></span>
 <span id="cb5-23"><a href="#cb5-23" tabindex="-1" aria-label="code-block-5-23"></a></span>
-<span id="cb5-24"><a href="#cb5-24" tabindex="-1" aria-label="code-block-5-24"></a>              <span class="co">// Loop over associations to find matching ReconstructedChargedParticle</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1" aria-label="code-block-5-24"></a>              <span class="co">// Loop over links to find matching ReconstructedChargedParticle</span></span>
 <span id="cb5-25"><a href="#cb5-25" tabindex="-1" aria-label="code-block-5-25"></a>		          <span class="cf">for</span><span class="op">(</span><span class="dt">unsigned</span> <span class="dt">int</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span>simuAssoc<span class="op">.</span>GetSize<span class="op">();</span> j<span class="op">++)</span></span>
 <span id="cb5-26"><a href="#cb5-26" tabindex="-1" aria-label="code-block-5-26"></a>		            <span class="op">{</span></span>
-<span id="cb5-27"><a href="#cb5-27" tabindex="-1" aria-label="code-block-5-27"></a>		              <span class="cf">if</span><span class="op">(</span>simuAssoc<span class="op">[</span>j<span class="op">]</span> <span class="op">==</span> i<span class="op">)</span> <span class="co">// Find association index matching the index of the thrown particle we are looking at</span></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1" aria-label="code-block-5-27"></a>		              <span class="cf">if</span><span class="op">(</span>simuAssoc<span class="op">[</span>j<span class="op">]</span> <span class="op">==</span> i<span class="op">)</span> <span class="co">// Find link index matching the index of the thrown particle we are looking at</span></span>
 <span id="cb5-28"><a href="#cb5-28" tabindex="-1" aria-label="code-block-5-28"></a>		                <span class="op">{</span></span>
 <span id="cb5-29"><a href="#cb5-29" tabindex="-1" aria-label="code-block-5-29"></a>			                TVector3 recMom<span class="op">(</span>trackMomX<span class="op">[</span>recoAssoc<span class="op">[</span>j<span class="op">]],</span>trackMomY<span class="op">[</span>recoAssoc<span class="op">[</span>j<span class="op">]],</span>trackMomZ<span class="op">[</span>recoAssoc<span class="op">[</span>j<span class="op">]]);</span> <span class="co">// recoAssoc[j] is the index of the matched ReconstructedChargedParticle</span></span>
 <span id="cb5-30"><a href="#cb5-30" tabindex="-1" aria-label="code-block-5-30"></a></span>
@@ -1168,7 +1168,7 @@ found by taking the ratio of matchedPartEta over partEta.</p>
 partices, does this distribution look reasonable?</li>
 <li>When filling the matchedPartEta histogram (the numerator in our
 efficiency), why do we use again the true thrown eta instead of the
-associated reconstructed eta?</li>
+linked reconstructed eta?</li>
 </ul>
 </div>
 </div>
@@ -1190,7 +1190,7 @@ result?</li>
 <li>Find the efficiency for some 2-D correlations: momentum vs eta; phi
 vs eta</li>
 <li>Plot some kinematic distributions (momentum, eta, etc) for all
-ReconstructedChargedParticles, not just those that are associated with a
+ReconstructedChargedParticles, not just those that are linked to a
 thrown particle</li>
 </ul>
 </div>
@@ -1237,18 +1237,18 @@ the momentum of the reconstructed track matches that of the thrown
 particle. We should have all of the “infrastructure” we need in place to
 do the analysis, we just need to define the appropriate quantities and
 make the histograms. It only makes sense to define the resolution for
-tracks and particles which are associated with one another, so we will
-work within the loop over associations. Define the resolution expression
-and fill a simple histogram:</p>
+tracks and particles which are linked with one another, so we will work
+within the loop over links. Define the resolution expression and fill a
+simple histogram:</p>
 <div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">CPP<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode cpp" tabindex="0"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" tabindex="-1" aria-label="code-block-6-1"></a>TH1D <span class="op">*</span>trackMomentumRes <span class="op">=</span> <span class="kw">new</span> TH1D<span class="op">(</span><span class="st">"trackMomentumRes"</span><span class="op">,</span><span class="st">"Track Momentum Resolution"</span><span class="op">,</span><span class="dv">2000</span><span class="op">,-</span><span class="fl">10.</span><span class="op">,</span><span class="fl">10.</span><span class="op">);</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1" aria-label="code-block-6-2"></a><span class="op">...</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1" aria-label="code-block-6-3"></a><span class="co">// Loop over associations to find matching ReconstructedChargedParticle</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1" aria-label="code-block-6-3"></a><span class="co">// Loop over links to find matching ReconstructedChargedParticle</span></span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1" aria-label="code-block-6-4"></a><span class="cf">for</span><span class="op">(</span><span class="dt">unsigned</span> <span class="dt">int</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span>simuAssoc<span class="op">.</span>GetSize<span class="op">();</span> j<span class="op">++)</span></span>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1" aria-label="code-block-6-5"></a>  <span class="op">{</span></span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1" aria-label="code-block-6-6"></a>    <span class="cf">if</span><span class="op">(</span>simuAssoc<span class="op">[</span>j<span class="op">]</span> <span class="op">==</span> i<span class="op">)</span> <span class="co">// Find association index matching the index of the thrown particle we are looking at</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1" aria-label="code-block-6-6"></a>    <span class="cf">if</span><span class="op">(</span>simuAssoc<span class="op">[</span>j<span class="op">]</span> <span class="op">==</span> i<span class="op">)</span> <span class="co">// Find link index matching the index of the thrown particle we are looking at</span></span>
 <span id="cb6-7"><a href="#cb6-7" tabindex="-1" aria-label="code-block-6-7"></a>      <span class="op">{</span></span>
 <span id="cb6-8"><a href="#cb6-8" tabindex="-1" aria-label="code-block-6-8"></a>        <span class="op">...</span></span>
 <span id="cb6-9"><a href="#cb6-9" tabindex="-1" aria-label="code-block-6-9"></a>        <span class="dt">double</span> momRes <span class="op">=</span> <span class="op">(</span>recMom<span class="op">.</span>Mag<span class="op">()</span> <span class="op">-</span> trueMom<span class="op">.</span>Mag<span class="op">())/</span>trueMom<span class="op">.</span>Mag<span class="op">();</span></span>
@@ -1285,7 +1285,7 @@ pseudorapidity.</li>
 </button>
 <div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
-<p>Inside the association loop, compute
+<p>Inside the link loop, compute
 <code>momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag()</code> and
 fill a 2-D histogram with the true momentum (or true pseudorapidity) on
 one axis and <code>momRes</code> on the other, once per matched particle
@@ -1544,15 +1544,15 @@ place.</p>
 </div>
 </div>
 <p>Our approach here is a bit different to the TTreeReader example, but
-we will still need to utilise our simulation and reconstruction
-association IDs. We can access them via -</p>
+we will still need to utilise our simulation and reconstruction link
+IDs. We can access them via -</p>
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" tabindex="-1" aria-label="code-block-16-1"></a>RecoAssocRec <span class="op">=</span> tree[<span class="st">'_ReconstructedChargedParticleAssociations_rec'</span>].arrays()</span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1" aria-label="code-block-16-2"></a>RecoAssocSim <span class="op">=</span> tree[<span class="st">'_ReconstructedChargedParticleAssociations_sim'</span>].arrays()</span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1" aria-label="code-block-16-3"></a>RecID<span class="op">=</span>RecoAssocRec[<span class="st">'_ReconstructedChargedParticleAssociations_rec.index'</span>] <span class="co"># Array of reconstructed IDs</span></span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1" aria-label="code-block-16-4"></a>SimID<span class="op">=</span>RecoAssocSim[<span class="st">'_ReconstructedChargedParticleAssociations_sim.index'</span>] <span class="co"># Array of simulated IDs</span></span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" tabindex="-1" aria-label="code-block-16-1"></a>RecoAssocRec <span class="op">=</span> tree[<span class="st">'_ReconstructedChargedParticleLinks_from'</span>].arrays()</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1" aria-label="code-block-16-2"></a>RecoAssocSim <span class="op">=</span> tree[<span class="st">'_ReconstructedChargedParticleLinks_to'</span>].arrays()</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1" aria-label="code-block-16-3"></a>RecID<span class="op">=</span>RecoAssocRec[<span class="st">'_ReconstructedChargedParticleLinks_from.index'</span>] <span class="co"># Array of reconstructed IDs</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1" aria-label="code-block-16-4"></a>SimID<span class="op">=</span>RecoAssocSim[<span class="st">'_ReconstructedChargedParticleLinks_to.index'</span>] <span class="co"># Array of simulated IDs</span></span></code></pre>
 </div>
 <p>These are arrays of indices which map our simulated data to events
 which have actually been reconstructed in our simulation. We can use
@@ -1697,7 +1697,7 @@ result?</li>
 <li>Find the efficiency for some 2-D correlations: momentum vs eta; phi
 vs eta</li>
 <li>Plot some kinematic distributions (momentum, eta, etc) for all
-ReconstructedChargedParticles, not just those that are associated with a
+ReconstructedChargedParticles, not just those that are linked to a
 thrown particle</li>
 </ul>
 </div>
@@ -2022,8 +2022,8 @@ associate the individual tracks and particles to one another.</p>
 <ol style="list-style-type: decimal">
 <li>Loop over all events in the file</li>
 <li>Within each event, loop over all stable charged particles</li>
-<li>Identify the ReconstructedChargedParticle (if any) associated with
-the truth particle we are looking at</li>
+<li>Identify the ReconstructedChargedParticle (if any) linked to the
+truth particle we are looking at</li>
 <li>Create and fill the necessary histograms</li>
 </ol>
 <p>Here is the sample code to implement these steps:</p>
@@ -2031,8 +2031,8 @@ the truth particle we are looking at</li>
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" tabindex="-1" aria-label="code-block-29-1"></a><span class="co"># Get assocations between MCParticles and ReconstructedChargedParticles</span></span>
-<span id="cb29-2"><a href="#cb29-2" tabindex="-1" aria-label="code-block-29-2"></a>recoAssoc <span class="op">=</span> events_tree[<span class="st">"_ReconstructedChargedParticleAssociations_rec.index"</span>].array()</span>
-<span id="cb29-3"><a href="#cb29-3" tabindex="-1" aria-label="code-block-29-3"></a>simuAssoc <span class="op">=</span> events_tree[<span class="st">"_ReconstructedChargedParticleAssociations_sim.index"</span>].array()</span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1" aria-label="code-block-29-2"></a>recoAssoc <span class="op">=</span> events_tree[<span class="st">"_ReconstructedChargedParticleLinks_from.index"</span>].array()</span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1" aria-label="code-block-29-3"></a>simuAssoc <span class="op">=</span> events_tree[<span class="st">"_ReconstructedChargedParticleLinks_to.index"</span>].array()</span>
 <span id="cb29-4"><a href="#cb29-4" tabindex="-1" aria-label="code-block-29-4"></a></span>
 <span id="cb29-5"><a href="#cb29-5" tabindex="-1" aria-label="code-block-29-5"></a><span class="co"># Define histograms below</span></span>
 <span id="cb29-6"><a href="#cb29-6" tabindex="-1" aria-label="code-block-29-6"></a>partEta <span class="op">=</span> ROOT.TH1D(<span class="st">"partEta"</span>,<span class="st">"Eta of Thrown Charged Particles;Eta"</span>,<span class="dv">100</span>, <span class="op">-</span><span class="dv">5</span> ,<span class="dv">5</span> )</span>
@@ -2049,7 +2049,7 @@ the truth particle we are looking at</li>
 <span id="cb29-17"><a href="#cb29-17" tabindex="-1" aria-label="code-block-29-17"></a>                trueEta <span class="op">=</span> trueMom.PseudoRapidity()</span>
 <span id="cb29-18"><a href="#cb29-18" tabindex="-1" aria-label="code-block-29-18"></a>                truePhi <span class="op">=</span> trueMom.Phi()</span>
 <span id="cb29-19"><a href="#cb29-19" tabindex="-1" aria-label="code-block-29-19"></a>                partEta.Fill(trueEta)</span>
-<span id="cb29-20"><a href="#cb29-20" tabindex="-1" aria-label="code-block-29-20"></a>                <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>,<span class="bu">len</span>(simuAssoc[i])): <span class="co"># Loop over associations to find matching ReconstructedChargedParticle</span></span>
+<span id="cb29-20"><a href="#cb29-20" tabindex="-1" aria-label="code-block-29-20"></a>                <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>,<span class="bu">len</span>(simuAssoc[i])): <span class="co"># Loop over links to find matching ReconstructedChargedParticle</span></span>
 <span id="cb29-21"><a href="#cb29-21" tabindex="-1" aria-label="code-block-29-21"></a>                    <span class="cf">if</span> (simuAssoc[i][k] <span class="op">==</span> j):</span>
 <span id="cb29-22"><a href="#cb29-22" tabindex="-1" aria-label="code-block-29-22"></a>                        recMom <span class="op">=</span> ROOT.TVector3(trackMomX[i][recoAssoc[i][k]], trackMomY[i][recoAssoc[i][k]], trackMomZ[i][recoAssoc[i][k]])</span>
 <span id="cb29-23"><a href="#cb29-23" tabindex="-1" aria-label="code-block-29-23"></a>                        deltaEta <span class="op">=</span> trueEta <span class="op">-</span> recMom.PseudoRapidity()</span>
@@ -2086,7 +2086,7 @@ partEta.</p>
 partices, does this distribution look reasonable?</li>
 <li>When filling the matchedPartEta histogram (the numerator in our
 efficiency), why do we use again the true thrown eta instead of the
-associated reconstructed eta?</li>
+linked reconstructed eta?</li>
 </ul>
 </div>
 </div>
@@ -2108,7 +2108,7 @@ result?</li>
 <li>Find the efficiency for some 2-D correlations: momentum vs eta; phi
 vs eta</li>
 <li>Plot some kinematic distributions (momentum, eta, etc) for all
-ReconstructedChargedParticles, not just those that are associated with a
+ReconstructedChargedParticles, not just those that are linked to a
 thrown particle</li>
 </ul>
 </div>
@@ -2124,7 +2124,7 @@ thrown particle</li>
 <p>As in the TTreeReader example, fill a denominator histogram with the
 thrown quantity for each species and a numerator histogram with the same
 quantity only for particles that have a matching track (found via the
-association loop), then divide with <code>TH1::Divide</code> (or
+link loop), then divide with <code>TH1::Divide</code> (or
 <code>TH2::Divide</code> for the 2-D correlations). Select species by
 PDG code and require <code>generatorStatus == 1</code>, and apply a
 momentum cut to avoid unstable low-statistics bins. See the <a href="exercise-scripts.html#efficiencyanalysispy">Pyroot efficiency
@@ -2155,16 +2155,15 @@ the momentum of the reconstructed track matches that of the thrown
 particle. We should have all of the “infrastructure” we need in place to
 do the analysis, we just need to define the appropriate quantities and
 make the histograms. It only makes sense to define the resolution for
-tracks and particles which are associated with one another, so we will
-work within the loop over associations. Define the resolution expression
-and fill a simple histogram by inserting this block of code
-appropriately:</p>
+tracks and particles which are linked with one another, so we will work
+within the loop over links. Define the resolution expression and fill a
+simple histogram by inserting this block of code appropriately:</p>
 <div class="codewrapper sourceCode" id="cb30">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" tabindex="-1" aria-label="code-block-30-1"></a>trackMomentumRes <span class="op">=</span> ROOT.TH1D(<span class="st">"trackMomentumRes"</span>,<span class="st">"Track Momentum Resolution"</span>,<span class="dv">2000</span>,<span class="op">-</span><span class="fl">10.</span>,<span class="fl">10.</span>)<span class="op">;</span></span>
 <span id="cb30-2"><a href="#cb30-2" tabindex="-1" aria-label="code-block-30-2"></a>...</span>
-<span id="cb30-3"><a href="#cb30-3" tabindex="-1" aria-label="code-block-30-3"></a>                <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>,<span class="bu">len</span>(simuAssoc[i])): <span class="co"># Loop over associations to find matching ReconstructedChargedParticle</span></span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1" aria-label="code-block-30-3"></a>                <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>,<span class="bu">len</span>(simuAssoc[i])): <span class="co"># Loop over links to find matching ReconstructedChargedParticle</span></span>
 <span id="cb30-4"><a href="#cb30-4" tabindex="-1" aria-label="code-block-30-4"></a>                    <span class="cf">if</span> (simuAssoc[i][k] <span class="op">==</span> j):</span>
 <span id="cb30-5"><a href="#cb30-5" tabindex="-1" aria-label="code-block-30-5"></a>                        recMom <span class="op">=</span> ROOT.TVector3(trackMomX[i][recoAssoc[i][k]], trackMomY[i][recoAssoc[i][k]], trackMomZ[i][recoAssoc[i][k]])</span>
 <span id="cb30-6"><a href="#cb30-6" tabindex="-1" aria-label="code-block-30-6"></a>                        momRes <span class="op">=</span> (recMom.Mag() <span class="op">-</span> trueMom.Mag())<span class="op">/</span>trueMom.Mag()</span>
@@ -2200,7 +2199,7 @@ pseudorapidity.</li>
 </button>
 <div id="collapseSolution6" class="accordion-collapse collapse" aria-labelledby="headingSolution6" data-bs-parent="#accordionSolution6">
 <div class="accordion-body">
-<p>Within the association loop, compute
+<p>Within the link loop, compute
 <code>momRes = (recMom.Mag() - trueMom.Mag())/trueMom.Mag()</code> for
 the matched particle and fill a <code>TH2D</code> with the true momentum
 (or true pseudorapidity) on one axis and <code>momRes</code> on the
@@ -2296,9 +2295,9 @@ following into a new file called <code>EfficiencyAnalysisRDF.C</code>
 <span id="cb31-32"><a href="#cb31-32" tabindex="-1" aria-label="code-block-31-32"></a>                <span class="op">.</span>Define<span class="op">(</span><span class="st">"pdgFilter"</span><span class="op">,</span>     <span class="st">"absPDG == 11 || absPDG == 13 || absPDG == 211 || absPDG == 321 || absPDG == 2212"</span><span class="op">)</span></span>
 <span id="cb31-33"><a href="#cb31-33" tabindex="-1" aria-label="code-block-31-33"></a>                <span class="op">.</span>Define<span class="op">(</span><span class="st">"particleFilter"</span><span class="op">,</span><span class="st">"statusFilter &amp;&amp; pdgFilter"</span>           <span class="op">)</span></span>
 <span id="cb31-34"><a href="#cb31-34" tabindex="-1" aria-label="code-block-31-34"></a>                <span class="op">.</span>Define<span class="op">(</span><span class="st">"filtMCParts"</span><span class="op">,</span>   <span class="st">"MCParticles[particleFilter]"</span>         <span class="op">)</span></span>
-<span id="cb31-35"><a href="#cb31-35" tabindex="-1" aria-label="code-block-31-35"></a>                <span class="op">.</span>Define<span class="op">(</span><span class="st">"assoFilter"</span><span class="op">,</span>    <span class="st">"Take(particleFilter,_ReconstructedChargedParticleAssociations_simID.index)"</span><span class="op">)</span> <span class="co">// Incase any of the associated particles happen to not be charged</span></span>
-<span id="cb31-36"><a href="#cb31-36" tabindex="-1" aria-label="code-block-31-36"></a>                <span class="op">.</span>Define<span class="op">(</span><span class="st">"assoMCParts"</span><span class="op">,</span>   <span class="st">"Take(MCParticles,_ReconstructedChargedParticleAssociations_simID.index)[assoFilter]"</span><span class="op">)</span></span>
-<span id="cb31-37"><a href="#cb31-37" tabindex="-1" aria-label="code-block-31-37"></a>                <span class="op">.</span>Define<span class="op">(</span><span class="st">"assoRecParts"</span><span class="op">,</span>  <span class="st">"Take(ReconstructedChargedParticles,_ReconstructedChargedParticleAssociations_recID.index)[assoFilter]"</span><span class="op">)</span></span>
+<span id="cb31-35"><a href="#cb31-35" tabindex="-1" aria-label="code-block-31-35"></a>                <span class="op">.</span>Define<span class="op">(</span><span class="st">"assoFilter"</span><span class="op">,</span>    <span class="st">"Take(particleFilter,_ReconstructedChargedParticleLinks_to.index)"</span><span class="op">)</span> <span class="co">// In case any of the linked particles happen to not be charged</span></span>
+<span id="cb31-36"><a href="#cb31-36" tabindex="-1" aria-label="code-block-31-36"></a>                <span class="op">.</span>Define<span class="op">(</span><span class="st">"assoMCParts"</span><span class="op">,</span>   <span class="st">"Take(MCParticles,_ReconstructedChargedParticleLinks_to.index)[assoFilter]"</span><span class="op">)</span></span>
+<span id="cb31-37"><a href="#cb31-37" tabindex="-1" aria-label="code-block-31-37"></a>                <span class="op">.</span>Define<span class="op">(</span><span class="st">"assoRecParts"</span><span class="op">,</span>  <span class="st">"Take(ReconstructedChargedParticles,_ReconstructedChargedParticleLinks_from.index)[assoFilter]"</span><span class="op">)</span></span>
 <span id="cb31-38"><a href="#cb31-38" tabindex="-1" aria-label="code-block-31-38"></a>                <span class="op">.</span>Define<span class="op">(</span><span class="st">"filtMCEta"</span><span class="op">,</span>     getEta<span class="op">&lt;</span>MCP<span class="op">&gt;</span>   <span class="op">,</span> <span class="op">{</span><span class="st">"filtMCParts"</span><span class="op">}</span> <span class="op">)</span></span>
 <span id="cb31-39"><a href="#cb31-39" tabindex="-1" aria-label="code-block-31-39"></a>                <span class="op">.</span>Define<span class="op">(</span><span class="st">"filtMCPhi"</span><span class="op">,</span>     getPhi<span class="op">&lt;</span>MCP<span class="op">&gt;</span>   <span class="op">,</span> <span class="op">{</span><span class="st">"filtMCParts"</span><span class="op">}</span> <span class="op">)</span></span>
 <span id="cb31-40"><a href="#cb31-40" tabindex="-1" aria-label="code-block-31-40"></a>                <span class="op">.</span>Define<span class="op">(</span><span class="st">"accoMCEta"</span><span class="op">,</span>     getEta<span class="op">&lt;</span>MCP<span class="op">&gt;</span>   <span class="op">,</span> <span class="op">{</span><span class="st">"assoMCParts"</span><span class="op">}</span> <span class="op">)</span></span>
@@ -2788,7 +2787,7 @@ started. Check the Examples Repository too!</li>
         <p>Materials licensed under <a href="LICENSE.html">CC-BY 4.0</a> by the authors</p>
 
         <p>Template licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" class="external-link">CC-BY 4.0</a> by <a href="https://carpentries.org/" class="external-link">The Carpentries</a></p>
-        <p>Built with <a href="https://github.com/carpentries/sandpaper/tree/" class="external-link">sandpaper (0.20.2)</a>, <a href="https://github.com/carpentries/pegboard/tree/" class="external-link">pegboard (0.7.9)</a>, and <a href="https://github.com/carpentries/varnish/tree/" class="external-link">varnish (1.1.1)</a></p>
+        <p>Built with <a href="https://github.com/carpentries/sandpaper/tree/" class="external-link">sandpaper (0.21.0)</a>, <a href="https://github.com/carpentries/pegboard/tree/" class="external-link">pegboard (0.7.9)</a>, and <a href="https://github.com/carpentries/varnish/tree/" class="external-link">varnish (1.1.2)</a></p>
 		</div>
 		</footer>
 </div> <!-- / div.container -->
@@ -2811,8 +2810,8 @@ started. Check the Examples Repository too!</li>
   "url": "https://eic.github.io/tutorial-analysis/instructor/aio.html",
   "identifier": "https://eic.github.io/tutorial-analysis/instructor/aio.html",
   "dateCreated": "2021-01-01",
-  "dateModified": "2026-08-25",
-  "datePublished": "2026-08-25"
+  "dateModified": "2026-09-03",
+  "datePublished": "2026-09-03"
 }
 
   </script><script>
