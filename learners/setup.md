@@ -9,15 +9,15 @@ well before the start of the tutorial to ensure your system is ready.
 This tutorial will go over how to analyze the reconstructed simulation, so you will need to download a file to work with locally. The files are on the order of 50-80MB each. For consistency, we will use neutral current DIS events from the February 2026 campaign (26.02.0) with minimum Q2 = 10 GeV2 and at the highest electron-proton beam energy combination (if you wish to make an energy comparison, you can download additional files). To browse the available files, you can run the following commands from within the eic-shell environment:
 
 ```bash
-xrdfs root://dtn-eic.jlab.org
-ls /volatile/eic/EPIC/RECO/26.02.0/epic_craterlake/DIS/NC/18x275/minQ2=10
+xrdfs root://dtn2304.jlab.org:8443
+ls /jlab-osdf-ro/eic/EPIC/volatile/RECO/26.02.0/epic_craterlake/DIS/NC/18x275/minQ2=10
 exit
 ```
 
 You can download any of the files you want in here. You can do this by (still within eic-shell environment) navigating to the directory you will store your file(s) and run the command:
 
 ```bash
-xrdcp root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/26.02.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_5.0001.eicrecon.tree.edm4eic.root ./
+xrdcp root://dtn2304.jlab.org:8443//jlab-osdf-ro/eic/EPIC/volatile/RECO/26.02.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_5.0001.eicrecon.tree.edm4eic.root ./
 ```
 
 Do not forget the trailing ./ (or just . works too) as this tells the progam to put the file in your current dir.
