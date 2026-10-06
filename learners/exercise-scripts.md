@@ -37,8 +37,8 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
   
   // Get Links Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
-  TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
+  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
+  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
       
   // Define Histograms
   TH1D *partEta = new TH1D("partEta","Eta of Thrown Charged Particles;Eta",100,-5.,5.);
@@ -108,8 +108,8 @@ void EfficiencyAnalysis_Exercise(TString infile="PATH_TO_FILE"){
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
   // Get Links Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
-  TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
+  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
+  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
     
   // Define Histograms
   TH1D *partEta = new TH1D("partEta","#eta of Thrown Charged Particles; #eta", 120, -6, 6);
@@ -252,8 +252,8 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
   // Get Links Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
-  TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
+  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
+  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
     
   // Define Histograms
   TH1D *trackMomentumRes = new TH1D("trackMomentumRes","Track Momentum Resolution", 400, -2, 2);
@@ -327,8 +327,8 @@ void ResolutionAnalysis_Exercise(TString infile="PATH_TO_FILE"){
   TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
   // Get Links Between MCParticles and ReconstructedChargedParticles
-  TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
-  TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
+  TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
+  TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
     
   // Define Histograms
   TH1D *trackMomentumRes = new TH1D("trackMomentumRes","Track Momentum Resolution; (P_{rec} - P_{MC})/P_{MC}", 400, -2, 2);

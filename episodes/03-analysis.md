@@ -120,8 +120,8 @@ TTreeReaderArray<float> trackMomY(tree_reader, "ReconstructedChargedParticles.mo
 TTreeReaderArray<float> trackMomZ(tree_reader, "ReconstructedChargedParticles.momentum.z");
 
 // Get Links Between MCParticles and ReconstructedChargedParticles
-TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
-TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
+TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleLinks_from.index");
+TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleLinks_to.index");
 ```
 
 The last two lines encode the link between a ReconstructedChargedParticle and an MCParticle where the matching is determined by the EICrecon [reconstruction algorithms](https://github.com/eic/EICrecon/tree/main/src/algorithms/reco) which generate the ReconstructedChargedParticle objects.
