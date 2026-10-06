@@ -81,7 +81,7 @@ void EfficiencyAnalysis(TString infile="PATH_TO_INPUT_FILE"){
 ```
 A "solution" version of the script for the exercise is included below -
 
-```c++
+```{.cpp .ci file="EfficiencyAnalysis_Exercise.C"}
 void EfficiencyAnalysis_Exercise(TString infile="PATH_TO_FILE"){
   
   // Set output file for the histograms
@@ -301,7 +301,7 @@ void ResolutionAnalysis(TString infile="PATH_TO_INPUT_FILE"){
 ```
 A "solution" version of the script for the exercise is included below -
 
-```c++
+```{.cpp .ci file="ResolutionAnalysis_Exercise.C"}
 void ResolutionAnalysis_Exercise(TString infile="PATH_TO_FILE"){
   // Set output file for the histograms
   TFile *ofile = TFile::Open("ResolutionAnalysis_Exercise_Out.root","RECREATE");
@@ -437,7 +437,12 @@ void ResolutionAnalysis_Exercise(TString infile="PATH_TO_FILE"){
 }
 ```
 
-Insert your input file path and execute as the example code above.
+Insert your input file path and execute as the example code above, e.g.
+
+```{.bash .ci}
+root -l -b -q 'EfficiencyAnalysis_Exercise.C("pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0001.eicrecon.edm4eic.root")'
+root -l -b -q 'ResolutionAnalysis_Exercise.C("pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0001.eicrecon.edm4eic.root")'
+```
 
 ### Compiled ROOT Scripts 
 
@@ -490,7 +495,7 @@ Note that you should delete the \ characters in this block.
 
 The contents of CMakeLists.txt are -
 
-```cmake
+```{.cmake .ci file="helloroot/CMakeLists.txt"}
 # CMakeLists.txt for helloroot.
 # More complicated than needed but demonstrates making and linking your own libraries
 # cf. https://cliutils.gitlab.io/modern-cmake/
@@ -579,7 +584,7 @@ message( " Done!")
 
 The contents of helloroot.hh are -
 
-```c++
+```{.cpp .ci file="helloroot/include/helloroot/helloroot.hh"}
 #ifndef HELLO_ROOT_H
 #define HELLO_ROOT_H
 
@@ -590,7 +595,7 @@ void HelloRoot();
 
 The contents of helloexec.cxx are -
 
-```c++
+```{.cpp .ci file="helloroot/src/helloexec.cxx"}
 #include<helloroot/helloroot.hh>
 
 #include<iostream>
@@ -607,7 +612,7 @@ int main()
 
 And finally, the contents of helloroot.cxx are -
 
-```c++
+```{.cpp .ci file="helloroot/src/helloroot.cxx"}
 #include<helloroot/helloroot.hh>
 
 #include<iostream>
@@ -629,7 +634,13 @@ void HelloRoot()
   return;
 }
 ```
-Please consult the README and script comments for further instructions.
+Please consult the README and script comments for further instructions. In short:
+
+```{.bash .ci}
+cmake -S helloroot -B helloroot/build
+cmake --build helloroot/build
+helloroot/build/helloexec
+```
 
 ## Python Uproot Scripts - Pythonic Versions
 
