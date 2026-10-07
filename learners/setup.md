@@ -14,7 +14,7 @@ rucio did content list --short epic:/RECO/26.04.1/epic_craterlake/DIS/NC/18x275/
 
 You can download any of the files you want in here. You can do this by (still within eic-shell environment) navigating to the directory you will store your file(s) and run the command:
 
-```bash
+```{.bash .ci}
 xrdcp $(rucio replica list file --protocols root --pfns --rses isopenaccess epic:/RECO/26.04.1/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0001.eicrecon.edm4eic.root | head -1) ./
 ```
 
