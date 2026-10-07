@@ -49,7 +49,7 @@ We will need a file to analyse going forward, if you have not done so, download 
 Grab a file from -
 
 ```bash
-epic:/RECO/26.02.0/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10/
+epic:/RECO/26.07.1/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10/
 ```
 
 ::::::::::::::::::::::::::::::::::::::::::::: callout
@@ -57,13 +57,13 @@ epic:/RECO/26.02.0/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10/
 Reminder, you can check the *content* of files within this dataset via:
 
 ```bash
-rucio did content list --short epic:/RECO/26.02.0/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10
+rucio did content list --short epic:/RECO/26.07.1/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10
 ```
 
 and check the location of files in the dataset via:
 
 ```bash
-rucio replica list file --protocols root --pfns --rses isopenaccess epic:/RECO/26.02.0/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10
+rucio replica list file --protocols root --pfns --rses isopenaccess epic:/RECO/26.07.1/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10
 ```
 
 :::::::::::::::::::::::::::::::::::::::::::::
@@ -71,14 +71,14 @@ rucio replica list file --protocols root --pfns --rses isopenaccess epic:/RECO/2
 For example -
 
 ```bash
-xrdcp root://dtn-eic.jlab.org:1094//volatile/eic/EPIC//RECO/26.02.0/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10/BeAGLE1.03.02-1.2_DIS_eHe3_10x110_q2_2to10_ab.0001.eicrecon.edm4eic.root
+xrdcp $(rucio replica list file --protocols root --pfns --rses isopenaccess epic:/RECO/26.07.1/epic_craterlake/DIS/BeAGLE1.03.02-1.2/eHe3/10x110/q2_2to10/BeAGLE1.03.02-1.2_DIS_eHe3_10x110_q2_2to10_ab.0001.eicrecon.edm4eic.root | head -1) ./
 ```
 Note that the ./ at the end is the target location to copy to. Change this as desired.
 
 ::::::::::::::::::::::::::::::::::::::::::::: callout
 
 Note that we can also specify a different filename to copy to as we could with a normal cp command. You might want to do this as the filename is a little cumbersome.
-I called mine `3He_10x110_Feb26Campaign.root`, just replace ./ with your file name of choice.
+I called mine `3He_10x110_Jul26Campaign.root`, just replace ./ with your file name of choice.
 
 :::::::::::::::::::::::::::::::::::::::::::::
 
@@ -108,15 +108,15 @@ where here we're finding things in the given path that match the name pattern pr
 Alternatively, you could grab a list of the files you want and pipe them to a file -
 
 ```bash
-xrdfs root://dtn-eic.jlab.org ls /volatile/eic/EPIC/RECO/26.02.0/epic_craterlake/DIS/NC/18x275/minQ2=10 | sed 's|^|root://dtn-eic.jlab.org/|g' > list.txt
+rucio replica list file --protocols root --pfns --rses isopenaccess epic:/RECO/26.04.1/epic_craterlake/DIS/NC/18x275/minQ2=10 > list.txt
 ```
 
-In this case, we're listing all files on the server in that path, piping them to sed and inserting "root://dtn-eic.jlab.org/" at the front and then feeding the output to the file "list.txt".
+In this case, Rucio lists the locations of all files in the dataset and we feed the output to the file "list.txt".
 
 ```bash
 more list.txt
-root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/26.02.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0000.eicrecon.tree.edm4eic.root
-root://dtn-eic.jlab.org//volatile/eic/EPIC/RECO/26.02.0/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0001.eicrecon.tree.edm4eic.root
+root://epicxrd1.sdcc.bnl.gov:1095//eic/EPIC//RECO/26.04.1/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0000.eicrecon.edm4eic.root
+root://epicxrd1.sdcc.bnl.gov:1095//eic/EPIC//RECO/26.04.1/epic_craterlake/DIS/NC/18x275/minQ2=10/pythia8NCDIS_18x275_minQ2=10_beamEffects_xAngle=-0.025_hiDiv_1.0001.eicrecon.edm4eic.root
 ...
 ```
 We could then, for example, feed this list to a TChain -
