@@ -1,0 +1,7 @@
+name: tutorial-ci
+
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  check:
+    uses: eic/tutorial-ci/.github/workflows/check.yml@main
